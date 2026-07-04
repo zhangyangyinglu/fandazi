@@ -19,7 +19,7 @@ const QUICK_FILTERS = [
   '控糖友好',
   '少油少盐',
   '我家版',
-  '屠老师爱吃',
+  '搭子偏好',
 ]
 
 const RECOMMENDATION_IDS = [
@@ -75,7 +75,7 @@ function matchFilter(dish: Dish, filter: string, pantryNames: Set<string>, myDis
       return tags.some((t) => ['控糖友好', '控糖主食', '低GI', '低碳水', '优质碳水'].includes(t))
     case '少油少盐':
       return tags.some((t) => ['少油', '低油', '清淡', '低脂', '低热量'].includes(t))
-    case '屠老师爱吃':
+    case '搭子偏好':
       return tags.some((t) => ['清淡', '鲜香', '清蒸', '汤品', '炖汤', '暖胃'].includes(t))
     default:
       return true
@@ -138,7 +138,7 @@ export function RecipeWorkspacePage() {
         <div className="fd-side-card summary-card">
           <div className="hero-label">家庭空间状态</div>
           <div className="fd-list-item"><span>当前模式</span><strong>公开 Demo</strong></div>
-          <div className="fd-list-item"><span>搭子</span><strong>我 + 屠老师</strong></div>
+          <div className="fd-list-item"><span>搭子</span><strong>小夏 + 阿川</strong></div>
           <div className="fd-list-item"><span>快过期</span><strong>番茄 · 豆腐</strong></div>
           <div className="fd-list-item"><span>缺少食材</span><strong>葱 / 虾仁</strong></div>
         </div>
@@ -165,7 +165,13 @@ export function RecipeWorkspacePage() {
             <div className="hero-label">晚餐推荐 · 4 道</div>
             <h3>今天可以这样吃</h3>
           </div>
-          <span className="dish-count">按冰箱匹配、健康标签、我家习惯排序</span>
+          <span className="dish-count">按 2026 膳食指南、冰箱匹配、健康标签、家庭习惯排序</span>
+        </div>
+        <div className="meal-logic-strip">
+          <span><strong>蛋白</strong> 鸡胸肉 / 鸡蛋 / 虾仁</span>
+          <span><strong>蔬菜</strong> 西兰花 / 番茄 / 空心菜</span>
+          <span><strong>主食</strong> 晚餐少量，可按活动量补全谷物</span>
+          <span><strong>控风险</strong> 少油少盐，避开重辣高糖</span>
         </div>
         <div className="dish-grid recommended-grid">
           {recommendationDishes.map((dish) => (

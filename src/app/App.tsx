@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { TopNav } from '@/components/TopNav'
+import { FloatingFantuan } from '@/components/FloatingFantuan'
 import { RecipeWorkspacePage } from '@/pages/RecipeWorkspacePage'
 import { RecipeDetailPage } from '@/pages/RecipeDetailPage'
 import { PantryPage } from '@/pages/PantryPage'
@@ -8,6 +9,7 @@ import { ShoppingPage } from '@/pages/ShoppingPage'
 import { MinePage } from '@/pages/MinePage'
 import { FantuanPage } from '@/pages/FantuanPage'
 import { AIKitchenPage } from '@/pages/AIKitchenPage'
+import { HealthPage } from '@/pages/HealthPage'
 import { PlaceholderPage } from '@/pages/PlaceholderPage'
 import '@/components/TopNav.css'
 
@@ -38,15 +40,14 @@ export function App() {
             <Route path="/mine" element={<MinePage />} />
             <Route path="/fantuan" element={<FantuanPage />} />
             <Route path="/ai-kitchen" element={<AIKitchenPage />} />
-            <Route path="/health" element={
-              <PlaceholderPage icon="🥗" title="健康" description="轻健康标签、控糖/减脂/少油少盐、健康分析增强——P2/P6 阶段实现。" />
-            } />
+            <Route path="/health" element={<HealthPage />} />
             <Route path="/family" element={
               <PlaceholderPage icon="👨‍👩‍👧" title="家庭空间" description="邀请一起吃饭的人、共享冰箱/计划/记录——P3 Supabase 阶段实现。" />
             } />
           </Routes>
         </main>
       </div>
+      <FloatingFantuan />
       <MobileBottomNav />
     </BrowserRouter>
   )

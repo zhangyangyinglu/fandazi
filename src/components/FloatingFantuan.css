@@ -1,0 +1,105 @@
+.floating-fantuan {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+  z-index: 120;
+  display: grid;
+  gap: 10px;
+  justify-items: end;
+  pointer-events: none;
+}
+
+.fantuan-float-button,
+.fantuan-popover {
+  pointer-events: auto;
+}
+
+.fantuan-float-button {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  border: 0;
+  border-radius: 22px 22px 22px 10px;
+  background: linear-gradient(145deg, #fff7df, #f69a12);
+  box-shadow: 0 18px 36px rgba(111, 78, 43, 0.22);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.fantuan-face {
+  font-size: 28px;
+  transform: translateY(1px);
+}
+
+.fantuan-pulse {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--fd-success);
+  box-shadow: 0 0 0 5px rgba(111, 143, 86, 0.18);
+}
+
+.fantuan-popover {
+  width: min(320px, calc(100vw - 56px));
+  background: var(--fd-surface);
+  border: 1px solid var(--fd-line);
+  border-radius: 24px 24px 8px 24px;
+  box-shadow: var(--shadow);
+  padding: 16px;
+}
+
+.fantuan-popover-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.fantuan-popover-head strong {
+  font: 900 18px var(--serif);
+}
+
+.fantuan-popover-head span {
+  color: var(--fd-muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.fantuan-popover p {
+  margin: 12px 0;
+  line-height: 1.7;
+  color: var(--fd-muted);
+  font-size: 14px;
+}
+
+.fantuan-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.fantuan-actions a {
+  border-radius: var(--r-pill);
+  border: 1px solid var(--fd-line-soft);
+  padding: 7px 10px;
+  color: var(--fd-ink);
+  font-size: 12px;
+  font-weight: 900;
+  background: var(--fd-surface-warm);
+}
+
+@media (max-width: 600px) {
+  .floating-fantuan {
+    right: 16px;
+    bottom: 72px;
+  }
+
+  .fantuan-float-button {
+    width: 52px;
+    height: 52px;
+  }
+}

@@ -143,7 +143,7 @@ export function PlanPage() {
       {/* Hero */}
       <div className="plan-hero">
         <div className="fd-hero-card">
-          <div className="hero-label">今晚 · 我 + 屠老师</div>
+          <div className="hero-label">今晚 · 小夏 + 阿川</div>
           <h2>
             {displayMissingTotal > 0
               ? `今晚计划差 ${displayMissingTotal} 样食材，买完就能开做`

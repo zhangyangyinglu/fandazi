@@ -25,7 +25,7 @@ export function MinePage() {
   const displayLogs = cookingLogs.length > 0
     ? cookingLogs
     : [
-        { id: 'demo-log-1', dishId: 'broccoli-chicken-egg', dishName: '西兰花鸡胸肉炒蛋', date: '2026-07-04', note: '鸡胸肉切小一点，屠老师觉得更入味。', miliReward: 15 },
+        { id: 'demo-log-1', dishId: 'broccoli-chicken-egg', dishName: '西兰花鸡胸肉炒蛋', date: '2026-07-04', note: '鸡胸肉切小一点，阿川觉得更入味。', miliReward: 15 },
         { id: 'demo-log-2', dishId: 'tomato-tofu-shrimp-soup', dishName: '番茄豆腐虾仁汤', date: '2026-07-03', note: '番茄可以多炒一会儿，汤底更浓。', miliReward: 20 },
         { id: 'demo-log-3', dishId: 'asparagus-shrimp-mushroom', dishName: '芦笋虾仁炒口蘑', date: '2026-07-01', note: '口蘑别切太薄，保留汁水。', miliReward: 15 },
       ]
@@ -37,7 +37,7 @@ export function MinePage() {
       {/* Hero */}
       <div className="mine-hero">
         <div className="fd-hero-card">
-          <div className="hero-label">我家厨房 · 我 + 屠老师</div>
+          <div className="hero-label">示例家庭 · 小夏 + 阿川</div>
           <h2>你家做过 {displayCookedCount} 道菜，饭团帮你记着每次口味调整</h2>
           <p>
             每次标记“做过”后，饭团会问你一句口味反馈，沉淀成你家独有版本。下次做同一道菜，自动带上你的调整。
@@ -73,7 +73,7 @@ export function MinePage() {
               <button className="fd-tab active">我家菜品</button>
               <button className="fd-tab">做饭记录</button>
               <button className="fd-tab">口味偏好</button>
-              <button className="fd-tab">屠老师偏好</button>
+              <button className="fd-tab">搭子偏好</button>
             </div>
             <h3>我家菜品</h3>
             {displayDishes.map((dish) => {
@@ -83,7 +83,7 @@ export function MinePage() {
                   ? cookingLogs.filter((l) => l.dishId === dish.id).length
                   : dish.id === 'broccoli-chicken-egg' ? 8 : dish.id === 'tomato-tofu-shrimp-soup' ? 5 : 3
                 const tweak = myVersion?.myNote ?? (dish.id === 'broccoli-chicken-egg'
-                  ? '鸡胸肉切小一点，屠老师觉得更入味'
+                  ? '鸡胸肉切小一点，阿川觉得更入味'
                   : dish.id === 'tomato-tofu-shrimp-soup'
                     ? '番茄多炒一会儿，汤底更浓'
                     : '口蘑别切太薄，保留汁水')

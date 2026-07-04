@@ -2,8 +2,8 @@
  * 饭搭子组合共享数据层（2026-06-25 v1.11 重构）
  *
  * 概念校正背景：
- * - 旧版（v1.9）:「家庭 4 人 + 执行人单点决策权 + 屠老师=被照顾对象」
- * - 新版（v1.11）:「饭搭子组合 N 人 + 今日掌勺轮流决策权 + 屠老师=平等搭子」
+ * - 旧版（v1.9）:「家庭 4 人 + 执行人单点决策权 + 单一被照顾对象」
+ * - 新版（v1.11）:「饭搭子组合 N 人 + 今日掌勺轮流决策权 + 成员平等搭子」
  *
  * 设计原则：
  * - 饭搭子完全平等,无长期身份差(无 executor/suggestor)
@@ -54,12 +54,12 @@ export type BuddyMember = {
 
 export type BuddyGroup = {
   id: string
-  /** 饭搭子组合名称(可自定义,如"我和屠老师"、"我们家"等) */
+  /** 饭搭子组合名称(可自定义,如"小夏和阿川"、"我们家"等；公开 Demo 不使用真实称呼) */
   name: string
   members: BuddyMember[]
   /**
    * 今日掌勺 id - 今天谁做饭,持今日决策权,可随时切换。
-   * 必须 ∈ members[].id。第一次启动默认是第一个成员(通常是"我")。
+   * 必须 ∈ members[].id。第一次启动默认是第一个成员。
    */
   todayChefId: string
 }
@@ -70,19 +70,19 @@ export const BUDDY_GROUP_STORAGE_KEY = 'fandazi.buddyGroup'
 const LEGACY_FAMILY_STORAGE_KEY = 'fandazi.family'
 
 // ─────────────────────────────────────────────────────────────────────
-// 2. 默认 mock 饭搭子组合(2 人:我 + 屠老师 - 当前真实饭搭子)
-//    依据 2026-06-25 用户拍板:屠老师是平等搭子,非被照顾对象
-//    爸妈不在默认组合(可通过"我的"页手动添加更多搭子)
+// 2. 默认 mock 饭搭子组合(2 人:小夏 + 阿川 - 公开 Demo 示例成员)
+//    公开 Demo 使用示例昵称；真实使用时由用户自定义成员昵称/头像/健康档案
+//    其他成员不在默认组合(后续可通过家庭空间添加更多搭子)
 // ─────────────────────────────────────────────────────────────────────
 
 export const DEFAULT_BUDDY_GROUP: BuddyGroup = {
   id: 'buddy-group-default',
-  name: '我和屠老师',
-  todayChefId: 'member-me',
+  name: '小夏和阿川',
+  todayChefId: 'member-xia',
   members: [
     {
-      id: 'member-me',
-      name: '我',
+      id: 'member-xia',
+      name: '小夏',
       avatar: '🍚',
       healthProfile: {
         goals: ['脂肪肝管理', '减脂'],
@@ -92,8 +92,8 @@ export const DEFAULT_BUDDY_GROUP: BuddyGroup = {
       preferences: EMPTY_DISH_PREFERENCES,
     },
     {
-      id: 'member-tu',
-      name: '屠老师',
+      id: 'member-chuan',
+      name: '阿川',
       avatar: '🍵',
       healthProfile: {
         goals: ['控糖', '低油低脂'],
@@ -166,7 +166,7 @@ function normalizeBuddyGroup(value: unknown): BuddyGroup {
   const todayChefId =
     rawTodayChefId && members.some((m) => m.id === rawTodayChefId)
       ? rawTodayChefId
-      : members[0]?.id ?? 'member-me'
+      : members[0]?.id ?? 'member-xia'
 
   return {
     id: typeof record.id === 'string' ? record.id : DEFAULT_BUDDY_GROUP.id,

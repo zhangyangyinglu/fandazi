@@ -131,7 +131,7 @@ export function PantryPage() {
         </div>
         <div className="fd-side-card pantry-summary">
           <div className="hero-label">冰箱状态</div>
-          <div className="pantry-line"><span>当前模式</span><strong>我 + 屠老师</strong></div>
+          <div className="pantry-line"><span>当前模式</span><strong>小夏 + 阿川</strong></div>
           <div className="pantry-line"><span>库存食材</span><strong>{Math.max(28, pantry.length)} 项</strong></div>
           <div className="pantry-line"><span>快过期</span><strong>{Math.max(3, useSoonItems.length)} 项</strong></div>
           <div className="pantry-line"><span>今晚可做</span><strong>{Math.max(8, canCookDishes.length)} 道菜</strong></div>

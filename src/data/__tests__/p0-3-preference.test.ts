@@ -121,7 +121,7 @@ describe('P0-3 偏好参与推荐', () => {
     const favs = ['m1', 'm2', 'm3', 'm4', 'm5']
     const { group, prefMap } = makeGroup([
       { id: ME, name: '我', p: prefs({ favorite: favs }) },
-      { id: TU, name: '屠老师' },
+      { id: TU, name: '阿川' },
     ], ME)
 
     const result = runLunch(group, prefMap)
@@ -139,7 +139,7 @@ describe('P0-3 偏好参与推荐', () => {
 
     const { group, prefMap } = makeGroup([
       { id: ME, name: '我', p: prefs({ disliked: allergyIds, dislikedDetails: details }) },
-      { id: TU, name: '屠老师' },
+      { id: TU, name: '阿川' },
     ], ME)
 
     const result = runLunch(group, prefMap)
@@ -155,7 +155,7 @@ describe('P0-3 偏好参与推荐', () => {
     // 基线: 无偏好
     const { group: g0, prefMap: pm0 } = makeGroup([
       { id: ME, name: '我' },
-      { id: TU, name: '屠老师' },
+      { id: TU, name: '阿川' },
     ], ME)
     const baseline = runLunch(g0, pm0)
     expect(baseline).not.toBeNull()
@@ -165,7 +165,7 @@ describe('P0-3 偏好参与推荐', () => {
     const cookedIds = baseline!.dishes.map((d) => d.id)
     const { group: g1, prefMap: pm1 } = makeGroup([
       { id: ME, name: '我', p: prefs({ cooked: cookedIds }) },
-      { id: TU, name: '屠老师', p: prefs({ cooked: cookedIds }) },
+      { id: TU, name: '阿川', p: prefs({ cooked: cookedIds }) },
     ], ME)
 
     const after = runLunch(g1, pm1)
@@ -178,12 +178,12 @@ describe('P0-3 偏好参与推荐', () => {
   })
 
   it('T4: 搭子意见不一致 → disagreementDishIds + verdict 正确', () => {
-    const targetId = 'm1' // 我喜欢 + 屠老师不喜欢
+    const targetId = 'm1' // 小夏喜欢 + 阿川不喜欢
     const { group, prefMap } = makeGroup([
       { id: ME, name: '我', p: prefs({ favorite: [targetId] }) },
       {
         id: TU,
-        name: '屠老师',
+        name: '阿川',
         p: prefs({
           disliked: [targetId],
           dislikedDetails: { [targetId]: dislike(targetId, 'taste') },
@@ -196,7 +196,7 @@ describe('P0-3 偏好参与推荐', () => {
     expect(verdicts).toHaveLength(2)
     expect(verdicts[0].verdict).toBe('love')  // 我喜欢
     expect(verdicts[0].isChef).toBe(true)
-    expect(verdicts[1].verdict).toBe('hate')  // 屠老师不喜欢
+    expect(verdicts[1].verdict).toBe('hate')  // 阿川不喜欢
     expect(verdicts[1].isChef).toBe(false)
 
     // 测 recommendMeal: m1 应被推荐(净 delta +0.11)且标记分歧

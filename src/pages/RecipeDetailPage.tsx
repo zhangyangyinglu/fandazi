@@ -101,7 +101,7 @@ export function RecipeDetailPage() {
             <div className="tab-row">
               <button className="fd-tab active">标准版</button>
               <button className="fd-tab">我家版</button>
-              <button className="fd-tab">屠老师偏好</button>
+              <button className="fd-tab">搭子偏好</button>
             </div>
             <h3>食材清单</h3>
             <div className="ingredient-list">
