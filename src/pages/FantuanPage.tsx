@@ -3,7 +3,7 @@
  * 米粒积分 + 副本系统 + 饭团宠物图鉴 + 抽卡
  * 纯前端，localStorage 持久化
  */
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { useFandaziStore } from '@/stores/fandaziStore'
 import {
   MILI_REWARDS,
@@ -53,18 +53,21 @@ export function FantuanPage() {
   const cookingLogs = useFandaziStore((s) => s.cookingLogs)
   const mealPlans = useFandaziStore((s) => s.mealPlans)
 
-  const [miliTick, setMiliTick] = useState(0)
-  const [questTick, setQuestTick] = useState(0)
-  const [ftTick, setFtTick] = useState(0)
+  const [miliState, setMiliState] = useState(() => readMili())
+  const [questState, setQuestState] = useState(() => readQuests())
+  const [ftState, setFtState] = useState(() => readFantuanzi())
+  const [questProgress, setQuestProgress] = useState(() => getQuestProgress())
+  const [currentLevel, setCurrentLevel] = useState(() => getCurrentLevel())
   const [gachaResult, setGachaResult] = useState<Fantuanzi[] | null>(null)
   const [showAllQuests, setShowAllQuests] = useState(false)
 
-  // 读取 gamification.ts 的独立 localStorage 状态
-  const miliState = useMemo(() => readMili(), [miliTick])
-  const questState = useMemo(() => readQuests(), [questTick])
-  const ftState = useMemo(() => readFantuanzi(), [ftTick])
-  const questProgress = useMemo(() => getQuestProgress(), [questTick])
-  const currentLevel = useMemo(() => getCurrentLevel(), [questTick])
+  const refreshMiliState = () => setMiliState(readMili())
+  const refreshQuestState = () => {
+    setQuestState(readQuests())
+    setQuestProgress(getQuestProgress())
+    setCurrentLevel(getCurrentLevel())
+  }
+  const refreshFantuanziState = () => setFtState(readFantuanzi())
 
   // 同步 store 的 fantuan.mili 到 gamification.ts 的 miliState
   // store.fantuan.mili 是"快速米粒"（做完了 +15），gamification.ts 是完整历史
@@ -74,7 +77,7 @@ export function FantuanPage() {
     const result = dailyCheckin()
     if (result.ok) {
       addMiliStore(result.earned)
-      setMiliTick((t) => t + 1)
+      refreshMiliState()
     }
   }
 
@@ -84,8 +87,8 @@ export function FantuanPage() {
     if (quest) {
       addMiliStore(quest.reward)
     }
-    setQuestTick((t) => t + 1)
-    setMiliTick((t) => t + 1)
+    refreshQuestState()
+    refreshMiliState()
   }
 
   const handleGachaSingle = () => {
@@ -95,8 +98,8 @@ export function FantuanPage() {
     addOwnedFantuanzi(ft)
     addMiliStore(-cost)
     setGachaResult([ft])
-    setFtTick((t) => t + 1)
-    setMiliTick((t) => t + 1)
+    refreshFantuanziState()
+    refreshMiliState()
   }
 
   const handleGachaTen = () => {
@@ -106,13 +109,13 @@ export function FantuanPage() {
     results.forEach((ft) => addOwnedFantuanzi(ft))
     addMiliStore(-cost)
     setGachaResult(results)
-    setFtTick((t) => t + 1)
-    setMiliTick((t) => t + 1)
+    refreshFantuanziState()
+    refreshMiliState()
   }
 
   const handleSetActive = (id: string) => {
     setActiveFantuanzi(id)
-    setFtTick((t) => t + 1)
+    refreshFantuanziState()
   }
 
   const today = new Date().toISOString().slice(0, 10)
