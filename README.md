@@ -165,6 +165,45 @@ done
 
 所有路径应返回 `200`。
 
+## 本地部署（你和家人怎么用起来）
+
+### 方式一：直接用线上 Demo
+
+打开 <https://fandazi-web-tool.vercel.app> 就能用，不需要安装任何东西。数据存在你自己的浏览器里。
+
+### 方式二：本地运行（推荐家庭自用）
+
+```bash
+# 1. 确保已安装 Node.js 18+ 和 npm
+node -v  # 应显示 v18 或更高
+
+# 2. 克隆仓库
+git clone https://github.com/fandazi/fandazi-web-tool.git
+cd fandazi-web-tool
+
+# 3. 安装依赖
+npm install
+
+# 4. 启动开发服务器
+npm run dev
+# 打开 http://localhost:5173
+
+# 5. 构建生产版本
+npm run build
+
+# 6. 本地预览生产版本
+npm run preview
+```
+
+你和家人各自在自己电脑上运行，就可以使用了。当前数据存在各自浏览器中，多设备同步功能开发中。
+
+### 方式三：部署到你自己的 Vercel
+
+1. Fork 这个仓库到你自己的 GitHub
+2. 在 [vercel.com](https://vercel.com) 导入该仓库
+3. 自动识别 Vite 项目，直接部署
+4. 获得你自己的域名，家人访问即可使用
+
 ## AI Key 配置
 
 进入 `AI厨房` 页面后，可选择服务商并填写 API Key。
@@ -220,7 +259,7 @@ done
 - P0：方向收口 + 完整功能排期 + 旧代码审计 ✅
 - P1：UI 设计系统 + v6 渲染图 + 前端骨架 ✅
 - P2：菜品主链路 + 冰箱 + 计划 + 购物 + 我家版 ✅
-- P3：家庭共用能力已在功能层演示；多人 Supabase 属后续增强 ✅ / ⏳
+- P3：家庭共用能力已在功能层演示；Supabase 多设备同步开发中 🔄
 - P4：饭团游戏化 + 抽卡 + 图鉴 ✅
 - P5：AI 厨房 ✅
 - P6：健康分析增强版 ⏳
