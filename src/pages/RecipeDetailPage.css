@@ -44,6 +44,14 @@
   place-items: center;
   font-size: 100px;
   box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.detail-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }
 
 .detail-summary {

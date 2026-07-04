@@ -191,19 +191,19 @@
 .dish-image-link {
   display: block;
   width: 100%;
-  height: 112px;
+  height: 160px;
   overflow: hidden;
   background: linear-gradient(135deg, #f7e0bd, #fff7e9);
 }
 
 .catalog-grid .dish-image-link {
-  height: 104px;
+  height: 140px;
 }
 
 .dish-image-link img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 
@@ -313,7 +313,7 @@
   }
   .dish-image-link,
   .catalog-grid .dish-image-link {
-    height: 110px;
+    height: 130px;
   }
   .dish-header {
     display: block;
@@ -333,7 +333,7 @@
   }
   .dish-image-link,
   .catalog-grid .dish-image-link {
-    height: 96px !important;
+    height: 120px !important;
   }
   .dish-body,
   .catalog-grid .dish-body {

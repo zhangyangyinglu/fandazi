@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
 import { TopNav } from '@/components/TopNav'
 import { FloatingFantuan } from '@/components/FloatingFantuan'
 import { RecipeWorkspacePage } from '@/pages/RecipeWorkspacePage'
@@ -11,16 +11,30 @@ import { FantuanPage } from '@/pages/FantuanPage'
 import { AIKitchenPage } from '@/pages/AIKitchenPage'
 import { HealthPage } from '@/pages/HealthPage'
 import { FamilyPage } from '@/pages/FamilyPage'
+import { NotFoundPage } from '@/pages/NotFoundPage'
 import '@/components/TopNav.css'
+
+const MOBILE_NAV_ITEMS = [
+  { to: '/', label: '菜品', end: true },
+  { to: '/pantry', label: '冰箱', end: false },
+  { to: '/plan', label: '计划', end: false },
+  { to: '/fantuan', label: '饭团', end: false },
+  { to: '/mine', label: '我的', end: false },
+]
 
 function MobileBottomNav() {
   return (
     <nav className="fd-mobile-bottom">
-      <span>菜品</span>
-      <span>冰箱</span>
-      <span>计划</span>
-      <span>饭团</span>
-      <span className="active">我的</span>
+      {MOBILE_NAV_ITEMS.map((item) => (
+        <NavLink
+          key={item.to}
+          to={item.to}
+          end={item.end}
+          className={({ isActive }) => (isActive ? 'active' : '')}
+        >
+          {item.label}
+        </NavLink>
+      ))}
     </nav>
   )
 }
@@ -42,6 +56,7 @@ export function App() {
             <Route path="/ai-kitchen" element={<AIKitchenPage />} />
             <Route path="/health" element={<HealthPage />} />
             <Route path="/family" element={<FamilyPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
       </div>

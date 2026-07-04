@@ -1,0 +1,33 @@
+.not-found-page {
+  display: grid;
+  place-items: center;
+  gap: 14px;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.not-found-emoji {
+  font-size: 64px;
+}
+
+.not-found-page h2 {
+  font: 900 24px/1.2 var(--fd-font-display);
+  margin: 0;
+}
+
+.not-found-page p {
+  color: var(--fd-muted);
+  margin: 0;
+}
+
+.not-found-back {
+  margin-top: 12px;
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: var(--r-pill);
+  background: var(--fd-accent);
+  color: #fff;
+  font-weight: 900;
+  font-size: 15px;
+  text-decoration: none;
+}

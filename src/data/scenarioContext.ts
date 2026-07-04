@@ -204,6 +204,8 @@ export function inferMealTime(scenario: MealScenario, currentMeal?: CurrentMealT
 export function fantuanCardTitle(_scenario: MealScenario): string {
   // 所有场景统一用"这一餐，怎么安排？"作为标题
   // 场景差异通过 fantuanLine 体现
+   
+  void _scenario
   return '这一餐，怎么安排？'
 }
 

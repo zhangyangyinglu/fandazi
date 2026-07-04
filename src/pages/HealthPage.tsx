@@ -132,6 +132,7 @@ export function HealthPage() {
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProfiles(readHealthProfiles())
   }, [])
 

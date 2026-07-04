@@ -31,10 +31,12 @@ export function FamilyPage() {
   const [isCustomized, setIsCustomized] = useState(false)
 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
     const stored = localStorage.getItem(STORAGE_KEY)
     setIsCustomized(!!stored)
     setGroup(readBuddyGroup())
     setHealthProfiles(readHealthProfiles())
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [])
 
   const isDemo = !isCustomized

@@ -124,11 +124,12 @@ export function AIKitchenPage() {
       } else {
         setError(!parsed.ok ? (parsed.errors.join('; ') || 'AI 输出解析失败') : 'AI 输出解析失败')
       }
-    } catch (e: any) {
-      if (e.name === 'AbortError') {
+    } catch (e: unknown) {
+      const err = e as { name?: string; message?: string }
+      if (err.name === 'AbortError') {
         // 用户取消
       } else {
-        setError(e.message || '生成失败')
+        setError(err.message || '生成失败')
       }
     } finally {
       setLoading(false)
@@ -160,7 +161,7 @@ export function AIKitchenPage() {
       const arr = JSON.parse(jsonStr)
       if (Array.isArray(arr)) {
         const dishes: Dish[] = []
-        arr.forEach((item: any, idx: number) => {
+        arr.forEach((item: Record<string, unknown>, idx: number) => {
           const parsed = parseAIRecipeJson(JSON.stringify(item))
           if (parsed.ok && parsed.dish) {
             dishes.push(aiParsedToDish(parsed.dish, `ai-${Date.now()}-${idx}`, new Set()))
@@ -168,8 +169,9 @@ export function AIKitchenPage() {
         })
         setResults(dishes)
       }
-    } catch (e: any) {
-      if (e.name !== 'AbortError') setError(e.message || '生成失败')
+    } catch (e: unknown) {
+      const err = e as { name?: string; message?: string }
+      if (err.name !== 'AbortError') setError(err.message || '生成失败')
     } finally {
       setLoading(false)
       abortRef.current = null

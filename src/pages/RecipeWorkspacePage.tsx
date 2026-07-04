@@ -94,8 +94,10 @@ export function RecipeWorkspacePage() {
   const myDishVersions = useFandaziStore((s) => s.myDishVersions)
 
   useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
     setSearchQuery(searchParams.get('q') ?? '')
     setHealthProfiles(readHealthProfiles())
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [searchParams])
 
   const pantryNames = useMemo(() => new Set(pantry.map((p) => p.ingredientName)), [pantry])

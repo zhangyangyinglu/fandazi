@@ -23,6 +23,7 @@ export function TopNav() {
   const [query, setQuery] = useState(searchParams.get('q') ?? '')
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setQuery(searchParams.get('q') ?? '')
   }, [searchParams])
 
@@ -66,7 +67,7 @@ export function TopNav() {
         />
       </form>
       <div className="fd-status">
-        🍙 <b>Lv.{fantuan.level}</b> · 🌾{fantuan.mili} · 副本2/4
+        🍙 <b>Lv.{fantuan.level}</b> · 🌾{fantuan.mili}
       </div>
     </header>
   )

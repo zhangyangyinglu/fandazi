@@ -3,8 +3,25 @@
   "private": false,
   "version": "0.1.0",
   "type": "module",
-  "description": "饭搭子 — GitHub 开源型 Web 工具版家庭做饭助手",
+  "description": "饭搭子 — 让家人一起好好吃饭的家庭做饭助手",
   "license": "MIT",
+  "keywords": [
+    "family",
+    "cooking",
+    "meal-planning",
+    "pantry",
+    "grocery",
+    "recipe",
+    "pwa",
+    "react",
+    "typescript",
+    "gamification"
+  ],
+  "homepage": "https://fandazi-web-tool.vercel.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/fandazi/fandazi-web-tool.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

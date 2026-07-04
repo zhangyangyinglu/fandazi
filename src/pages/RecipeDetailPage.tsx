@@ -53,7 +53,11 @@ export function RecipeDetailPage() {
       {/* 标题区 */}
       <div className="detail-hero">
         <div className="detail-photo" style={{ background: `linear-gradient(135deg, ${dish.color}, #fff6e7)` }}>
-          <span>{getDishEmoji(dish.name, dish.category, dish.tags)}</span>
+          {dish.image ? (
+            <img src={dish.image} alt={dish.name} onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }} />
+          ) : (
+            <span>{getDishEmoji(dish.name, dish.category, dish.tags)}</span>
+          )}
         </div>
         <section className="detail-summary">
           <div className="detail-label">

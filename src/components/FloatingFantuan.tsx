@@ -17,9 +17,10 @@ function useFantuanInsights() {
   const pantry = useFandaziStore((s) => s.pantry)
   const mealPlans = useFandaziStore((s) => s.mealPlans)
   const location = useLocation()
-  const [healthProfileCount, setHealthProfileCount] = useState(0)
+  const [healthProfileCount, setHealthProfileCount] = useState(() => readHealthProfiles().length)
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHealthProfileCount(readHealthProfiles().length)
   }, [location.pathname])
 

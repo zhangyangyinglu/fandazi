@@ -190,7 +190,14 @@
   z-index: 100;
 }
 
-.fd-mobile-bottom .active {
+.fd-mobile-bottom a {
+  text-decoration: none;
+  color: var(--fd-quiet);
+  padding: 8px 12px;
+  border-radius: var(--r-pill);
+}
+
+.fd-mobile-bottom a.active {
   color: var(--fd-orange);
 }
 
