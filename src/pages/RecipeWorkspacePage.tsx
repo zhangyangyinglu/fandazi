@@ -7,6 +7,8 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { DISHES } from '@/data/dishes'
 import type { Dish } from '@/types'
 import { useFandaziStore } from '@/stores/fandaziStore'
+import { readHealthProfiles, type HealthProfile } from '@/components/healthProfileStorage'
+import { checkPlateStructure } from '@/data/healthRecommend'
 import './RecipeWorkspacePage.css'
 
 const QUICK_FILTERS = [
@@ -86,12 +88,14 @@ export function RecipeWorkspacePage() {
   const [searchParams] = useSearchParams()
   const [activeFilter, setActiveFilter] = useState('全部')
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') ?? '')
+  const [healthProfiles, setHealthProfiles] = useState<HealthProfile[]>([])
 
   const pantry = useFandaziStore((s) => s.pantry)
   const myDishVersions = useFandaziStore((s) => s.myDishVersions)
 
   useEffect(() => {
     setSearchQuery(searchParams.get('q') ?? '')
+    setHealthProfiles(readHealthProfiles())
   }, [searchParams])
 
   const pantryNames = useMemo(() => new Set(pantry.map((p) => p.ingredientName)), [pantry])
@@ -100,6 +104,12 @@ export function RecipeWorkspacePage() {
   const recommendationDishes = useMemo(() => (
     RECOMMENDATION_IDS.map((id) => DISHES.find((dish) => dish.id === id)).filter(Boolean) as Dish[]
   ), [])
+
+  const plateStatus = useMemo(() => checkPlateStructure(recommendationDishes), [recommendationDishes])
+  const hasHealthProfiles = healthProfiles.length > 0
+  const combinedRestrictions = useMemo(() => (
+    Array.from(new Set(healthProfiles.flatMap((p) => p.restrictions)))
+  ), [healthProfiles])
 
   const displayDishes = useMemo(() => {
     let result = DISHES.slice(0, 24)
@@ -168,11 +178,16 @@ export function RecipeWorkspacePage() {
           <span className="dish-count">按 2026 膳食指南、冰箱匹配、健康标签、家庭习惯排序</span>
         </div>
         <div className="meal-logic-strip">
-          <span><strong>蛋白</strong> 鸡胸肉 / 鸡蛋 / 虾仁</span>
-          <span><strong>蔬菜</strong> 西兰花 / 番茄 / 空心菜</span>
-          <span><strong>主食</strong> 晚餐少量，可按活动量补全谷物</span>
-          <span><strong>控风险</strong> 少油少盐，避开重辣高糖</span>
+          <span><strong>蛋白</strong> {plateStatus.hasProtein ? '✅ 已覆盖' : '⚠️ 缺优质蛋白'}</span>
+          <span><strong>蔬菜</strong> {plateStatus.hasVegetable ? '✅ 已覆盖' : '⚠️ 缺蔬菜'}</span>
+          <span><strong>主食</strong> {plateStatus.hasStaple ? '✅ 已覆盖' : '晚餐少量，可按活动量补全谷物'}</span>
+          <span><strong>健康约束</strong> {hasHealthProfiles ? `${combinedRestrictions.length} 条限制已生效` : '未填健康问卷，仅按 2026 指南默认推荐'}</span>
         </div>
+        {plateStatus.gaps.length > 0 && (
+          <div className="plate-gap-warning">
+            ⚠️ 餐盘结构缺口：{plateStatus.gaps.join('、')}。建议从菜品库补一道。
+          </div>
+        )}
         <div className="dish-grid recommended-grid">
           {recommendationDishes.map((dish) => (
             <DishCard key={dish.id} dish={dish} compact recommendation />

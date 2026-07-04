@@ -92,6 +92,37 @@
   background: var(--fd-surface-warm);
 }
 
+.fantuan-insight {
+  margin: 8px 0;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--fd-surface-warm);
+}
+
+.fantuan-insight.high {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+}
+
+.fantuan-insight.medium {
+  background: #e8f4fd;
+  border: 1px solid #b3d9f2;
+}
+
+.fantuan-insight p {
+  margin: 0 0 6px;
+  line-height: 1.5;
+  color: var(--fd-ink);
+  font-size: 13px;
+}
+
+.fantuan-insight-link {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--fd-accent, #d97706);
+  text-decoration: none;
+}
+
 @media (max-width: 600px) {
   .floating-fantuan {
     right: 16px;

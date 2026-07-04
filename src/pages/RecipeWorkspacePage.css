@@ -150,6 +150,17 @@
   margin-bottom: 3px;
 }
 
+.plate-gap-warning {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #856404;
+  margin: -4px 0 14px;
+}
+
 .dish-grid {
   display: grid;
   gap: 14px;

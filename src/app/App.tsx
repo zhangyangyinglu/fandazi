@@ -10,7 +10,7 @@ import { MinePage } from '@/pages/MinePage'
 import { FantuanPage } from '@/pages/FantuanPage'
 import { AIKitchenPage } from '@/pages/AIKitchenPage'
 import { HealthPage } from '@/pages/HealthPage'
-import { PlaceholderPage } from '@/pages/PlaceholderPage'
+import { FamilyPage } from '@/pages/FamilyPage'
 import '@/components/TopNav.css'
 
 function MobileBottomNav() {
@@ -41,9 +41,7 @@ export function App() {
             <Route path="/fantuan" element={<FantuanPage />} />
             <Route path="/ai-kitchen" element={<AIKitchenPage />} />
             <Route path="/health" element={<HealthPage />} />
-            <Route path="/family" element={
-              <PlaceholderPage icon="👨‍👩‍👧" title="家庭空间" description="邀请一起吃饭的人、共享冰箱/计划/记录——P3 Supabase 阶段实现。" />
-            } />
+            <Route path="/family" element={<FamilyPage />} />
           </Routes>
         </main>
       </div>

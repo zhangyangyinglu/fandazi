@@ -18,6 +18,8 @@ import type { Dish } from '../types'
 import { sumDishNutrients, type DishNutrients } from './nutrition'
 import type { BuddyGroup, BuddyMember } from './familySharing'
 import type { DishPreferences } from './dishPreferences'
+import type { HealthProfile } from '@/components/healthProfileStorage'
+import { scoreDishByHealthProfiles, checkPlateStructure } from './healthRecommend'
 
 /**
  * v1.11: 提取菜品的主要蛋白质食材类型，用于推荐去重。
@@ -65,6 +67,8 @@ export type RecommendInput = {
   familySize?: number
   /** v1.11: 强制推荐指定数量（用于首页固定展示 4 道等场景，覆盖 snack 的 1 道限制） */
   forceCount?: number
+  /** 健康档案（2026 膳食指南 + 个人约束） */
+  healthProfiles?: HealthProfile[]
 }
 
 export type RecommendResult = {
@@ -78,6 +82,10 @@ export type RecommendResult = {
   perDishReasons: Record<string, string[]>
   /** P0-3: 有搭子意见分歧的菜 id */
   disagreementDishIds: string[]
+  /** 2026 膳食指南餐盘结构缺口 */
+  plateGaps: string[]
+  /** 健康档案约束命中的理由（供 UI 展示） */
+  healthReasons: string[]
 }
 
 /**
@@ -178,6 +186,7 @@ const CATEGORY_PREFERENCE: Record<MealTime, Record<Dish['category'], number>> = 
 export function recommendMeal(input: RecommendInput): RecommendResult | null {
   const { mealTime, pantryItems, candidateDishes, buddyGroup, memberPreferences } = input
   const familySize = input.familySize ?? 2
+  const healthProfiles = input.healthProfiles
   const exclude = new Set(input.excludeDishIds ?? [])
   // v1.11 阶段 2: 时段隐式加权 — 默认沿用 mealTime,允许覆盖
   // bento/snack 不是真实时段, 回退到当前实际时段
@@ -204,6 +213,7 @@ export function recommendMeal(input: RecommendInput): RecommendResult | null {
         buddyGroup,
         memberPreferences,
         currentMealType,
+        healthProfiles,
       }),
     }))
     .filter((c) => CATEGORY_PREFERENCE[mealTime][c.dish.category] > 0)
@@ -318,6 +328,15 @@ export function recommendMeal(input: RecommendInput): RecommendResult | null {
     if (c?.disagreement) disagreementDishIds.push(pick.id)
   }
 
+  // 7) 餐盘结构检查（2026 膳食指南）
+  const plateResult = checkPlateStructure(picks)
+  const allHealthReasons = Array.from(new Set(
+    picks.flatMap((pick) => {
+      const c = scoredMap.get(pick.id)
+      return c?.prefReasons ?? []
+    }).filter((r) => r.includes('偏高') || r.includes('忌口') || r.includes('过敏') || r.includes('含'))
+  ))
+
   return {
     dishes: picks,
     totalNutrition,
@@ -327,6 +346,8 @@ export function recommendMeal(input: RecommendInput): RecommendResult | null {
     pantryIngredientTotal,
     perDishReasons,
     disagreementDishIds,
+    plateGaps: plateResult.gaps,
+    healthReasons: allHealthReasons,
   }
 }
 
@@ -354,6 +375,7 @@ function scoreCandidate(
     buddyGroup?: BuddyGroup
     memberPreferences?: Record<string, DishPreferences>
     currentMealType?: CurrentMealTime
+    healthProfiles?: HealthProfile[]
   },
 ): CandidateScore {
   let score = 1
@@ -385,6 +407,16 @@ function scoreCandidate(
     score *= mealTypeWeight(dish, ctx.currentMealType)
   }
 
+  // 健康档案约束（2026 膳食指南 + 个人限制）
+  let healthFilter = false
+  let healthReasons: string[] = []
+  if (ctx?.healthProfiles && ctx.healthProfiles.length > 0) {
+    const healthResult = scoreDishByHealthProfiles(dish, ctx.healthProfiles)
+    score += healthResult.penalty
+    healthFilter = healthResult.hardFilter
+    healthReasons = healthResult.reasons
+  }
+
   // P0-3: 今日掌勺 + 饭搭子偏好加权(结构体)
   let prefFilter = false
   let prefReasons: string[] = []
@@ -397,7 +429,7 @@ function scoreCandidate(
     disagreement = pref.disagreement
   }
 
-  return { score, prefFilter, prefReasons, disagreement }
+  return { score, prefFilter: prefFilter || healthFilter, prefReasons: [...healthReasons, ...prefReasons], disagreement }
 }
 
 /**
