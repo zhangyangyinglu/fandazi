@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/((?!manifest.webmanifest|sw.js|workbox-.*\\.js|registerSW.js|assets/.*|icons/.*).*)",
+      "destination": "/index.html"
+    }
+  ]
+}

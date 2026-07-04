@@ -1,0 +1,20 @@
+.placeholder-page {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.placeholder-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.placeholder-page h2 {
+  font: 900 28px var(--serif);
+  margin: 8px 0;
+}
+
+.placeholder-page p {
+  font-size: 16px;
+  color: var(--fd-muted);
+  margin: 0 0 18px;
+}

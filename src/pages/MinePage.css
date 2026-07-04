@@ -1,0 +1,209 @@
+.mine-page {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.mine-hero {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.mine-hero .hero-label {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--fd-quiet);
+  margin-bottom: 8px;
+}
+
+.mine-hero h2 {
+  font: 900 30px/1.15 var(--serif);
+  margin: 8px 0;
+}
+
+.mine-hero p {
+  font-size: 15px;
+  color: var(--fd-muted);
+  margin: 0 0 16px;
+}
+
+.mine-workspace {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 20px;
+  align-items: start;
+}
+
+.tab-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.mine-aside {
+  position: sticky;
+  top: 92px;
+}
+
+.mine-dish {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14px 0;
+}
+
+.mine-dish-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mine-dish-name {
+  font-weight: 900;
+  font-size: 16px;
+  color: var(--fd-ink);
+  text-decoration: none;
+}
+
+.mine-dish-name:hover {
+  color: var(--fd-orange);
+}
+
+.mine-dish-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--fd-muted);
+  font-weight: 700;
+}
+
+.mine-dish-note {
+  font-size: 12px;
+  color: var(--fd-muted);
+  font-weight: 800;
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tweak-tag {
+  background: var(--fd-surface-soft);
+  border-radius: 6px;
+  padding: 3px 7px;
+}
+
+.mine-timeline {
+  margin-top: 8px;
+}
+
+.record-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.record-dot {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  background: var(--fd-surface-warm);
+  border-radius: 999px;
+  font-size: 15px;
+}
+
+.record-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.record-date {
+  font-size: 13px;
+  color: var(--fd-muted);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.record-dish-name {
+  font-weight: 900;
+  font-size: 15px;
+  color: var(--fd-ink);
+  text-decoration: none;
+}
+
+.record-dish-name:hover {
+  color: var(--fd-orange);
+}
+
+.record-note {
+  font-size: 13px;
+  color: var(--fd-muted);
+}
+
+.record-reward {
+  font-size: 13px;
+  font-weight: 900;
+  color: #9c7420;
+  white-space: nowrap;
+}
+
+.fantuan-reminder h4,
+.mine-aside h4 {
+  font: 900 15px var(--serif);
+  margin: 0 0 10px;
+}
+
+.preference-flow .fd-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.flow-desc {
+  font-size: 13px;
+  color: var(--fd-muted);
+  font-weight: 700;
+  text-align: right;
+}
+
+.empty-text {
+  color: var(--fd-muted);
+  font-weight: 700;
+  padding: 20px 0;
+  text-align: center;
+  line-height: 1.8;
+}
+
+.empty-text a {
+  color: var(--fd-orange);
+}
+
+@media (max-width: 900px) {
+  .mine-hero,
+  .mine-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .mine-aside {
+    position: static;
+  }
+}
+
+@media (max-width: 520px) {
+  .record-row {
+    grid-template-columns: auto 1fr;
+  }
+
+  .record-reward {
+    grid-column: 2;
+  }
+}

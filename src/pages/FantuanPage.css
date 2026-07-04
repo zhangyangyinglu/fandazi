@@ -1,0 +1,405 @@
+/* 饭团游戏化页面 — P4 */
+
+.fantuan-page {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* 状态卡 */
+.ft-status-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ft-pet-display {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--fd-surface-soft);
+  border-radius: 12px;
+}
+
+.ft-pet-emoji {
+  font-size: 56px;
+  line-height: 1;
+}
+
+.ft-pet-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ft-pet-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--fd-ink);
+}
+
+.ft-pet-rarity {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ft-pet-flavor {
+  font-size: 12px;
+  color: var(--fd-muted);
+}
+
+.ft-stats-row {
+  display: flex;
+  gap: 12px;
+}
+
+.ft-stat {
+  flex: 1;
+  text-align: center;
+  padding: 12px 8px;
+  background: var(--fd-surface-soft);
+  border-radius: 10px;
+}
+
+.ft-stat-label {
+  display: block;
+  font-size: 12px;
+  color: var(--fd-muted);
+  margin-bottom: 4px;
+}
+
+.ft-stat-value {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--fd-ink);
+}
+
+.ft-checkin-btn {
+  width: 100%;
+}
+
+/* 副本 */
+.ft-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ft-section-header h3 {
+  margin: 0;
+}
+
+.ft-level-progress {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ft-level-badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: var(--fd-surface-soft);
+  color: var(--fd-muted);
+}
+
+.ft-level-badge.bronze { background: #f0e6d3; }
+.ft-level-badge.silver { background: #e8eef5; }
+.ft-level-badge.gold { background: #fdf3d8; }
+.ft-level-badge.diamond { background: #e8f0f8; }
+
+.ft-quest-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ft-quest-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--fd-surface-soft);
+  transition: background 0.2s;
+}
+
+.ft-quest-item.claimable {
+  background: #fff8ec;
+  border: 1px dashed var(--fd-orange);
+}
+
+.ft-quest-item.done {
+  opacity: 0.55;
+}
+
+.ft-quest-emoji {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.ft-quest-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ft-quest-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--fd-ink);
+}
+
+.ft-quest-desc {
+  font-size: 12px;
+  color: var(--fd-muted);
+}
+
+.ft-quest-bar {
+  position: relative;
+  height: 18px;
+  background: var(--fd-line);
+  border-radius: 9px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.ft-quest-bar-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--fd-green);
+  border-radius: 9px;
+  transition: width 0.3s;
+}
+
+.ft-quest-bar-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fd-ink);
+}
+
+.ft-quest-action {
+  flex-shrink: 0;
+}
+
+.ft-quest-done {
+  font-size: 12px;
+  color: var(--fd-green);
+}
+
+.ft-quest-reward {
+  font-size: 12px;
+  color: var(--fd-muted);
+  font-weight: 600;
+}
+
+.ft-claim-btn {
+  font-size: 12px;
+  padding: 6px 12px;
+}
+
+.ft-show-more {
+  margin-top: 12px;
+  width: 100%;
+  text-align: center;
+  background: transparent;
+  color: var(--fd-muted);
+  font-size: 13px;
+}
+
+/* 抽卡 */
+.ft-gacha-buttons {
+  display: flex;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.ft-gacha-buttons .fd-btn {
+  flex: 1;
+}
+
+.ft-gacha-result {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--fd-surface-soft);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.ft-gacha-result h4 {
+  margin: 0 0 12px;
+}
+
+.ft-gacha-grid {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ft-gacha-grid.ten {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.ft-gacha-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 8px;
+  background: var(--fd-surface);
+  border: 2px solid;
+  border-radius: 10px;
+  min-width: 70px;
+}
+
+.ft-gacha-emoji {
+  font-size: 28px;
+}
+
+.ft-gacha-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fd-ink);
+}
+
+.ft-gacha-rarity {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ft-close-result {
+  margin-top: 12px;
+}
+
+/* 图鉴 */
+.ft-dex-progress {
+  height: 8px;
+  background: var(--fd-line);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 8px 0 16px;
+}
+
+.ft-dex-progress-fill {
+  height: 100%;
+  background: var(--fd-green);
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+
+.ft-dex-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: 8px;
+}
+
+.ft-dex-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px;
+  border-radius: 10px;
+  border: 2px solid var(--fd-line);
+  background: var(--fd-surface-soft);
+  cursor: default;
+  transition: transform 0.15s;
+}
+
+.ft-dex-card.owned {
+  cursor: pointer;
+  background: var(--fd-surface);
+}
+
+.ft-dex-card.owned:hover {
+  transform: translateY(-2px);
+}
+
+.ft-dex-card.active {
+  box-shadow: 0 0 0 2px var(--fd-orange);
+}
+
+.ft-dex-card.locked {
+  opacity: 0.4;
+}
+
+.ft-dex-emoji {
+  font-size: 24px;
+}
+
+.ft-dex-name {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--fd-ink);
+  text-align: center;
+}
+
+.ft-dex-rarity {
+  font-size: 9px;
+  font-weight: 700;
+}
+
+/* 米粒指南 */
+.ft-mili-guide {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.ft-mili-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--fd-surface-soft);
+  border-radius: 8px;
+}
+
+.ft-mili-label {
+  font-size: 13px;
+  color: var(--fd-ink);
+}
+
+.ft-mili-amount {
+  font-size: 13px;
+  color: var(--fd-orange);
+  font-weight: 700;
+}
+
+/* 响应式 */
+@media (max-width: 600px) {
+  .ft-stats-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ft-gacha-grid.ten {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .ft-dex-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .ft-mili-guide {
+    grid-template-columns: 1fr;
+  }
+
+  .ft-section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

@@ -1,0 +1,263 @@
+.recipe-detail {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.detail-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--fd-muted);
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+.back-link {
+  display: inline-block;
+  border: 1px solid var(--fd-line);
+  background: var(--fd-surface);
+  border-radius: var(--r-pill);
+  padding: 9px 14px;
+  color: var(--fd-ink);
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.detail-breadcrumb span {
+  font-size: 13px;
+  color: var(--fd-muted);
+  font-weight: 800;
+}
+
+.detail-hero {
+  display: grid;
+  grid-template-columns: 430px 1fr;
+  gap: 22px;
+  margin-bottom: 20px;
+}
+
+.detail-photo {
+  height: 380px;
+  border-radius: 28px;
+  border: 1px solid var(--fd-line-soft);
+  display: grid;
+  place-items: center;
+  font-size: 100px;
+  box-shadow: var(--shadow);
+}
+
+.detail-summary {
+  background: var(--fd-surface);
+  border: 1px solid var(--fd-line-soft);
+  border-radius: 28px;
+  padding: 24px;
+}
+
+.detail-label {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--fd-muted);
+  margin-bottom: 8px;
+}
+
+.detail-hero h2 {
+  font: 900 36px/1.05 var(--serif);
+  margin: 8px 0;
+}
+
+.flavor-desc {
+  font-size: 15px;
+  color: var(--fd-muted);
+  margin: 0 0 16px;
+  line-height: 1.6;
+}
+
+.detail-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.detail-meta {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--fd-page);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.meta-item strong {
+  font-size: 12px;
+  color: var(--fd-muted);
+}
+
+.meta-item span {
+  font-size: 16px;
+  font-weight: 900;
+}
+
+/* 工作区 */
+.detail-workspace {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+}
+
+.tab-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.ingredient-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 18px;
+}
+
+.ingredient-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 0;
+  border-top: 1px dashed var(--fd-line-soft);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.ingredient-row:first-of-type,
+.ingredient-row:nth-of-type(2) {
+  border-top: 0;
+}
+
+.ingredient-row em {
+  font-style: normal;
+  font-size: 12px;
+  border-radius: var(--r-pill);
+  padding: 4px 7px;
+  background: var(--fd-surface);
+  color: var(--fd-muted);
+}
+
+.ingredient-row.ok em {
+  background: var(--fd-success-bg);
+  color: var(--fd-green);
+}
+
+.ingredient-row.miss em {
+  background: var(--fd-danger-bg);
+  color: var(--fd-danger-ink);
+}
+
+.step-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.step-list li {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px dashed var(--fd-line-soft);
+}
+
+.step-list li:first-of-type {
+  border-top: 0;
+}
+
+.step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--fd-surface-warm);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--fd-fantuan);
+  flex-shrink: 0;
+}
+
+.step-text {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.health-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.health-card {
+  background: var(--fd-success-bg);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.health-card strong {
+  display: block;
+  color: var(--fd-green);
+  margin-bottom: 4px;
+}
+
+.health-card span {
+  color: var(--fd-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.fantuan-card {
+  background: var(--fd-surface-warm);
+  border-color: var(--fd-line);
+  position: sticky;
+  top: 90px;
+}
+
+@media (max-width: 1100px) {
+  .detail-hero {
+    grid-template-columns: 360px 1fr;
+  }
+  .detail-photo {
+    height: 330px;
+  }
+}
+
+@media (max-width: 900px) {
+  .detail-hero,
+  .detail-workspace {
+    grid-template-columns: 1fr;
+  }
+  .detail-photo {
+    height: 220px;
+    font-size: 72px;
+  }
+  .detail-meta,
+  .ingredient-list,
+  .health-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .detail-meta,
+  .ingredient-list,
+  .health-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .ingredient-row:nth-of-type(2) {
+    border-top: 1px dashed var(--fd-line-soft);
+  }
+}

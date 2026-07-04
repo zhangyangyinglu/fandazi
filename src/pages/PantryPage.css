@@ -1,0 +1,360 @@
+.pantry-page {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.pantry-hero {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.pantry-hero-card {
+  padding: 24px;
+  border-radius: 26px;
+}
+
+.pantry-hero .hero-label,
+.pantry-filters .hero-label,
+.pantry-summary .hero-label {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--fd-quiet);
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+.pantry-hero h2 {
+  font: 900 34px/1.1 var(--serif);
+  margin: 8px 0;
+}
+
+.pantry-hero p {
+  font-size: 16px;
+  color: var(--fd-muted);
+  margin: 0 0 18px;
+}
+
+.pantry-summary {
+  border-radius: 26px;
+  padding: 20px;
+}
+
+.pantry-line {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px dashed var(--fd-line-soft);
+  padding: 11px 0;
+  font-size: 14px;
+}
+
+.pantry-line:last-child {
+  border-bottom: 0;
+}
+
+.pantry-line strong {
+  color: var(--fd-ink);
+}
+
+.pantry-quick {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.pantry-stat {
+  background: var(--fd-surface-soft);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.pantry-stat strong {
+  display: block;
+  font-size: 25px;
+  line-height: 1.1;
+  color: var(--fd-ink);
+}
+
+.pantry-stat span {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--fd-muted);
+}
+
+.pantry-stat.warn {
+  background: var(--fd-danger-bg);
+}
+
+.pantry-stat.warn strong {
+  color: var(--fd-danger-ink);
+}
+
+.pantry-stat.green {
+  background: #f3f8ec;
+}
+
+.pantry-stat.green strong {
+  color: var(--fd-green);
+}
+
+.pantry-filters {
+  background: #fff;
+  border: 1px solid var(--fd-line-soft);
+  border-radius: 22px;
+  padding: 16px;
+  margin-bottom: 18px;
+}
+
+.pantry-filter-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.pantry-chip {
+  background: var(--fd-page);
+  border: 1px solid var(--fd-line-soft);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--fd-muted);
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.pantry-chip.active {
+  background: var(--fd-orange);
+  border-color: var(--fd-orange);
+  color: #fff;
+}
+
+.pantry-chip.hot:not(.active) {
+  background: var(--fd-danger-bg);
+  color: var(--fd-danger-ink);
+}
+
+.pantry-chip.green:not(.active) {
+  background: #f3f8ec;
+  color: var(--fd-green);
+}
+
+.pantry-workspace {
+  display: grid;
+  grid-template-columns: 1fr 330px;
+  gap: 20px;
+}
+
+.pantry-panel {
+  border-radius: 24px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.pantry-panel h3 {
+  font: 900 22px var(--serif);
+  margin: 0 0 12px;
+}
+
+.pantry-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.pantry-item-card {
+  border: 1px solid var(--fd-line-soft);
+  border-radius: 20px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.pantry-item-emoji {
+  height: 92px;
+  background: linear-gradient(135deg, #fde4bd, #fff6e7);
+  display: grid;
+  place-items: center;
+  font-size: 42px;
+}
+
+.pantry-item-body {
+  padding: 13px;
+}
+
+.pantry-item-body h4 {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+
+.pantry-tags {
+  min-height: 28px;
+}
+
+.pantry-tag {
+  font-size: 11px;
+  background: var(--fd-surface-soft);
+  color: var(--fd-muted);
+  padding: 5px 7px;
+  border-radius: 999px;
+  font-weight: 900;
+  display: inline-block;
+  margin: 2px;
+}
+
+.pantry-tag.green {
+  background: #f3f8ec;
+  color: var(--fd-green);
+}
+
+.pantry-tag.red {
+  background: var(--fd-danger-bg);
+  color: var(--fd-danger-ink);
+}
+
+.pantry-tag.gold {
+  background: #fff8df;
+  color: #9c7420;
+}
+
+.pantry-meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--fd-muted);
+  font-weight: 800;
+  margin: 7px 0;
+}
+
+.pantry-item-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.pantry-item-actions button {
+  border-radius: 12px;
+  border: 1px solid var(--fd-line);
+  background: #fff;
+  padding: 8px;
+  font-weight: 900;
+  color: var(--fd-ink);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.pantry-item-actions .primary {
+  background: var(--fd-orange);
+  border-color: var(--fd-orange);
+  color: white;
+}
+
+.pantry-fantuan {
+  background: var(--fd-surface-warm);
+  border-color: var(--fd-line);
+  position: sticky;
+  top: 16px;
+}
+
+.pantry-fantuan h4,
+.pantry-side-card h4 {
+  font: 900 15px var(--serif);
+  margin: 0 0 12px;
+}
+
+.pantry-fantuan .cta-row {
+  margin-top: 18px;
+}
+
+.pantry-side-card {
+  border-radius: 24px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.pantry-recipe-list {
+  display: grid;
+  gap: 10px;
+}
+
+.pantry-recipe {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 0;
+  border-top: 1px dashed var(--fd-line-soft);
+}
+
+.pantry-recipe:first-of-type {
+  border-top: 0;
+}
+
+.pantry-recipe strong,
+.pantry-recipe span {
+  display: block;
+}
+
+.pantry-recipe span {
+  color: var(--fd-muted);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.pantry-recipe button {
+  border: 1px solid var(--fd-line);
+  background: #fff;
+  border-radius: 999px;
+  padding: 7px 10px;
+  font-weight: 900;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.pantry-shop-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-top: 1px dashed var(--fd-line-soft);
+  font-size: 14px;
+}
+
+.pantry-shop-row:first-child {
+  border-top: 0;
+}
+
+.pantry-shop-row b {
+  color: var(--fd-muted);
+}
+
+.empty-text {
+  color: var(--fd-muted);
+  font-weight: 700;
+  padding: 20px 0;
+  text-align: center;
+}
+
+@media (max-width: 1100px) {
+  .pantry-workspace,
+  .pantry-hero {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .pantry-quick {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pantry-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .pantry-quick,
+  .pantry-grid {
+    grid-template-columns: 1fr;
+  }
+}

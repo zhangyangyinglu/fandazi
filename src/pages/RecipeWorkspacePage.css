@@ -1,0 +1,324 @@
+/* 菜品工作区页面样式 — 严格对照 P1-1 菜品工作区 v6 */
+
+.recipe-workspace {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.recipe-workspace .fd-hero-card {
+  border-radius: 24px;
+  padding: 22px;
+}
+
+.recipe-workspace .fd-side-card {
+  border-radius: 24px;
+}
+
+.recipe-workspace .fd-btn {
+  padding: 11px 16px;
+}
+
+/* 空状态 */
+.empty-dishes {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.empty-dishes p {
+  color: var(--fd-muted);
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+/* Hero */
+.hero-section {
+  display: grid;
+  grid-template-columns: 1.35fr 0.65fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.hero-label {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--fd-quiet);
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.hero-main h2 {
+  font: 900 30px/1.15 var(--serif);
+  margin: 8px 0;
+}
+
+.hero-main p {
+  font-size: 16px;
+  color: var(--fd-muted);
+  margin: 0 0 18px;
+}
+
+.cta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.summary-card .fd-list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  padding: 10px 0;
+}
+
+.summary-card .fd-list-item strong {
+  color: var(--fd-ink);
+}
+
+/* 筛选 — 渲染图里不是搜索框，是 chips */
+.filters-section {
+  padding: 0 0 16px;
+  margin-bottom: 0;
+}
+
+.filter-label {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--fd-quiet);
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* 分区 */
+.dish-section {
+  margin-top: 2px;
+}
+
+.dish-catalog-section {
+  margin-top: 26px;
+  padding-top: 4px;
+}
+
+.dish-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  margin: 18px 2px 12px;
+  gap: 18px;
+}
+
+.dish-header h3 {
+  font: 900 22px var(--serif);
+  margin: 0;
+}
+
+.dish-count {
+  font-size: 13px;
+  color: var(--fd-muted);
+  font-weight: 700;
+  text-align: right;
+}
+
+.dish-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.recommended-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.catalog-grid {
+  grid-template-columns: repeat(5, 1fr);
+}
+
+.dish-card {
+  background: var(--fd-surface);
+  border: 1px solid var(--fd-line-soft);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 8px 22px rgba(150, 100, 50, 0.055);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+
+.dish-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(150, 100, 50, 0.09);
+}
+
+.dish-image-link {
+  display: block;
+  width: 100%;
+  height: 112px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f7e0bd, #fff7e9);
+}
+
+.catalog-grid .dish-image-link {
+  height: 104px;
+}
+
+.dish-image-link img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.dish-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-size: 38px;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.dish-body {
+  padding: 13px;
+}
+
+.catalog-grid .dish-body {
+  padding: 11px;
+}
+
+.dish-body h4 {
+  margin: 0 0 7px;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.catalog-grid .dish-body h4 {
+  font-size: 14px;
+}
+
+.dish-note {
+  color: var(--fd-muted);
+  font-size: 13px;
+  line-height: 1.45;
+  margin: 0 0 9px;
+  min-height: 38px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.catalog-grid .dish-note {
+  font-size: 12px;
+  min-height: 34px;
+}
+
+.dish-tags {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.dish-meta {
+  font-size: 12px;
+  color: var(--fd-muted);
+  margin: 8px 0 12px;
+  line-height: 1.35;
+}
+
+.catalog-grid .dish-meta {
+  display: none;
+}
+
+.dish-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.dish-actions .fd-btn {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+.catalog-grid .dish-actions .fd-btn {
+  padding: 7px 8px;
+  font-size: 12px;
+}
+
+/* 响应式 */
+@media (max-width: 1200px) {
+  .catalog-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 1000px) {
+  .recommended-grid,
+  .catalog-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .hero-section {
+    grid-template-columns: 1fr;
+  }
+  .recommended-grid,
+  .catalog-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .dish-image-link,
+  .catalog-grid .dish-image-link {
+    height: 110px;
+  }
+  .dish-header {
+    display: block;
+  }
+  .dish-count {
+    display: block;
+    text-align: left;
+    margin-top: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .recommended-grid,
+  .catalog-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+  }
+  .dish-image-link,
+  .catalog-grid .dish-image-link {
+    height: 96px !important;
+  }
+  .dish-body,
+  .catalog-grid .dish-body {
+    padding: 8px !important;
+  }
+  .dish-body h4,
+  .catalog-grid .dish-body h4 {
+    font-size: 13px !important;
+  }
+  .dish-note {
+    display: none;
+  }
+  .dish-actions {
+    grid-template-columns: 1fr;
+  }
+  .dish-actions .fd-btn {
+    padding: 6px 8px !important;
+    font-size: 12px !important;
+  }
+  .fd-badge {
+    font-size: 10px !important;
+    padding: 3px 6px !important;
+  }
+}

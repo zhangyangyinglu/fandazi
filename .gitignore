@@ -1,0 +1,23 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+dev-dist/
+
+# 环境变量
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+
+# 系统文件
+.DS_Store
+*.log
+*.tsbuildinfo
+
+# Vercel
+.vercel/
