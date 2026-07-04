@@ -25,30 +25,40 @@ const QUICK_FILTERS = [
 ]
 
 const RECOMMENDATION_IDS = [
-  'fan-qie-chao-dan',
-  'tomato-tofu-shrimp-soup',
+  'steamed-bass-shanghai-greens',
   'water-spinach-lean-pork',
-  'steamed-chicken-shiitake',
+  'winter-melon-egg-soup',
+  'brown-rice-chicken-veg-bowl',
 ]
 
-const RECOMMENDATION_COPY: Record<string, { displayName?: string; note: string; meta: string }> = {
-  'fan-qie-chao-dan': {
-    note: '家常快手，适合晚餐搭配。',
-    meta: '已有：番茄、鸡蛋｜缺：葱',
-  },
-  'tomato-tofu-shrimp-soup': {
-    note: '清淡高蛋白，适合控油。',
-    meta: '已有：番茄、豆腐｜缺：虾仁',
+type RecommendationCopy = {
+  displayName?: string
+  note: string
+  meta: string
+  role: '主蛋白' | '绿叶菜' | '汤羹' | '主食'
+}
+
+const RECOMMENDATION_COPY: Record<string, RecommendationCopy> = {
+  'steamed-bass-shanghai-greens': {
+    note: '清蒸鱼做主蛋白，口味干净，搭配绿叶菜不厚重。',
+    meta: '主蛋白｜缺：鲈鱼、上海青',
+    role: '主蛋白',
   },
   'water-spinach-lean-pork': {
-    displayName: '蒜蓉空心菜',
-    note: '补一盘青菜，清爽不腻。',
-    meta: '已有：蒜｜缺：空心菜',
+    displayName: '空心菜炒瘦肉',
+    note: '补一盘绿叶菜，快炒出锅，和清蒸主菜错开做法。',
+    meta: '绿叶菜｜已有：蒜｜缺：空心菜、瘦猪肉',
+    role: '绿叶菜',
   },
-  'steamed-chicken-shiitake': {
-    displayName: '香菇蒸鸡腿',
-    note: '适合顺手多做，明天带饭。',
-    meta: '已有：香菇｜缺：鸡腿',
+  'winter-melon-egg-soup': {
+    note: '汤菜用冬瓜打底，避开番茄重复，晚餐更清爽。',
+    meta: '汤羹｜已有：鸡蛋｜缺：冬瓜、虾皮',
+    role: '汤羹',
+  },
+  'brown-rice-chicken-veg-bowl': {
+    note: '少量糙米饭补主食，搭配蔬菜和鸡肉，晚餐更稳。',
+    meta: '主食｜缺：糙米饭、鸡胸肉、胡萝卜',
+    role: '主食',
   },
 }
 
@@ -261,8 +271,9 @@ function DishCard({ dish, compact = false, recommendation = false }: { dish: Dis
   const missingCount = dish.ingredients.filter((ing) => !pantryNames.has(ing.name)).length
   const copy = RECOMMENDATION_COPY[dish.id]
   const displayName = copy?.displayName ?? dish.name
-  const note = copy?.note ?? (dish.flavorDescription || dish.intro)
+  const note = copy?.note ?? dish.flavorDescription ?? dish.intro ?? `适合${dish.mealType?.includes('dinner') ? '晚餐' : '日常'}的一道${dish.category}。`
   const meta = copy?.meta ?? `已有 ${Math.max(0, dish.ingredients.length - missingCount)}/${dish.ingredients.length} · ${missingCount === 0 ? '冰箱可做' : `缺${missingCount}样`}`
+  const role = copy?.role
 
   const handleAddToPlan = () => {
     const today = new Date().toISOString().slice(0, 10)
@@ -282,10 +293,9 @@ function DishCard({ dish, compact = false, recommendation = false }: { dish: Dis
         <div className="dish-tags">
           {recommendation ? (
             <>
-              <span className="fd-badge green">{dish.id === 'fan-qie-chao-dan' ? '冰箱可做' : dish.tags.includes('低油') || dish.tags.includes('少油') ? '少油' : '清淡'}</span>
-              {dish.id === 'fan-qie-chao-dan' && <span className="fd-badge gold">我家版</span>}
-              {(dish.id === 'tomato-tofu-shrimp-soup') && <span className="fd-badge red">缺虾仁</span>}
-              {(dish.id === 'steamed-chicken-shiitake') && <span className="fd-badge gold">带饭</span>}
+              {role && <span className="fd-badge green">{role}</span>}
+              {dish.tags.includes('低油') || dish.tags.includes('少油') ? <span className="fd-badge">少油</span> : null}
+              {dish.tags.includes('控糖友好') || dish.tags.includes('控糖主食') ? <span className="fd-badge gold">控糖友好</span> : null}
               <span className="fd-badge">{dish.cookTime}</span>
             </>
           ) : (

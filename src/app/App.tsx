@@ -11,7 +11,9 @@ import { FantuanPage } from '@/pages/FantuanPage'
 import { AIKitchenPage } from '@/pages/AIKitchenPage'
 import { HealthPage } from '@/pages/HealthPage'
 import { FamilyPage } from '@/pages/FamilyPage'
+import { SyncSettingsPage } from '@/pages/SyncSettingsPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
+import { useFamilySync } from '@/lib/useFamilySync'
 import '@/components/TopNav.css'
 
 const MOBILE_NAV_ITEMS = [
@@ -40,6 +42,8 @@ function MobileBottomNav() {
 }
 
 export function App() {
+  useFamilySync()
+
   return (
     <BrowserRouter>
       <div className="fd-desktop-shell">
@@ -56,6 +60,7 @@ export function App() {
             <Route path="/ai-kitchen" element={<AIKitchenPage />} />
             <Route path="/health" element={<HealthPage />} />
             <Route path="/family" element={<FamilyPage />} />
+            <Route path="/sync" element={<SyncSettingsPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>

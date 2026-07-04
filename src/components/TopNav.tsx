@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { to: '/ai-kitchen', label: 'AI厨房' },
   { to: '/health', label: '健康' },
   { to: '/family', label: '家庭空间' },
+  { to: '/sync', label: '同步' },
 ]
 
 export function TopNav() {

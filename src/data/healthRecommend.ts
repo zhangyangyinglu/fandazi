@@ -172,24 +172,75 @@ export function scoreDishByHealthProfiles(
   return { hardFilter, penalty, reasons: Array.from(new Set(reasons)) }
 }
 
+function getCoreIngredientNames(dish: Dish): string[] {
+  return dish.ingredients
+    .filter((ingredient) => ingredient.group !== '调味')
+    .map((ingredient) => ingredient.name.replace(/嫩|老|小|大|鲜|干/g, ''))
+}
+
+function getFlavorFamilies(dish: Dish): string[] {
+  const text = `${dish.name} ${dish.tags.join(' ')} ${dish.ingredients.map((i) => i.name).join(' ')}`
+  const families: string[] = []
+  if (/番茄|西红柿/.test(text)) families.push('番茄')
+  if (/咖喱/.test(text)) families.push('咖喱')
+  if (/酸辣|泡椒|剁椒|辣/.test(text)) families.push('辣味')
+  if (/红烧|酱|卤/.test(text)) families.push('酱香红烧')
+  if (/蒜蓉|蒜香/.test(text)) families.push('蒜香')
+  if (/凉拌|冷菜/.test(text)) families.push('凉拌')
+  return families
+}
+
+function findRepeated(values: string[]): string[] {
+  const counts = new Map<string, number>()
+  for (const value of values) {
+    counts.set(value, (counts.get(value) ?? 0) + 1)
+  }
+  return Array.from(counts.entries()).filter(([, count]) => count > 1).map(([value]) => value)
+}
+
 /**
- * 检查一桌菜是否满足 2026 膳食指南餐盘结构
+ * 检查一桌菜是否满足 2026 膳食指南餐盘结构 + 真实家庭配餐合理性
  * 返回缺口提示
  */
 export function checkPlateStructure(dishes: Dish[]): {
   hasProtein: boolean
   hasVegetable: boolean
   hasStaple: boolean
+  hasSoup: boolean
+  repeatedCoreIngredients: string[]
+  repeatedFlavorFamilies: string[]
+  repeatedCookMethods: string[]
   gaps: string[]
 } {
   const hasProtein = dishes.some((d) => d.ingredients.some((i) => i.group === '肉蛋'))
   const hasVegetable = dishes.some((d) => d.ingredients.some((i) => i.group === '蔬菜') || d.category === '素菜')
   const hasStaple = dishes.some((d) => d.category === '主食' || d.ingredients.some((i) => i.group === '主食'))
+  const hasSoup = dishes.some((d) => d.category === '汤羹' || /汤|羹|煲/.test(d.name))
+  const repeatedCoreIngredients = findRepeated(dishes.flatMap(getCoreIngredientNames))
+  const repeatedFlavorFamilies = findRepeated(dishes.flatMap(getFlavorFamilies))
+  const repeatedCookMethods = findRepeated(
+    dishes
+      .filter((dish) => dish.category !== '主食')
+      .map((d) => d.cookMethod)
+      .filter(Boolean),
+  )
 
   const gaps: string[] = []
   if (!hasProtein) gaps.push('缺优质蛋白')
   if (!hasVegetable) gaps.push('缺蔬菜')
   if (!hasStaple) gaps.push('缺主食')
+  if (repeatedCoreIngredients.length > 0) gaps.push(`核心食材重复：${repeatedCoreIngredients.join('、')}`)
+  if (repeatedFlavorFamilies.length > 0) gaps.push(`口味重复：${repeatedFlavorFamilies.join('、')}`)
+  if (dishes.length >= 3 && repeatedCookMethods.length > 0) gaps.push(`做法重复：${repeatedCookMethods.join('、')}`)
 
-  return { hasProtein, hasVegetable, hasStaple, gaps }
+  return {
+    hasProtein,
+    hasVegetable,
+    hasStaple,
+    hasSoup,
+    repeatedCoreIngredients,
+    repeatedFlavorFamilies,
+    repeatedCookMethods,
+    gaps,
+  }
 }
