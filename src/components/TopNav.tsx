@@ -66,7 +66,7 @@ export function TopNav() {
         />
       </form>
       <div className="fd-status">
-        🍙 <b>Lv.{fantuan.level}</b> · 🌾{fantuan.mili}{isPantry ? ' · 副本2/4' : ''}
+        🍙 <b>Lv.{fantuan.level}</b> · 🌾{fantuan.mili} · 副本2/4
       </div>
     </header>
   )
