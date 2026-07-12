@@ -22,7 +22,10 @@
 }
 
 .ft-pet-emoji {
-  font-size: 56px;
+  width: 88px;
+  height: 88px;
+  overflow: hidden;
+  border-radius: 18px;
   line-height: 1;
 }
 
@@ -266,7 +269,10 @@
 }
 
 .ft-gacha-emoji {
-  font-size: 28px;
+  width: 42px;
+  height: 42px;
+  overflow: hidden;
+  border-radius: 12px;
 }
 
 .ft-gacha-name {
@@ -337,7 +343,10 @@
 }
 
 .ft-dex-emoji {
-  font-size: 24px;
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
+  border-radius: 10px;
 }
 
 .ft-dex-name {

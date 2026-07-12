@@ -1,0 +1,21 @@
+{
+  "updatedAt": "2026-07-11 22:05 +0800",
+  "sourceFolder": "/Users/miki/Desktop/未命名文件夹",
+  "note": "14 张新生成饭团功能图标已录入，并按保守页面映射完成正式 UI 接入；食材 emoji、成员头像和饭团状态图保留。",
+  "items": [
+    { "source": "副本挑战.png", "file": "/icons/fantuan-actions/fantuan-challenge-copy.png", "use": "副本挑战" },
+    { "source": "图鉴.png", "file": "/icons/fantuan-actions/fantuan-catalog.png", "use": "饭团图鉴" },
+    { "source": "对话.png", "file": "/icons/fantuan-actions/fantuan-chat.png", "use": "对话入口" },
+    { "source": "带饭.png", "file": "/icons/fantuan-actions/fantuan-takeout.png", "use": "带饭" },
+    { "source": "庆祝.png", "file": "/icons/fantuan-actions/fantuan-celebration.png", "use": "庆祝" },
+    { "source": "成长升级.png", "file": "/icons/fantuan-actions/fantuan-growth.png", "use": "成长升级" },
+    { "source": "抽饭团.png", "file": "/icons/fantuan-actions/fantuan-draw.png", "use": "抽饭团" },
+    { "source": "提示.png", "file": "/icons/fantuan-actions/fantuan-hint.png", "use": "提示" },
+    { "source": "搭子合作.png", "file": "/icons/fantuan-actions/fantuan-buddy-collab.png", "use": "搭子合作" },
+    { "source": "签到.png", "file": "/icons/fantuan-actions/fantuan-checkin.png", "use": "签到" },
+    { "source": "翻车分享.png", "file": "/icons/fantuan-actions/fantuan-fail-share.png", "use": "翻车分享" },
+    { "source": "连续打卡.png", "file": "/icons/fantuan-actions/fantuan-streak.png", "use": "连续打卡" },
+    { "source": "钻石.png", "file": "/icons/fantuan-actions/fantuan-diamond.png", "use": "钻石" },
+    { "source": "首页.png", "file": "/icons/fantuan-actions/fantuan-home.png", "use": "首页" }
+  ]
+}

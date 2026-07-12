@@ -15,6 +15,20 @@ const ENV_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
 const LS_URL_KEY = 'fandazi.supabase.url'
 const LS_KEY_KEY = 'fandazi.supabase.anonKey'
 
+export interface SupabasePublicConfig {
+  url: string
+  anonKey: string
+  source: 'env' | 'localStorage'
+}
+
+export const FANDAZI_SYNC_CONFIG_EVENT = 'fandazi-sync-config-changed'
+
+function notifySyncConfigChanged(): void {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event(FANDAZI_SYNC_CONFIG_EVENT))
+  }
+}
+
 /** 从 localStorage 读取用户自配的 Supabase 凭据 */
 function getLocalConfig(): { url: string; key: string } | null {
   try {
@@ -29,19 +43,35 @@ function getLocalConfig(): { url: string; key: string } | null {
 
 /** 是否已配置 Supabase（环境变量或 localStorage 任一可用） */
 export function isSupabaseConfigured(): boolean {
-  return !!(ENV_URL && ENV_KEY) || !!getLocalConfig()
+  return !!getSupabasePublicConfig()
+}
+
+/** 当前客户端可用的公开 Supabase 配置。
+ * anon key 是前端公开 key，可用于家庭邀请包；不要放 service_role key。
+ */
+export function getSupabasePublicConfig(): SupabasePublicConfig | null {
+  if (ENV_URL && ENV_KEY) {
+    return { url: ENV_URL, anonKey: ENV_KEY, source: 'env' }
+  }
+  const local = getLocalConfig()
+  if (local) {
+    return { url: local.url, anonKey: local.key, source: 'localStorage' }
+  }
+  return null
 }
 
 /** 用户自配 Supabase 凭据（设置页面调用） */
 export function setSupabaseConfig(url: string, anonKey: string): void {
   localStorage.setItem(LS_URL_KEY, url.trim())
   localStorage.setItem(LS_KEY_KEY, anonKey.trim())
+  notifySyncConfigChanged()
 }
 
 /** 清除用户自配凭据 */
 export function clearSupabaseConfig(): void {
   localStorage.removeItem(LS_URL_KEY)
   localStorage.removeItem(LS_KEY_KEY)
+  notifySyncConfigChanged()
 }
 
 let _client: SupabaseClient | null = null

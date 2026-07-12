@@ -8,11 +8,14 @@
  *   4. 显示同步状态
  */
 import { useCallback, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { friendlyError } from '@/lib/friendlyError'
 import {
   isSupabaseConfigured,
   setSupabaseConfig,
   clearSupabaseConfig,
   resetSupabaseClient,
+  getSupabasePublicConfig,
 } from '@/lib/supabaseClient'
 import {
   signUp,
@@ -25,6 +28,16 @@ import {
   type AuthUser,
   type Household,
 } from '@/lib/familyAuth'
+import {
+  readAiConfig,
+  writeAiConfig,
+  clearAiConfig,
+  getAiConfigSource,
+  PROVIDER_DEFAULTS,
+  type AiProvider,
+  type AiProviderConfig,
+} from '@/lib/aiProviderConfig'
+import { testAiConnection } from '@/lib/fantuanAiClient'
 import './SyncSettingsPage.css'
 
 type Step = 'config' | 'auth' | 'household' | 'done'
@@ -44,6 +57,32 @@ export function SyncSettingsPage() {
   const [householdName, setHouseholdName] = useState('')
   const [inviteCode, setInviteCode] = useState('')
   const [displayName, setDisplayName] = useState('')
+
+  // 饭团 AI 设置状态（惰性初始化，从 localStorage 读取已保存配置）
+  const savedAiConfig = readAiConfig()
+  const [aiProvider, setAiProvider] = useState<AiProvider>(savedAiConfig?.provider ?? 'deepseek')
+  const [aiBaseURL, setAiBaseURL] = useState(savedAiConfig?.baseURL ?? PROVIDER_DEFAULTS.deepseek.baseURL)
+  const [aiModel, setAiModel] = useState(savedAiConfig?.model ?? PROVIDER_DEFAULTS.deepseek.model)
+  const [aiApiKey, setAiApiKey] = useState(savedAiConfig?.apiKey ?? '')
+  const [aiTestStatus, setAiTestStatus] = useState<'idle' | 'testing' | 'ok' | 'fail'>(savedAiConfig?.tested ? 'ok' : 'idle')
+  const [aiTestError, setAiTestError] = useState('')
+  const [aiConfigSaved, setAiConfigSaved] = useState(!!savedAiConfig)
+
+  const supabasePublicConfig = getSupabasePublicConfig()
+  const visiblePrimaryButtonStyle = {
+    backgroundColor: '#f39c12',
+    borderColor: '#f39c12',
+    color: '#fff',
+  }
+  const partnerInvitePackage = household && supabasePublicConfig
+    ? [
+        '饭搭子家庭邀请包',
+        `Supabase URL: ${supabasePublicConfig.url}`,
+        `Supabase anon key: ${supabasePublicConfig.anonKey}`,
+        `家庭邀请码: ${household.inviteCode}`,
+        '说明：搭子不用再创建自己的 Supabase 项目；下载/部署饭搭子后，在同步页填入上面同一套家庭云端配置，再注册/登录并输入邀请码加入。',
+      ].join('\n')
+    : ''
 
   const checkStatus = useCallback(async () => {
     setLoading(true)
@@ -79,6 +118,74 @@ export function SyncSettingsPage() {
     })
   }, [checkStatus])
 
+  function handleAiProviderChange(provider: AiProvider) {
+    setAiProvider(provider)
+    const defaults = PROVIDER_DEFAULTS[provider]
+    setAiBaseURL(defaults.baseURL)
+    setAiModel(defaults.model)
+  }
+
+  async function handleSaveAiConfig() {
+    if (!aiApiKey.trim() || !aiBaseURL.trim() || !aiModel.trim()) {
+      setAiTestStatus('fail')
+      setAiTestError('请填写完整的 baseURL、模型和 API Key')
+      return
+    }
+    const config: AiProviderConfig = {
+      provider: aiProvider,
+      baseURL: aiBaseURL.trim(),
+      model: aiModel.trim(),
+      apiKey: aiApiKey.trim(),
+      tested: false,
+    }
+    writeAiConfig(config).then(() => {
+      setAiConfigSaved(true)
+      setAiTestStatus('idle')
+      setAiTestError('')
+    })
+  }
+
+  async function handleTestAi() {
+    if (!aiApiKey.trim() || !aiBaseURL.trim() || !aiModel.trim()) {
+      setAiTestStatus('fail')
+      setAiTestError('请先填写并保存配置')
+      return
+    }
+    // 先保存再测试
+    await handleSaveAiConfig()
+    setAiTestStatus('testing')
+    setAiTestError('')
+    const config: AiProviderConfig = {
+      provider: aiProvider,
+      baseURL: aiBaseURL.trim(),
+      model: aiModel.trim(),
+      apiKey: aiApiKey.trim(),
+      tested: false,
+    }
+    const result = await testAiConnection(config)
+    if (result.ok) {
+      setAiTestStatus('ok')
+      void writeAiConfig({ ...config, tested: true })
+    } else {
+      setAiTestStatus('fail')
+      const errorMap: Record<string, string> = {
+        KEY_INVALID: 'API Key 无效，请检查',
+        NETWORK_ERROR: '网络连接失败，检查 baseURL 是否正确',
+        EMPTY_RESPONSE: '模型返回为空，检查模型名称是否正确',
+      }
+      setAiTestError(errorMap[result.error] || result.error)
+    }
+  }
+
+  function handleClearAiConfig() {
+    clearAiConfig().then(() => {
+      setAiApiKey('')
+      setAiTestStatus('idle')
+      setAiTestError('')
+      setAiConfigSaved(false)
+    })
+  }
+
   async function handleSaveConfig() {
     if (!supabaseUrl.trim() || !supabaseKey.trim()) {
       setError('请填写 Supabase URL 和 anon key')
@@ -91,6 +198,14 @@ export function SyncSettingsPage() {
   }
 
   async function handleAuth(mode: 'signup' | 'signin') {
+    if (!email.trim() || !password.trim()) {
+      setError('请填写邮箱和密码')
+      return
+    }
+    if (password.trim().length < 6) {
+      setError('密码至少 6 位')
+      return
+    }
     setLoading(true)
     setError(null)
     const result = mode === 'signup'
@@ -98,7 +213,7 @@ export function SyncSettingsPage() {
       : await signIn(email, password)
 
     if (result.error) {
-      setError(result.error)
+      setError(friendlyError(result.error))
       setLoading(false)
       return
     }
@@ -125,7 +240,7 @@ export function SyncSettingsPage() {
     setError(null)
     const result = await createHousehold(householdName.trim(), user.id)
     if (result.error) {
-      setError(result.error)
+      setError(friendlyError(result.error))
     } else if (result.household) {
       setHousehold(result.household)
       setStep('done')
@@ -142,7 +257,7 @@ export function SyncSettingsPage() {
     setError(null)
     const result = await joinHousehold(inviteCode.trim(), user.id, displayName.trim())
     if (result.error) {
-      setError(result.error)
+      setError(friendlyError(result.error))
     } else if (result.household) {
       setHousehold(result.household)
       setStep('done')
@@ -172,10 +287,11 @@ export function SyncSettingsPage() {
       <div className="sync-info-banner">
         <p>
           饭搭子的核心是「一起吃饭的人」。
-          开启同步后，你和家人的冰箱、计划、购物清单、做饭记录、饭团进度会实时共享。
+          你可以一个人用一个家庭组，也可以把搭子邀请进来。搭子可以是另一个人、家里的宠物、或不会用电脑的老人——由你自己设置。
         </p>
         <p className="sync-note">
-          ⚠️ AI API Key 是个人配置，不会同步。健康档案家庭可见但各自编辑。
+          一个家庭只需要一个共享 Supabase 后端。先创建家庭的人会拿到邀请包（URL + key + 邀请码），想邀请搭子时发给对方就行；不邀请也完全正常。
+          饭团 AI 可在本页下方配置；健康档案家庭可见但各自编辑。
         </p>
       </div>
 
@@ -184,11 +300,12 @@ export function SyncSettingsPage() {
         <section className="sync-section">
           <h3>第 1 步：配置 Supabase</h3>
           <p className="sync-step-desc">
-            前往 <a href="https://supabase.com" target="_blank" rel="noopener noreferrer">supabase.com</a> 注册免费账号，
-            创建新项目，然后在 Settings → API 中找到 URL 和 anon key。
+            如果你是第一个配置饭搭子的人：前往 <a href="https://supabase.com" target="_blank" rel="noopener noreferrer">supabase.com</a> 注册免费账号，
+            创建一个家庭云端项目，然后在 Settings → API 中找到 URL 和 anon key。
           </p>
           <p className="sync-step-desc">
             创建项目后，在 SQL Editor 中执行 <code>supabase/schema.sql</code> 建表。
+            如果你是被邀请的搭子，不用新建 Supabase 项目，直接填邀请人发来的 URL 和 anon key。
           </p>
           <input
             type="text"
@@ -224,10 +341,18 @@ export function SyncSettingsPage() {
             onChange={(e) => setPassword(e.target.value)}
           />
           <div className="sync-button-row">
-            <button onClick={() => handleAuth('signup')} disabled={loading}>注册</button>
-            <button onClick={() => handleAuth('signin')} disabled={loading}>登录</button>
+            <button style={visiblePrimaryButtonStyle} onClick={() => handleAuth('signup')} disabled={loading}>注册</button>
+            <button style={visiblePrimaryButtonStyle} onClick={() => handleAuth('signin')} disabled={loading}>登录</button>
           </div>
-          {error && <p className="sync-error">{error}</p>}
+          {error && (
+            <div className="sync-error-card">
+              <p>{error}</p>
+              <div className="sync-button-row">
+                <button style={visiblePrimaryButtonStyle} onClick={() => handleAuth('signup')} disabled={loading}>重新注册/重发确认</button>
+                <button style={visiblePrimaryButtonStyle} onClick={() => handleAuth('signin')} disabled={loading}>我已确认，登录</button>
+              </div>
+            </div>
+          )}
         </section>
       )}
 
@@ -244,7 +369,7 @@ export function SyncSettingsPage() {
               value={householdName}
               onChange={(e) => setHouseholdName(e.target.value)}
             />
-            <button onClick={handleCreateHousehold} disabled={loading}>创建家庭</button>
+            <button style={visiblePrimaryButtonStyle} onClick={handleCreateHousehold} disabled={loading}>创建家庭</button>
           </div>
 
           <div className="sync-divider">或</div>
@@ -264,7 +389,7 @@ export function SyncSettingsPage() {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
             />
-            <button onClick={handleJoinHousehold} disabled={loading}>加入家庭</button>
+            <button style={visiblePrimaryButtonStyle} onClick={handleJoinHousehold} disabled={loading}>加入家庭</button>
           </div>
           {error && <p className="sync-error">{error}</p>}
         </section>
@@ -277,12 +402,95 @@ export function SyncSettingsPage() {
           <div className="sync-status-card">
             <p><strong>家庭：</strong>{household.name}</p>
             <p><strong>邀请码：</strong><code>{household.inviteCode}</code></p>
-            <p className="sync-hint">把这个邀请码发给家人，他们在同步设置里输入即可加入。</p>
+            <p className="sync-hint">
+              想邀请搭子时，把下面这份邀请包发给对方即可。搭子可以是另一个人、宠物、或不会用电脑的老人——不邀请也完全正常，一个人用就是一个人的家庭组。
+            </p>
+            {partnerInvitePackage && (
+              <div className="sync-invite-package">
+                <label htmlFor="partner-invite-package">给搭子的邀请包</label>
+                <textarea
+                  id="partner-invite-package"
+                  readOnly
+                  value={partnerInvitePackage}
+                  rows={6}
+                />
+              </div>
+            )}
             <p><strong>当前账号：</strong>{user.email}</p>
           </div>
           <button onClick={handleSignOut} className="sync-logout-btn">退出登录</button>
         </section>
       )}
+
+      {/* 饭团 AI 设置 */}
+      <section className="sync-section sync-ai-section">
+        <h3>饭团 AI 设置</h3>
+        <p className="sync-step-desc">
+          配置后饭团可以调用真实 AI 模型对话。不配置则使用本地回复（本地模式）。
+          Key 不进仓库、不进公开 Demo。
+        </p>
+        <p className="sync-note">
+          {getAiConfigSource() === 'cloud'
+            ? '🔒 家庭共享模式：Key 保存在家庭组云端，家庭组内任意成员添加后全组可用。'
+            : '📱 本机模式：Key 保存在本机浏览器。配置家庭同步后，Key 将自动共享给整个家庭组。'}
+        </p>
+        <label className="sync-ai-label">AI 服务商</label>
+        <select
+          className="sync-ai-select"
+          value={aiProvider}
+          onChange={(e) => handleAiProviderChange(e.target.value as AiProvider)}
+        >
+          <option value="deepseek">DeepSeek</option>
+          <option value="openai">OpenAI</option>
+          <option value="custom">自定义（OpenAI 兼容）</option>
+        </select>
+
+        <label className="sync-ai-label">Base URL</label>
+        <input
+          type="text"
+          placeholder="https://api.deepseek.com/v1"
+          value={aiBaseURL}
+          onChange={(e) => setAiBaseURL(e.target.value)}
+        />
+
+        <label className="sync-ai-label">模型名称</label>
+        <input
+          type="text"
+          placeholder="deepseek-chat"
+          value={aiModel}
+          onChange={(e) => setAiModel(e.target.value)}
+        />
+
+        <label className="sync-ai-label">API Key</label>
+        <input
+          type="password"
+          placeholder="sk-..."
+          value={aiApiKey}
+          onChange={(e) => setAiApiKey(e.target.value)}
+        />
+
+        <div className="sync-button-row">
+          <button style={visiblePrimaryButtonStyle} onClick={handleSaveAiConfig}>保存配置</button>
+          <button onClick={handleTestAi} disabled={aiTestStatus === 'testing'}>
+            {aiTestStatus === 'testing' ? '测试中…' : '测试连接'}
+          </button>
+          {aiConfigSaved && (
+            <button onClick={handleClearAiConfig} className="sync-clear-btn">
+              清除 Key
+            </button>
+          )}
+        </div>
+
+        {aiTestStatus === 'ok' && (
+          <p className="sync-ai-test-ok">✅ 连接成功！饭团可以开始用 AI 对话了。</p>
+        )}
+        {aiTestStatus === 'fail' && (
+          <p className="sync-ai-test-fail">❌ {aiTestError}</p>
+        )}
+        {aiConfigSaved && aiTestStatus === 'idle' && (
+          <p className="sync-ai-saved">已保存（未测试连接）。饭团将尝试使用此配置。</p>
+        )}
+      </section>
 
       {/* 底部：清除配置 */}
       {step !== 'config' && (
@@ -290,6 +498,7 @@ export function SyncSettingsPage() {
           <button onClick={handleClearConfig} className="sync-clear-btn">
             清除 Supabase 配置（回到本地模式）
           </button>
+          <Link to="/privacy" className="sync-privacy-link">隐私政策</Link>
         </div>
       )}
     </div>

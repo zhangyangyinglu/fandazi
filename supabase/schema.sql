@@ -27,7 +27,7 @@ create table if not exists household_members (
 
 -- 3. 冰箱库存（家庭共享）
 create table if not exists pantry_items (
-  id uuid default gen_random_uuid() primary key,
+  id text primary key, -- App 端生成的稳定 ID，便于离线优先后同步
   household_id uuid references households(id) on delete cascade,
   ingredient_name text not null,
   category text not null,
@@ -38,13 +38,14 @@ create table if not exists pantry_items (
   best_before_at date,
   source text default 'manual_add',
   status text default 'fresh', -- fresh / use_soon / expired
+  note text,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
 
 -- 4. 晚餐计划（家庭共享）
 create table if not exists meal_plans (
-  id uuid default gen_random_uuid() primary key,
+  id text primary key, -- App 端生成的稳定 ID，便于离线优先后同步
   household_id uuid references households(id) on delete cascade,
   dish_id text not null,
   status text default 'planned', -- planned / cooking / done / cancelled
@@ -56,7 +57,7 @@ create table if not exists meal_plans (
 
 -- 5. 购物清单（家庭共享）
 create table if not exists shopping_items (
-  id uuid default gen_random_uuid() primary key,
+  id text primary key, -- App 端生成的稳定 ID，便于离线优先后同步
   household_id uuid references households(id) on delete cascade,
   name text not null,
   amount text,
@@ -77,6 +78,8 @@ create table if not exists my_dish_versions (
   cook_time text,
   my_note text,
   created_by uuid references auth.users(id),
+  created_at_ms bigint,
+  updated_at_ms bigint,
   created_at timestamptz default now(),
   updated_at timestamptz default now(),
   unique(household_id, dish_id)
@@ -84,7 +87,7 @@ create table if not exists my_dish_versions (
 
 -- 7. 做饭记录（家庭共享）
 create table if not exists cooking_logs (
-  id uuid default gen_random_uuid() primary key,
+  id text primary key, -- App 端生成的稳定 ID，便于离线优先后同步
   household_id uuid references households(id) on delete cascade,
   dish_id text not null,
   dish_name text not null,
@@ -106,6 +109,17 @@ create table if not exists fantuan_state (
   total_cooked integer default 0,
   updated_at timestamptz default now()
 );
+
+-- ============================================================
+-- 兼容迁移：如果你已经执行过旧版 schema，再执行本段可补齐离线优先同步字段
+-- ============================================================
+alter table pantry_items alter column id type text using id::text;
+alter table meal_plans alter column id type text using id::text;
+alter table shopping_items alter column id type text using id::text;
+alter table cooking_logs alter column id type text using id::text;
+alter table pantry_items add column if not exists note text;
+alter table my_dish_versions add column if not exists created_at_ms bigint;
+alter table my_dish_versions add column if not exists updated_at_ms bigint;
 
 -- ============================================================
 -- RLS 行级安全策略
@@ -155,6 +169,97 @@ alter table fantuan_state enable row level security;
 create policy "家庭成员可读饭团" on fantuan_state for select using (is_household_member(household_id));
 create policy "家庭成员可写饭团" on fantuan_state for all using (is_household_member(household_id));
 
+-- RPC：创建家庭并把当前用户设为 owner
+-- 用数据库函数一次性完成 households / household_members / fantuan_state 初始化，
+-- 避免前端多次 insert 在 RLS 下出现“new row violates row-level security policy”。
+create or replace function create_household_with_owner(household_name text)
+returns table(id uuid, name text, invite_code text)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  new_household_id uuid;
+  new_invite_code text;
+  normalized_name text;
+begin
+  if auth.uid() is null then
+    raise exception '请先登录再创建家庭';
+  end if;
+
+  normalized_name := nullif(trim(household_name), '');
+  if normalized_name is null then
+    raise exception '请填写家庭名称';
+  end if;
+
+  loop
+    new_invite_code := upper(substr(md5(random()::text || clock_timestamp()::text), 1, 6));
+    exit when not exists (select 1 from households where households.invite_code = new_invite_code);
+  end loop;
+
+  insert into households (name, invite_code, created_by)
+  values (normalized_name, new_invite_code, auth.uid())
+  returning households.id into new_household_id;
+
+  insert into household_members (household_id, user_id, display_name, role)
+  values (new_household_id, auth.uid(), '我', 'owner')
+  on conflict (household_id, user_id) do update
+    set role = 'owner';
+
+  insert into fantuan_state (household_id, mili, level)
+  values (new_household_id, 0, 1)
+  on conflict (household_id) do nothing;
+
+  return query
+  select households.id, households.name, households.invite_code
+  from households
+  where households.id = new_household_id;
+end;
+$$;
+
+grant execute on function create_household_with_owner(text) to authenticated;
+
+-- RPC：通过邀请码加入家庭
+-- 为什么不用前端直接 select households.eq(invite_code)：
+-- 未加入成员会被 households 的 RLS select policy 拦截，必须由 security definer
+-- 在数据库内完成“查邀请码 → 插入 household_members → 返回家庭”。
+create or replace function join_household_by_invite(
+  target_invite_code text,
+  member_display_name text
+)
+returns table(id uuid, name text, invite_code text)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  target_household households%rowtype;
+begin
+  if auth.uid() is null then
+    raise exception '请先登录再加入家庭';
+  end if;
+
+  select * into target_household
+  from households
+  where households.invite_code = upper(trim(target_invite_code))
+  limit 1;
+
+  if target_household.id is null then
+    raise exception '邀请码无效';
+  end if;
+
+  insert into household_members (household_id, user_id, display_name, role)
+  values (target_household.id, auth.uid(), nullif(trim(member_display_name), ''), 'member')
+  on conflict (household_id, user_id) do update
+    set display_name = excluded.display_name;
+
+  return query
+  select target_household.id, target_household.name, target_household.invite_code;
+end;
+$$;
+
+grant execute on function join_household_by_invite(text, text) to authenticated;
+
 -- household_members
 alter table household_members enable row level security;
 create policy "成员可读家庭成员" on household_members for select using (
@@ -166,6 +271,23 @@ create policy "成员可加入家庭" on household_members for insert with check
 alter table households enable row level security;
 create policy "成员可读家庭" on households for select using (is_household_member(id));
 create policy "用户可创建家庭" on households for insert with check (created_by = auth.uid());
+
+-- ============================================================
+-- 家庭共享设置（AI Key 等）
+-- ============================================================
+create table if not exists household_settings (
+  household_id uuid references households(id) on delete cascade primary key,
+  ai_config jsonb,  -- { provider, baseURL, model, apiKey, tested }
+  updated_at timestamptz default now(),
+  updated_by uuid references auth.users(id)
+);
+
+alter table household_settings enable row level security;
+create policy "成员可读家庭设置" on household_settings for select using (is_household_member(household_id));
+create policy "成员可写家庭设置" on household_settings for insert with check (is_household_member(household_id));
+create policy "成员可更新家庭设置" on household_settings for update using (is_household_member(household_id));
+
+alter publication supabase_realtime add table household_settings;
 
 -- ============================================================
 -- 实时订阅

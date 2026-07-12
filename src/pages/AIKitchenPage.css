@@ -108,6 +108,13 @@
   flex: 1;
 }
 
+/* 生成行（冰箱推荐区） */
+.ai-gen-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
 .ai-abort-btn {
   background: var(--fd-danger-bg) !important;
   color: var(--fd-danger-ink) !important;
@@ -220,6 +227,37 @@
   line-height: 1.5;
   white-space: pre-wrap;
   word-break: break-all;
+}
+
+/* 饭团能力卡 */
+.ai-capability {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--fd-line-soft, rgba(0,0,0,0.04));
+}
+
+.ai-capability:last-child {
+  border-bottom: none;
+}
+
+.ai-cap-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ai-capability strong {
+  font-size: 14px;
+  color: var(--fd-ink, #333);
+}
+
+.ai-capability p {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--fd-muted, #888);
+  line-height: 1.5;
 }
 
 /* 响应式 */

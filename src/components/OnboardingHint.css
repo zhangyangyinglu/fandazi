@@ -1,0 +1,129 @@
+.onboarding-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 16px;
+  animation: onboarding-fade-in 0.3s ease;
+}
+
+@keyframes onboarding-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.onboarding-modal {
+  max-width: 440px;
+  width: 100%;
+  background: var(--fd-surface, #fff);
+  border-radius: 20px;
+  padding: 32px 28px 24px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  animation: onboarding-slide-up 0.4s ease;
+}
+
+@keyframes onboarding-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.onboarding-emoji {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 12px;
+}
+
+.onboarding-modal h2 {
+  font-size: 22px;
+  margin-bottom: 8px;
+  color: var(--fd-text, #333);
+}
+
+.onboarding-modal > p {
+  color: var(--fd-muted, #888);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.onboarding-steps {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.onboarding-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 14px;
+  color: var(--fd-text, #555);
+  line-height: 1.5;
+}
+
+.step-num {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--fd-primary, #e85a4f);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.onboarding-links {
+  font-size: 13px;
+  color: var(--fd-muted, #aaa);
+  margin-bottom: 20px;
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.onboarding-links a {
+  color: var(--fd-primary, #e85a4f);
+  text-decoration: none;
+}
+
+.onboarding-links a:hover {
+  text-decoration: underline;
+}
+
+.link-divider {
+  color: var(--fd-border, #ddd);
+}
+
+.onboarding-start {
+  width: 100%;
+  padding: 12px !important;
+  font-size: 16px !important;
+}
+
+@media (max-width: 480px) {
+  .onboarding-modal {
+    padding: 24px 20px 20px;
+    border-radius: 16px;
+  }
+
+  .onboarding-emoji {
+    font-size: 44px;
+  }
+
+  .onboarding-modal h2 {
+    font-size: 18px;
+  }
+}

@@ -5,7 +5,7 @@ export const DISHES: Dish[] = [
   {
     id: 'broccoli-chicken-egg',
     name: '西兰花鸡胸肉炒蛋',
-    image: '/dish-images/broccoli-chicken-egg.png',
+    image: '/dish-images/broccoli-chicken-egg.webp',
     category: '荤菜',
     tags: ['轻食', '减脂', '低脂', '高蛋白', '控糖友好', '低GI'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -38,7 +38,7 @@ export const DISHES: Dish[] = [
   {
     id: 'tomato-tofu-shrimp-soup',
     name: '番茄豆腐虾仁汤',
-    image: '/dish-images/tomato-tofu-shrimp-soup.png',
+    image: '/dish-images/tomato-tofu-shrimp-soup.webp',
     category: '汤羹',
     tags: ['轻食', '汤菜', '低脂', '高蛋白', '低油', '饱腹', '控糖友好'],
     mealType: ['lunch', 'dinner'],
@@ -71,7 +71,7 @@ export const DISHES: Dish[] = [
   {
     id: 'mushroom-greens-chicken-ball-soup',
     name: '香菇青菜鸡肉丸汤',
-    image: '/dish-images/mushroom-greens-chicken-ball-soup.png',
+    image: '/dish-images/mushroom-greens-chicken-ball-soup.webp',
     category: '汤羹',
     tags: ['轻食', '汤菜', '低脂', '高蛋白', '低碳水', '饱腹'],
     mealType: ['lunch', 'dinner'],
@@ -104,7 +104,7 @@ export const DISHES: Dish[] = [
   {
     id: 'asparagus-shrimp-mushroom',
     name: '芦笋虾仁炒口蘑',
-    image: '/dish-images/asparagus-shrimp-mushroom.png',
+    image: '/dish-images/asparagus-shrimp-mushroom.webp',
     category: '荤菜',
     tags: ['轻食', '快手', '高蛋白', '低脂', '低碳水', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -137,7 +137,7 @@ export const DISHES: Dish[] = [
   {
     id: 'steamed-bass-shanghai-greens',
     name: '清蒸鲈鱼配上海青',
-    image: '/dish-images/steamed-bass-shanghai-greens.png',
+    image: '/dish-images/steamed-bass-shanghai-greens.webp',
     category: '荤菜',
     tags: ['轻食', '清蒸', '低脂', '高蛋白', '低油', '控糖友好', '低热量'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -169,7 +169,7 @@ export const DISHES: Dish[] = [
   {
     id: 'spinach-egg-wood-ear-salad',
     name: '鸡蛋菠菜拌木耳',
-    image: '/dish-images/spinach-egg-wood-ear-salad.png',
+    image: '/dish-images/spinach-egg-wood-ear-salad.webp',
     category: '荤菜',
     tags: ['轻食', '凉拌', '高纤维', '低脂', '控糖友好', '饱腹'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -202,7 +202,7 @@ export const DISHES: Dish[] = [
   {
     id: 'pepper-chicken-cauliflower',
     name: '彩椒鸡丁炒花菜',
-    image: '/dish-images/pepper-chicken-cauliflower.png',
+    image: '/dish-images/pepper-chicken-cauliflower.webp',
     category: '荤菜',
     tags: ['轻食', '减脂', '炒菜', '高蛋白', '高纤维', '低碳水', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -235,7 +235,7 @@ export const DISHES: Dish[] = [
   {
     id: 'winter-melon-egg-soup',
     name: '冬瓜虾皮鸡蛋汤',
-    image: '/dish-images/winter-melon-egg-soup.png',
+    image: '/dish-images/winter-melon-egg-soup.webp',
     category: '汤羹',
     tags: ['轻食', '汤菜', '低热量', '低脂', '清淡', '控糖友好'],
     mealType: ['lunch', 'dinner'],
@@ -267,7 +267,7 @@ export const DISHES: Dish[] = [
   {
     id: 'beef-celery-king-oyster-mushroom',
     name: '牛肉芹菜炒杏鲍菇',
-    image: '/dish-images/beef-celery-king-oyster-mushroom.png',
+    image: '/dish-images/beef-celery-king-oyster-mushroom.webp',
     category: '荤菜',
     tags: ['轻食', '家常', '高蛋白', '低油', '高纤维', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -300,9 +300,9 @@ export const DISHES: Dish[] = [
   {
     id: 'steamed-chicken-leg-mushrooms',
     name: '菌菇蒸鸡腿肉',
-    image: '/dish-images/steamed-chicken-leg-mushrooms.png',
+    image: '/dish-images/steamed-chicken-leg-mushrooms.webp',
     category: '荤菜',
-    tags: ['轻食', '蒸菜', '高蛋白', '少油', '控糖友好', '适合便当'],
+    tags: ['轻食', '蒸菜', '高蛋白', '少油', '控糖友好', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '鸡腿肉去皮后口感比鸡胸肉更嫩，蒸着吃油脂更少。',
     flavorDescription: '鸡腿肉去皮腌好和香菇、金针菇一起蒸，菌菇的味道渗到肉里。没什么油，蒸出来的汁拌饭很鲜。',
@@ -333,7 +333,7 @@ export const DISHES: Dish[] = [
   {
     id: 'cucumber-chicken-buckwheat-noodles',
     name: '黄瓜鸡丝拌荞麦面',
-    image: '/dish-images/cucumber-chicken-buckwheat-noodles.png',
+    image: '/dish-images/cucumber-chicken-buckwheat-noodles.webp',
     category: '主食',
     tags: ['轻食', '控量', '主食', '高蛋白', '控糖主食', '少油', '适合午餐'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -366,7 +366,7 @@ export const DISHES: Dish[] = [
   {
     id: 'brown-rice-chicken-veg-bowl',
     name: '糙米鸡肉蔬菜饭',
-    image: '/dish-images/brown-rice-chicken-veg-bowl.png',
+    image: '/dish-images/brown-rice-chicken-veg-bowl.webp',
     category: '主食',
     tags: ['轻食', '一人份', '便当', '控糖主食', '高蛋白', '高纤维', '减脂'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -399,7 +399,7 @@ export const DISHES: Dish[] = [
   {
     id: 'garlic-lettuce-fried-eggs',
     name: '蒜蓉生菜煎鸡蛋',
-    image: '/dish-images/garlic-lettuce-fried-eggs.png',
+    image: '/dish-images/garlic-lettuce-fried-eggs.webp',
     category: '荤菜',
     tags: ['快手', '轻食', '低碳水', '低热量', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -430,7 +430,7 @@ export const DISHES: Dish[] = [
   {
     id: 'tomato-beef-tofu-pot',
     name: '番茄牛肉豆腐煲',
-    image: '/dish-images/tomato-beef-tofu-pot.png',
+    image: '/dish-images/tomato-beef-tofu-pot.webp',
     category: '荤菜',
     tags: ['轻食', '炖菜', '高蛋白', '饱腹', '少油', '控糖友好'],
     mealType: ['lunch', 'dinner'],
@@ -463,7 +463,7 @@ export const DISHES: Dish[] = [
   {
     id: 'chicken-lettuce-wrap',
     name: '鸡胸肉生菜卷',
-    image: '/dish-images/chicken-lettuce-wrap.png',
+    image: '/dish-images/chicken-lettuce-wrap.webp',
     category: '荤菜',
     tags: ['轻食', '卷菜', '低碳水', '高蛋白', '低脂', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -496,7 +496,7 @@ export const DISHES: Dish[] = [
   {
     id: 'kelp-tofu-egg-soup',
     name: '海带豆腐鸡蛋汤',
-    image: '/dish-images/kelp-tofu-egg-soup.png',
+    image: '/dish-images/kelp-tofu-egg-soup.webp',
     category: '汤羹',
     tags: ['轻食', '汤菜', '低脂', '低热量', '饱腹', '控糖友好'],
     mealType: ['lunch', 'dinner'],
@@ -528,7 +528,7 @@ export const DISHES: Dish[] = [
   {
     id: 'water-spinach-lean-pork',
     name: '空心菜炒瘦肉',
-    image: '/dish-images/water-spinach-lean-pork.png',
+    image: '/dish-images/water-spinach-lean-pork.webp',
     category: '荤菜',
     tags: ['轻食', '家常', '减脂', '高纤维', '高蛋白', '低油', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -560,7 +560,7 @@ export const DISHES: Dish[] = [
   {
     id: 'salmon-asparagus',
     name: '香煎三文鱼配芦笋',
-    image: '/dish-images/salmon-asparagus.png',
+    image: '/dish-images/salmon-asparagus.webp',
     category: '荤菜',
     tags: ['轻食', '优质脂肪', '高蛋白', '低碳水', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -592,7 +592,7 @@ export const DISHES: Dish[] = [
   {
     id: 'seaweed-shrimp-egg-soup',
     name: '紫菜虾仁蛋花汤',
-    image: '/dish-images/seaweed-shrimp-egg-soup.png',
+    image: '/dish-images/seaweed-shrimp-egg-soup.webp',
     category: '汤羹',
     tags: ['轻食', '快手', '汤菜', '低脂', '高蛋白', '低热量', '控糖友好'],
     mealType: ['lunch', 'dinner'],
@@ -625,7 +625,7 @@ export const DISHES: Dish[] = [
   {
     id: 'black-pepper-chicken-quinoa-bowl',
     name: '黑椒鸡肉藜麦碗',
-    image: '/dish-images/black-pepper-chicken-quinoa-bowl.png',
+    image: '/dish-images/black-pepper-chicken-quinoa-bowl.webp',
     category: '主食',
     tags: ['轻食', '控糖主食', '主食碗', '高蛋白', '优质碳水', '高纤维', '减脂'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -659,9 +659,9 @@ export const DISHES: Dish[] = [
   {
     id: 'sichuan-kung-pao-chicken',
     name: '川味宫保鸡丁',
-    image: '/dish-images/sichuan-kung-pao-chicken.png',
+    image: '/dish-images/sichuan-kung-pao-chicken.webp',
     category: '荤菜',
-    tags: ['川菜', '高蛋白', '少油', '控糖友好', '下饭菜'],
+    tags: ['川菜', '高蛋白', '少油', '控糖友好', '下饭'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '保留宫保鸡丁的酸辣咸香，但减少糖和油，不放大量花生，更适合控糖减脂。',
     flavorDescription: '鸡丁滑嫩，花生酥脆，黄瓜清爽，调一份酸甜微辣的料汁裹起来。家里复刻的川味，比外卖油少很多。',
@@ -698,7 +698,7 @@ export const DISHES: Dish[] = [
   {
     id: 'hunan-beef-stir-fry',
     name: '湘味小炒黄牛肉',
-    image: '/dish-images/hunan-beef-stir-fry.png',
+    image: '/dish-images/hunan-beef-stir-fry.webp',
     category: '荤菜',
     tags: ['湘菜', '高蛋白', '低油', '香辣', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -734,7 +734,7 @@ export const DISHES: Dish[] = [
   {
     id: 'cantonese-steamed-bass',
     name: '粤式清蒸鲈鱼',
-    image: '/dish-images/cantonese-steamed-bass.png',
+    image: '/dish-images/cantonese-steamed-bass.webp',
     category: '荤菜',
     tags: ['粤菜', '高蛋白', '低油', '清淡', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -766,7 +766,7 @@ export const DISHES: Dish[] = [
   {
     id: 'scallion-sea-cucumber-mushroom',
     name: '葱烧鸡腿菇海参',
-    image: '/dish-images/scallion-sea-cucumber-mushroom.png',
+    image: '/dish-images/scallion-sea-cucumber-mushroom.webp',
     category: '荤菜',
     tags: ['鲁菜', '高蛋白', '低脂', '少油', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -802,7 +802,7 @@ export const DISHES: Dish[] = [
   {
     id: 'chicken-lion-head-soup',
     name: '清炖鸡肉狮子头',
-    image: '/dish-images/chicken-lion-head-soup.png',
+    image: '/dish-images/chicken-lion-head-soup.webp',
     category: '荤菜',
     tags: ['苏菜', '高蛋白', '少油', '清炖', '控糖友好'],
     mealType: ['lunch', 'dinner'],
@@ -837,7 +837,7 @@ export const DISHES: Dish[] = [
   {
     id: 'longjing-shrimp',
     name: '龙井虾仁',
-    image: '/dish-images/longjing-shrimp.png',
+    image: '/dish-images/longjing-shrimp.webp',
     category: '荤菜',
     tags: ['浙菜', '高蛋白', '低脂', '清淡', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -870,7 +870,7 @@ export const DISHES: Dish[] = [
   {
     id: 'steamed-chicken-shiitake',
     name: '香菇蒸鸡',
-    image: '/dish-images/steamed-chicken-shiitake.png',
+    image: '/dish-images/steamed-chicken-shiitake.webp',
     category: '荤菜',
     tags: ['闽菜', '高蛋白', '少油', '蒸菜', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -903,7 +903,7 @@ export const DISHES: Dish[] = [
   {
     id: 'pigeon-mushroom-bamboo-shoot-soup',
     name: '香菇笋片炖鸽子',
-    image: '/dish-images/pigeon-mushroom-bamboo-shoot-soup.png',
+    image: '/dish-images/pigeon-mushroom-bamboo-shoot-soup.webp',
     category: '荤菜',
     tags: ['徽菜', '高蛋白', '低油', '炖汤', '控糖友好'],
     mealType: ['lunch', 'dinner'],
@@ -936,7 +936,7 @@ export const DISHES: Dish[] = [
   {
     id: 'lean-pork-shuizhu',
     name: '水煮瘦肉片',
-    image: '/dish-images/lean-pork-shuizhu.png',
+    image: '/dish-images/lean-pork-shuizhu.webp',
     category: '荤菜',
     tags: ['川菜', '高蛋白', '少油', '麻辣', '低碳水', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -972,7 +972,7 @@ export const DISHES: Dish[] = [
   {
     id: 'steamed-fish-slices-chopped-chili',
     name: '剁椒蒸鱼片',
-    image: '/dish-images/steamed-fish-slices-chopped-chili.png',
+    image: '/dish-images/steamed-fish-slices-chopped-chili.webp',
     category: '荤菜',
     tags: ['湘菜', '高蛋白', '低油', '蒸菜', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1005,7 +1005,7 @@ export const DISHES: Dish[] = [
   {
     id: 'skinless-white-cut-chicken',
     name: '白切鸡去皮版',
-    image: '/dish-images/skinless-white-cut-chicken.png',
+    image: '/dish-images/skinless-white-cut-chicken.webp',
     category: '荤菜',
     tags: ['粤菜', '高蛋白', '少油', '低碳水', '控糖友好'],
     mealType: ['lunch', 'dinner'],
@@ -1037,7 +1037,7 @@ export const DISHES: Dish[] = [
   {
     id: 'celery-chicken-gizzard',
     name: '芹菜炒鸡胗',
-    image: '/dish-images/celery-chicken-gizzard.png',
+    image: '/dish-images/celery-chicken-gizzard.webp',
     category: '荤菜',
     tags: ['鲁菜', '家常', '高蛋白', '低脂', '高纤维', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1072,7 +1072,7 @@ export const DISHES: Dish[] = [
   {
     id: 'shrimp-luffa-stir-fry',
     name: '虾仁炒丝瓜',
-    image: '/dish-images/shrimp-luffa-stir-fry.png',
+    image: '/dish-images/shrimp-luffa-stir-fry.webp',
     category: '荤菜',
     tags: ['苏菜', '家常', '高蛋白', '低脂', '低热量', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1106,7 +1106,7 @@ export const DISHES: Dish[] = [
   {
     id: 'west-lake-beef-soup',
     name: '西湖牛肉羹',
-    image: '/dish-images/west-lake-beef-soup.png',
+    image: '/dish-images/west-lake-beef-soup.webp',
     category: '汤羹',
     tags: ['浙菜', '高蛋白', '少油', '暖胃', '控糖友好'],
     mealType: ['lunch', 'dinner'],
@@ -1140,7 +1140,7 @@ export const DISHES: Dish[] = [
   {
     id: 'light-oyster-omelette',
     name: '少油海蛎煎蛋',
-    image: '/dish-images/light-oyster-omelette.png',
+    image: '/dish-images/light-oyster-omelette.webp',
     category: '荤菜',
     tags: ['闽菜', '高蛋白', '少油', '低碳水', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1174,7 +1174,7 @@ export const DISHES: Dish[] = [
   {
     id: 'bamboo-shoot-chicken-braise',
     name: '笋干烧鸡块',
-    image: '/dish-images/bamboo-shoot-chicken-braise.png',
+    image: '/dish-images/bamboo-shoot-chicken-braise.webp',
     category: '荤菜',
     tags: ['徽菜', '高蛋白', '高纤维', '少油', '红烧', '控糖友好'],
     mealType: ['lunch', 'dinner'],
@@ -1210,9 +1210,9 @@ export const DISHES: Dish[] = [
   {
     id: 'lean-mapo-tofu',
     name: '麻婆豆腐瘦肉版',
-    image: '/dish-images/lean-mapo-tofu.png',
+    image: '/dish-images/lean-mapo-tofu.webp',
     category: '荤菜',
-    tags: ['川菜', '高蛋白', '少油', '控糖友好', '下饭菜'],
+    tags: ['川菜', '高蛋白', '少油', '控糖友好', '下饭'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '保留麻婆豆腐麻辣味，但减少油和肉末肥度。',
     flavorDescription: '豆腐嫩，瘦肉末焦香，蒜苗切段最后撒进去。麻辣有，但用瘦肉代替肥肉末，吃完不会太腻。',
@@ -1246,7 +1246,7 @@ export const DISHES: Dish[] = [
   {
     id: 'sour-spicy-chicken-offal',
     name: '酸辣鸡杂',
-    image: '/dish-images/sour-spicy-chicken-offal.png',
+    image: '/dish-images/sour-spicy-chicken-offal.webp',
     category: '荤菜',
     tags: ['湘菜', '高蛋白', '低脂', '香辣', '开胃', '控糖友好'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1284,7 +1284,7 @@ export const DISHES: Dish[] = [
   {
     id: 'winter-melon-duck-soup',
     name: '冬瓜老鸭汤',
-    image: '/dish-images/winter-melon-duck-soup.png',
+    image: '/dish-images/winter-melon-duck-soup.webp',
     category: '汤羹',
     tags: ['粤菜', '汤品', '低油', '饱腹', '清淡', '控糖友好'],
     mealType: ['lunch', 'dinner'],
@@ -1317,9 +1317,9 @@ export const DISHES: Dish[] = [
   {
     id: 'tomato-lean-brisket-stew',
     name: '番茄炖瘦牛腩',
-    image: '/dish-images/tomato-lean-brisket-stew.png',
+    image: '/dish-images/tomato-lean-brisket-stew.webp',
     category: '荤菜',
-    tags: ['鲁菜', '北方家常', '高蛋白', '少油', '炖菜', '饱腹', '控糖友好'],
+    tags: ['鲁菜', '家常', '高蛋白', '少油', '炖菜', '饱腹', '控糖友好'],
     mealType: ['lunch', 'dinner'],
     intro: '番茄炖牛腩是经典中式炖菜，减脂版选择偏瘦牛腩，减少油脂。',
     flavorDescription: '牛腩切块和番茄一起小火慢炖，白萝卜后加吸汤。汤红肉香，秋冬天想喝一碗暖暖的就做这个。',
@@ -1353,7 +1353,7 @@ export const DISHES: Dish[] = [
   {
     id: 'di-san-xian',
     name: '地三鲜',
-    image: '/dish-images/disanxian.png',
+    image: '/dish-images/disanxian.webp',
     category: '素菜',
     tags: ['家常', '东北菜', '下饭', '素菜', '快手'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1387,7 +1387,7 @@ export const DISHES: Dish[] = [
   {
     id: 'pork-stew-glass-noodles',
     name: '猪肉炖粉条',
-    image: '/dish-images/pork-vermicelli-stew.png',
+    image: '/dish-images/pork-vermicelli-stew.webp',
     category: '荤菜',
     tags: ['东北菜', '家常', '下饭', '炖菜', '饱腹'],
     mealType: ['lunch', 'dinner'],
@@ -1424,7 +1424,7 @@ export const DISHES: Dish[] = [
   {
     id: 'chicken-stew-mushroom',
     name: '小鸡炖蘑菇',
-    image: '/dish-images/chicken-stew-mushroom.png',
+    image: '/dish-images/chicken-stew-mushroom.webp',
     category: '荤菜',
     tags: ['东北菜', '家常', '下饭', '炖菜', '高蛋白'],
     mealType: ['lunch', 'dinner'],
@@ -1461,7 +1461,7 @@ export const DISHES: Dish[] = [
   {
     id: 'sauerkraut-glass-noodles',
     name: '酸菜粉条',
-    image: '/dish-images/sauerkraut-vermicelli.png',
+    image: '/dish-images/sauerkraut-vermicelli.webp',
     category: '汤羹',
     tags: ['东北菜', '家常', '下饭', '开胃', '暖胃'],
     mealType: ['lunch', 'dinner'],
@@ -1495,7 +1495,7 @@ export const DISHES: Dish[] = [
   {
     id: 'northeast-乱炖',
     name: '东北乱炖',
-    image: '/dish-images/dongbei-stew.png',
+    image: '/dish-images/dongbei-stew.webp',
     category: '汤羹',
     tags: ['东北菜', '家常', '下饭', '炖菜', '暖胃'],
     mealType: ['lunch', 'dinner'],
@@ -1530,7 +1530,7 @@ export const DISHES: Dish[] = [
   {
     id: 'jing-jiang-rou-si',
     name: '京酱肉丝',
-    image: '/dish-images/jingjiang-shredded-pork.png',
+    image: '/dish-images/jingjiang-shredded-pork.webp',
     category: '荤菜',
     tags: ['京菜', '家常', '下饭', '咸香', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1565,7 +1565,7 @@ export const DISHES: Dish[] = [
   {
     id: 'cong-bao-lamb',
     name: '葱爆羊肉',
-    image: '/dish-images/scallion-lamb-stir-fry.png',
+    image: '/dish-images/scallion-lamb-stir-fry.webp',
     category: '荤菜',
     tags: ['京菜', '家常', '下饭', '快手', '高蛋白'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1600,7 +1600,7 @@ export const DISHES: Dish[] = [
   {
     id: 'cu-liu-bai-cai',
     name: '醋溜白菜',
-    image: '/dish-images/vinegar-cabbage.png',
+    image: '/dish-images/vinegar-cabbage.webp',
     category: '素菜',
     tags: ['京菜', '家常', '下饭', '快手', '酸爽'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1637,7 +1637,7 @@ export const DISHES: Dish[] = [
   {
     id: 'you-po-mian',
     name: '油泼面',
-    image: '/dish-images/you-po-noodles.png',
+    image: '/dish-images/you-po-noodles.webp',
     category: '主食',
     tags: ['西北菜', '家常', '下饭', '主食', '快手'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1671,7 +1671,7 @@ export const DISHES: Dish[] = [
   {
     id: 'sao-zi-mian',
     name: '臊子面',
-    image: '/dish-images/saozi-noodles.png',
+    image: '/dish-images/saozi-noodles.webp',
     category: '主食',
     tags: ['西北菜', '家常', '下饭', '主食', '汤面'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1712,7 +1712,7 @@ export const DISHES: Dish[] = [
   {
     id: 'liang-pi',
     name: '凉皮',
-    image: '/dish-images/liangpi.png',
+    image: '/dish-images/liangpi.webp',
     category: '主食',
     tags: ['西北菜', '家常', '凉菜', '主食', '开胃'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1748,7 +1748,7 @@ export const DISHES: Dish[] = [
   {
     id: 'yu-xiang-rou-si',
     name: '鱼香肉丝',
-    image: '/dish-images/yuxiang-shredded-pork.png',
+    image: '/dish-images/yuxiang-shredded-pork.webp',
     category: '荤菜',
     tags: ['川菜', '家常', '下饭', '咸甜酸辣', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1789,7 +1789,7 @@ export const DISHES: Dish[] = [
   {
     id: 'hui-guo-rou',
     name: '回锅肉',
-    image: '/dish-images/huiguo-pork.png',
+    image: '/dish-images/huiguo-pork.webp',
     category: '荤菜',
     tags: ['川菜', '家常', '下饭', '咸香', '经典'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1825,7 +1825,7 @@ export const DISHES: Dish[] = [
   {
     id: 'suan-cai-yu',
     name: '酸菜鱼',
-    image: '/dish-images/suan-cai-fish.png',
+    image: '/dish-images/suan-cai-fish.webp',
     category: '汤羹',
     tags: ['川菜', '家常', '下饭', '酸辣', '开胃'],
     mealType: ['lunch', 'dinner'],
@@ -1863,7 +1863,7 @@ export const DISHES: Dish[] = [
   {
     id: 'shui-zhu-yu',
     name: '水煮鱼',
-    image: '/dish-images/shuizhu-fish.png',
+    image: '/dish-images/shuizhu-fish.webp',
     category: '汤羹',
     tags: ['川菜', '家常', '下饭', '麻辣', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -1902,7 +1902,7 @@ export const DISHES: Dish[] = [
   {
     id: 'la-zi-ji',
     name: '辣子鸡',
-    image: '/dish-images/lazi-chicken.png',
+    image: '/dish-images/lazi-chicken.webp',
     category: '荤菜',
     tags: ['川菜', '家常', '下饭', '麻辣', '下酒'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1941,7 +1941,7 @@ export const DISHES: Dish[] = [
   {
     id: 'fu-qi-fei-pian',
     name: '夫妻肺片',
-    image: '/dish-images/fuqi-lung-slices.png',
+    image: '/dish-images/fuqi-lung-slices.webp',
     category: '凉菜',
     tags: ['川菜', '家常', '下酒', '麻辣', '凉菜'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -1984,7 +1984,7 @@ export const DISHES: Dish[] = [
   {
     id: 'kou-shui-ji',
     name: '口水鸡',
-    image: '/dish-images/kou-shui-chicken.png',
+    image: '/dish-images/kou-shui-chicken.webp',
     category: '凉菜',
     tags: ['川菜', '家常', '下酒', '麻辣', '凉菜'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -2023,8 +2023,9 @@ export const DISHES: Dish[] = [
   {
     id: 'hong-shao-pai-gu',
     name: '红烧排骨',
+    image: '/dish-images/hong-shao-pai-gu.webp',
     category: '荤菜',
-    tags: ['家常菜', '家常', '下饭', '炖菜', '咸香', '宴客'],
+    tags: ['家常', '下饭', '炖菜', '咸香', '宴客'],
     mealType: ['lunch', 'dinner'],
     intro: '家家会做的红烧排骨，色泽红亮，香甜咸鲜。',
     flavorDescription: '排骨焯水后用糖色慢烧，八角桂皮入味。烧到酱汁收稠挂在排骨上，是家里来客或者周末会做的菜。',
@@ -2061,7 +2062,7 @@ export const DISHES: Dish[] = [
   {
     id: 'duo-jiao-yu-tou',
     name: '剁椒鱼头',
-    image: '/dish-images/duojiao-fish-head.png',
+    image: '/dish-images/duojiao-fish-head.webp',
     category: '荤菜',
     tags: ['湘菜', '家常', '下饭', '咸辣', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -2096,7 +2097,7 @@ export const DISHES: Dish[] = [
   {
     id: 'la-jiao-chao-rou',
     name: '辣椒炒肉',
-    image: '/dish-images/chili-pork-stir-fry.png',
+    image: '/dish-images/chili-pork-stir-fry.webp',
     category: '荤菜',
     tags: ['湘菜', '家常', '下饭', '咸辣', '快手'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -2132,7 +2133,7 @@ export const DISHES: Dish[] = [
   {
     id: 'xiang-xi-wai-po-cai',
     name: '湘西外婆菜',
-    image: '/dish-images/xiangxi-grandma-vegetables.png',
+    image: '/dish-images/xiangxi-grandma-vegetables.webp',
     category: '素菜',
     tags: ['湘菜', '家常', '下饭', '咸辣', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -2165,7 +2166,7 @@ export const DISHES: Dish[] = [
   {
     id: 'gan-guo-hua-cai',
     name: '干锅花菜',
-    image: '/dish-images/dry-pot-cauliflower.png',
+    image: '/dish-images/dry-pot-cauliflower.webp',
     category: '素菜',
     tags: ['湘菜', '家常', '下饭', '干香', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -2202,7 +2203,7 @@ export const DISHES: Dish[] = [
   {
     id: 'bai-zhuo-xia',
     name: '白灼虾',
-    image: '/dish-images/boiled-shrimp.png',
+    image: '/dish-images/boiled-shrimp.webp',
     category: '荤菜',
     tags: ['粤菜', '家常', '宴客', '清淡', '高蛋白'],
     mealType: ['lunch', 'dinner'],
@@ -2234,7 +2235,7 @@ export const DISHES: Dish[] = [
   {
     id: 'bo-luo-gu-la-rou',
     name: '菠萝咕咾肉',
-    image: '/dish-images/pineapple-sweet-sour-pork.png',
+    image: '/dish-images/pineapple-sweet-sour-pork.webp',
     category: '荤菜',
     tags: ['粤菜', '家常', '下饭', '酸甜', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -2272,7 +2273,7 @@ export const DISHES: Dish[] = [
   {
     id: 'mi-zhi-ji-chi',
     name: '蜜汁鸡翅',
-    image: '/dish-images/honey-chicken-wings.png',
+    image: '/dish-images/honey-chicken-wings.webp',
     category: '荤菜',
     tags: ['粤菜', '家常', '下饭', '甜咸', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -2307,7 +2308,7 @@ export const DISHES: Dish[] = [
   {
     id: 'xian-yu-qie-zi-bao',
     name: '咸鱼茄子煲',
-    image: '/dish-images/salted-fish-eggplant-pot.png',
+    image: '/dish-images/salted-fish-eggplant-pot.webp',
     category: '荤菜',
     tags: ['粤菜', '家常', '下饭', '咸香', '便当'],
     mealType: ['lunch', 'dinner'],
@@ -2345,7 +2346,7 @@ export const DISHES: Dish[] = [
   {
     id: 'song-sao-yu-geng',
     name: '宋嫂鱼羹',
-    image: '/dish-images/sister-song-fish-soup.png',
+    image: '/dish-images/sister-song-fish-soup.webp',
     category: '汤羹',
     tags: ['浙菜', '家常', '暖胃', '鲜香', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -2384,7 +2385,7 @@ export const DISHES: Dish[] = [
   {
     id: 'you-men-chun-sun',
     name: '油焖春笋',
-    image: '/dish-images/braised-spring-bamboo.png',
+    image: '/dish-images/braised-spring-bamboo.webp',
     category: '素菜',
     tags: ['浙菜', '家常', '下饭', '咸甜', '春季'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -2416,7 +2417,7 @@ export const DISHES: Dish[] = [
   {
     id: 'yan-shui-ya',
     name: '盐水鸭',
-    image: '/dish-images/salted-duck.png',
+    image: '/dish-images/salted-duck.webp',
     category: '荤菜',
     tags: ['苏菜', '家常', '下酒', '咸香', '冷盘'],
     mealType: ['lunch', 'dinner'],
@@ -2450,7 +2451,7 @@ export const DISHES: Dish[] = [
   {
     id: 'hai-li-zi-cai-bao',
     name: '海蛎紫菜煲',
-    image: '/dish-images/oyster-seaweed-pot.png',
+    image: '/dish-images/oyster-seaweed-pot.webp',
     category: '汤羹',
     tags: ['闽菜', '家常', '鲜香', '开胃', '暖胃'],
     mealType: ['lunch', 'dinner'],
@@ -2487,7 +2488,7 @@ export const DISHES: Dish[] = [
   {
     id: 'fo-tiao-qiang-jia-chang',
     name: '佛跳墙（家常简版）',
-    image: '/dish-images/buddha-jumps-over-wall-home-style.png',
+    image: '/dish-images/buddha-jumps-over-wall-home-style.webp',
     category: '汤羹',
     tags: ['闽菜', '家常', '宴客', '滋补', '高蛋白'],
     mealType: ['lunch', 'dinner'],
@@ -2525,7 +2526,7 @@ export const DISHES: Dish[] = [
   {
     id: 'hui-zhou-mao-dou-fu',
     name: '徽州毛豆腐',
-    image: '/dish-images/huizhou-fuzzy-tofu.png',
+    image: '/dish-images/huizhou-fuzzy-tofu.webp',
     category: '素菜',
     tags: ['徽菜', '家常', '下饭', '特色', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -2558,7 +2559,7 @@ export const DISHES: Dish[] = [
   {
     id: 'tang-cu-li-ji',
     name: '糖醋里脊',
-    image: '/dish-images/sweet-sour-pork-tenderloin.png',
+    image: '/dish-images/sweet-sour-pork-tenderloin.webp',
     category: '荤菜',
     tags: ['鲁菜', '家常', '下饭', '酸甜', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -2596,7 +2597,7 @@ export const DISHES: Dish[] = [
   {
     id: 'mu-xu-rou',
     name: '木须肉',
-    image: '/dish-images/muxu-pork.png',
+    image: '/dish-images/muxu-pork.webp',
     category: '荤菜',
     tags: ['京菜', '家常', '下饭', '咸香', '快手'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -2635,7 +2636,7 @@ export const DISHES: Dish[] = [
   {
     id: 'you-bao-xia',
     name: '油爆虾',
-    image: '/dish-images/oil-popped-shrimp.png',
+    image: '/dish-images/oil-popped-shrimp.webp',
     category: '荤菜',
     tags: ['鲁菜', '家常', '下酒', '鲜香', '快手'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -2671,9 +2672,9 @@ export const DISHES: Dish[] = [
   {
     id: 'shou-si-bao-cai',
     name: '手撕包菜',
-    image: '/dish-images/hand-torn-cabbage.png',
+    image: '/dish-images/hand-torn-cabbage.webp',
     category: '素菜',
-    tags: ['家常菜', '家常', '快手', '下饭', '酸辣', '便当'],
+    tags: ['家常', '快手', '下饭', '酸辣', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '家常快手素菜，包菜手撕爆炒，酸辣开胃。',
     flavorDescription: '包菜用手撕成大块，铁锅烧热下干辣椒爆香，包菜一进锅就翻几下。带点锅气，吃起来还脆脆的。',
@@ -2703,9 +2704,9 @@ export const DISHES: Dish[] = [
   {
     id: 'suan-rong-qie-zi',
     name: '蒜蓉茄子',
-    image: '/dish-images/garlic-eggplant.png',
+    image: '/dish-images/garlic-eggplant.webp',
     category: '素菜',
-    tags: ['家常菜', '家常', '下饭', '蒜香', '快手', '便当'],
+    tags: ['家常', '下饭', '蒜香', '快手', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '家常蒸茄子，蒜泥和生抽拌匀，入口即化。',
     flavorDescription: '茄子蒸到筷子能轻松插进去，撕成长条。蒜末加生抽香醋拌一拌，软糯下饭，夏天吃尤其合适。',
@@ -2739,9 +2740,9 @@ export const DISHES: Dish[] = [
   {
     id: 'qing-chao-tu-dou-si',
     name: '清炒土豆丝',
-    image: '/dish-images/stir-fried-shredded-potato.png',
+    image: '/dish-images/stir-fried-shredded-potato.webp',
     category: '素菜',
-    tags: ['家常菜', '家常', '快手', '下饭', '酸辣', '便当'],
+    tags: ['家常', '快手', '下饭', '酸辣', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '家家会做，刀工越细越入味，酸辣口开胃。',
     flavorDescription: '土豆切细丝过一遍水去淀粉，热锅快炒到刚熟，淋一点醋。脆爽不糊，是每个人学做饭都会做的一道。',
@@ -2772,9 +2773,9 @@ export const DISHES: Dish[] = [
   {
     id: 'gan-bian-dou-jiao',
     name: '干煸豆角',
-    image: '/dish-images/dry-fried-green-beans.png',
+    image: '/dish-images/dry-fried-green-beans.webp',
     category: '素菜',
-    tags: ['家常菜', '家常', '下饭', '干香', '便当', '川味'],
+    tags: ['家常', '下饭', '干香', '便当', '川味'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '川味家常，豆角煸到表皮微皱，肉末酥香。',
     flavorDescription: '豆角煸到表皮起皱微焦，加肉末炒香，撒点榨菜碎。咸鲜下饭，比起油炸版本，干煸的更轻一些。',
@@ -2808,9 +2809,9 @@ export const DISHES: Dish[] = [
   {
     id: 'suan-rong-xi-lan-hua',
     name: '蒜蓉西兰花',
-    image: '/dish-images/garlic-broccoli.png',
+    image: '/dish-images/garlic-broccoli.webp',
     category: '素菜',
-    tags: ['家常菜', '家常', '快手', '下饭', '清淡', '便当'],
+    tags: ['家常', '快手', '下饭', '清淡', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '家常快手，焯水保留翠绿，蒜香提味。',
     flavorDescription: '西兰花焯水到刚断生还翠绿，沥干，热油爆蒜蓉淋上去。简单干净，减脂期吃不腻。',
@@ -2838,7 +2839,7 @@ export const DISHES: Dish[] = [
   {
     id: 'shang-tang-wa-wa-cai',
     name: '上汤娃娃菜',
-    image: '/dish-images/broth-baby-cabbage.png',
+    image: '/dish-images/broth-baby-cabbage.webp',
     category: '素菜',
     tags: ['粤菜', '家常', '下饭', '清淡', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -2873,7 +2874,7 @@ export const DISHES: Dish[] = [
   {
     id: 'liang-ban-huang-gua',
     name: '凉拌黄瓜',
-    image: '/dish-images/cold-cucumber-salad.png',
+    image: '/dish-images/cold-cucumber-salad.webp',
     category: '凉菜',
     tags: ['轻食', '家常', '快手', '凉菜', '开胃', '下酒', '低热量'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -2908,9 +2909,9 @@ export const DISHES: Dish[] = [
   {
     id: 'pai-gu-yu-mi-tang',
     name: '排骨玉米汤',
-    image: '/dish-images/pork-rib-corn-soup.png',
+    image: '/dish-images/pork-rib-corn-soup.webp',
     category: '汤羹',
-    tags: ['家常菜', '家常', '汤菜', '清淡', '暖胃', '高蛋白'],
+    tags: ['家常', '汤菜', '清淡', '暖胃', '高蛋白'],
     mealType: ['lunch', 'dinner'],
     intro: '家常经典，玉米胡萝卜排骨慢炖，清甜不油腻。',
     flavorDescription: '排骨焯水后和玉米、胡萝卜一起慢炖一个多小时。汤清甜不油腻，老人小孩一起喝都合适。',
@@ -2942,9 +2943,9 @@ export const DISHES: Dish[] = [
   {
     id: 'fan-qie-dan-tang',
     name: '番茄蛋汤',
-    image: '/dish-images/tomato-egg-drop-soup.png',
+    image: '/dish-images/tomato-egg-drop-soup.webp',
     category: '汤羹',
-    tags: ['家常菜', '家常', '快手', '汤菜', '清淡', '开胃'],
+    tags: ['家常', '快手', '汤菜', '清淡', '开胃'],
     mealType: ['lunch', 'dinner'],
     intro: '家家会做的快手汤，番茄炒出汁再淋蛋液。',
     flavorDescription: '番茄切块炒到出汁，加水煮开淋蛋液，蛋花漂在红汤上。家家会做的快手汤，一锅两人吃刚好。',
@@ -2974,9 +2975,9 @@ export const DISHES: Dish[] = [
   {
     id: 'suan-la-tang',
     name: '酸辣汤',
-    image: '/dish-images/hot-sour-soup.png',
+    image: '/dish-images/hot-sour-soup.webp',
     category: '汤羹',
-    tags: ['家常菜', '家常', '汤菜', '酸辣', '开胃', '暖胃'],
+    tags: ['家常', '汤菜', '酸辣', '开胃', '暖胃'],
     mealType: ['lunch', 'dinner'],
     intro: '酸辣开胃的胡辣汤家常版，配豆腐木耳鸡蛋。',
     flavorDescription: '豆腐木耳切丝和鸡蛋同煮，加醋和白胡椒提酸辣。冬天来一碗暖到脚底，配几个饺子就是一餐。',
@@ -3012,9 +3013,9 @@ export const DISHES: Dish[] = [
   {
     id: 'si-gua-dan-tang',
     name: '丝瓜蛋汤',
-    image: '/dish-images/luffa-egg-soup.png',
+    image: '/dish-images/luffa-egg-soup.webp',
     category: '汤羹',
-    tags: ['家常菜', '家常', '快手', '汤菜', '清淡', '春季'],
+    tags: ['家常', '快手', '汤菜', '清淡', '春季'],
     mealType: ['lunch', 'dinner'],
     intro: '春季家常，丝瓜清甜配蛋花，清淡不腻。',
     flavorDescription: '丝瓜切滚刀块煮到刚软，淋蛋液转大火。汤清甜不腻，春天和夏天最常做。',
@@ -3046,7 +3047,7 @@ export const DISHES: Dish[] = [
   {
     id: 'zi-cai-dan-tang',
     name: '紫菜蛋汤',
-    image: '/dish-images/seaweed-egg-drop-soup.png',
+    image: '/dish-images/seaweed-egg-drop-soup.webp',
     category: '汤羹',
     tags: ['轻食', '家常', '快手', '汤菜', '清淡', '低热量'],
     mealType: ['lunch', 'dinner'],
@@ -3079,9 +3080,9 @@ export const DISHES: Dish[] = [
   {
     id: 'fan-qie-chao-dan',
     name: '番茄炒蛋',
-    image: '/dish-images/tomato-egg-stir-fry.png',
+    image: '/dish-images/tomato-egg-stir-fry.webp',
     category: '荤菜',
-    tags: ['家常菜', '家常', '下饭', '快手', '国民菜', '便当'],
+    tags: ['家常', '下饭', '快手', '国民菜', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '国民下饭神菜，番茄和鸡蛋一炒就香。',
     flavorDescription: '番茄炒到出汁，鸡蛋蓬松地裹在里面。酸甜不重，配米饭刚刚好，很多人从这道菜开始学做饭。',
@@ -3112,9 +3113,9 @@ export const DISHES: Dish[] = [
   {
     id: 'hong-shao-rou',
     name: '红烧肉',
-    image: '/dish-images/braised-pork-belly.png',
+    image: '/dish-images/braised-pork-belly.webp',
     category: '荤菜',
-    tags: ['家常菜', '家常', '下饭', '炖菜', '咸甜', '宴客'],
+    tags: ['家常', '下饭', '炖菜', '咸甜', '宴客'],
     mealType: ['lunch', 'dinner'],
     intro: '江浙家常经典，肥而不腻，入口即化。',
     flavorDescription: '五花肉炖得软糯，肥的那层入口化开，瘦的那层吸足酱汁。糖色亮，八角桂皮味道很淡，周末可以慢慢做。',
@@ -3150,9 +3151,9 @@ export const DISHES: Dish[] = [
   {
     id: 'ke-le-ji-chi',
     name: '可乐鸡翅',
-    image: '/dish-images/cola-chicken-wings.png',
+    image: '/dish-images/cola-chicken-wings.webp',
     category: '荤菜',
-    tags: ['家常菜', '家常', '下饭', '甜咸', '便当', '小孩爱'],
+    tags: ['家常', '下饭', '甜咸', '便当', '小孩爱'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '网红家常菜，可乐代替糖烧鸡翅，咸甜鲜亮。',
     flavorDescription: '鸡翅煎过和可乐一起烧到收汁，糖色靠可乐自然出来。做起来简单，是新手第一次做硬菜会成功的一道。',
@@ -3184,7 +3185,7 @@ export const DISHES: Dish[] = [
   {
     id: 'tu-dou-dun-ji',
     name: '土豆炖鸡',
-    image: '/dish-images/potato-chicken-stew.png',
+    image: '/dish-images/potato-chicken-stew.webp',
     category: '荤菜',
     tags: ['家常', '下饭', '炖菜', '北方菜', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -3223,7 +3224,7 @@ export const DISHES: Dish[] = [
   {
     id: 'ma-po-dou-fu-jia-chang',
     name: '麻婆豆腐（家常版）',
-    image: '/dish-images/home-mapo-tofu.png',
+    image: '/dish-images/home-mapo-tofu.webp',
     category: '荤菜',
     tags: ['川菜', '家常', '下饭', '麻辣', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -3261,7 +3262,7 @@ export const DISHES: Dish[] = [
   {
     id: 'nong-jia-xiao-chao-rou',
     name: '农家小炒肉',
-    image: '/dish-images/farmhouse-pork-stir-fry.png',
+    image: '/dish-images/farmhouse-pork-stir-fry.webp',
     category: '荤菜',
     tags: ['湘菜', '家常', '下饭', '咸辣', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -3299,9 +3300,9 @@ export const DISHES: Dish[] = [
   {
     id: 'xiao-mi-zhou',
     name: '小米粥',
-    image: '/dish-images/millet-porridge.png',
+    image: '/dish-images/millet-porridge.webp',
     category: '早餐',
-    tags: ['家常菜', '家常', '早餐', '暖胃', '清淡', '主食'],
+    tags: ['家常', '早餐', '暖胃', '清淡', '主食'],
     mealType: ['breakfast'],
     intro: '家家会做的家常粥，养胃易消化。',
     flavorDescription: '小米淘洗下锅煮到米开花出米油，最上面那层金黄。养胃易消化，喝凉粥和热粥都行。',
@@ -3327,9 +3328,9 @@ export const DISHES: Dish[] = [
   {
     id: 'cong-you-ban-mian',
     name: '葱油拌面',
-    image: '/dish-images/scallion-oil-noodles.png',
+    image: '/dish-images/scallion-oil-noodles.webp',
     category: '主食',
-    tags: ['家常菜', '家常', '早餐', '快手', '主食', '开胃'],
+    tags: ['家常', '早餐', '快手', '主食', '开胃'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '上海家常经典，葱白慢熬葱油，拌面满屋飘香。',
     flavorDescription: '葱白小火慢熬到变焦黄出葱油，拌面只要酱油和这一勺油。家里随时能做的一碗，五分钟一顿。',
@@ -3359,9 +3360,9 @@ export const DISHES: Dish[] = [
   {
     id: 'jia-chang-dan-chao-fan',
     name: '家常蛋炒饭',
-    image: '/dish-images/home-egg-fried-rice.png',
+    image: '/dish-images/home-egg-fried-rice.webp',
     category: '主食',
-    tags: ['家常菜', '家常', '早餐', '快手', '主食', '便当'],
+    tags: ['家常', '早餐', '快手', '主食', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '家家会做，蛋炒饭要饭粒分明才香。',
     flavorDescription: '隔夜饭先和蛋液拌匀再下锅，大火快炒到粒粒分明。葱花是最后撒的，简单也最考验火候。',
@@ -3394,9 +3395,9 @@ export const DISHES: Dish[] = [
   {
     id: 'zheng-dan-geng',
     name: '蒸蛋羹',
-    image: '/dish-images/steamed-egg-custard.png',
+    image: '/dish-images/steamed-egg-custard.webp',
     category: '早餐',
-    tags: ['家常菜', '家常', '早餐', '清淡', '小孩爱', '快手'],
+    tags: ['家常', '早餐', '清淡', '小孩爱', '快手'],
     mealType: ['breakfast'],
     intro: '滑嫩如布丁，鸡蛋加水蒸一蒸。',
     flavorDescription: '鸡蛋液加温水按 1:1.5 调匀过筛，盖保鲜膜蒸八分钟。滑得像布丁，淋一勺生抽和香油就够。',
@@ -3425,9 +3426,9 @@ export const DISHES: Dish[] = [
   {
     id: 'cong-hua-bing',
     name: '葱花饼',
-    image: '/dish-images/scallion-pancake.png',
+    image: '/dish-images/scallion-pancake.webp',
     category: '早餐',
-    tags: ['家常菜', '家常', '早餐', '主食', '葱香', '面食'],
+    tags: ['家常', '早餐', '主食', '葱香', '面食'],
     mealType: ['breakfast', 'lunch'],
     intro: '家常葱花饼，层次分明外酥内软。',
     flavorDescription: '面团擀薄抹油撒葱花卷起来，再擀开下锅烙。层次分明外酥内软，是家里早餐最简单的一种。',
@@ -3454,9 +3455,9 @@ export const DISHES: Dish[] = [
   {
     id: 'zheng-hong-shu',
     name: '蒸红薯',
-    image: '/dish-images/steamed-sweet-potato.png',
+    image: '/dish-images/steamed-sweet-potato.webp',
     category: '甜品',
-    tags: ['家常菜', '家常', '早餐', '快手', '主食', '粗粮'],
+    tags: ['家常', '早餐', '快手', '主食', '粗粮'],
     mealType: ['snack'],
     intro: '最简单的粗粮主食，蒸熟就很甜。',
     flavorDescription: '红薯洗净切块上锅蒸 25 分钟，蒸到流糖汁。最简单的一道粗粮主食，早餐或者下午饿了都合适。',
@@ -3481,7 +3482,7 @@ export const DISHES: Dish[] = [
   {
     id: 'jing-jiang-zhou-zi',
     name: '京酱肘子',
-    image: '/dish-images/jingjiang-pork-knuckle.png',
+    image: '/dish-images/jingjiang-pork-knuckle.webp',
     category: '荤菜',
     tags: ['京菜', '家常', '下饭', '咸香', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -3520,7 +3521,7 @@ export const DISHES: Dish[] = [
   {
     id: 'cu-liu-mu-xu',
     name: '醋溜木须',
-    image: '/dish-images/vinegar-muxu.png',
+    image: '/dish-images/vinegar-muxu.webp',
     category: '荤菜',
     tags: ['京菜', '家常', '下饭', '酸甜', '快手'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -3561,7 +3562,7 @@ export const DISHES: Dish[] = [
   {
     id: 'shao-er-dong',
     name: '烧二冬',
-    image: '/dish-images/braised-two-winters.png',
+    image: '/dish-images/braised-two-winters.webp',
     category: '素菜',
     tags: ['京菜', '家常', '下饭', '咸香', '清真'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -3595,7 +3596,7 @@ export const DISHES: Dish[] = [
   {
     id: 'ba-si-hong-shu',
     name: '拔丝红薯',
-    image: '/dish-images/candied-sweet-potato.png',
+    image: '/dish-images/candied-sweet-potato.webp',
     category: '甜品',
     tags: ['京菜', '家常', '甜品', '宴客', '高糖'],
     mealType: ['snack'],
@@ -3624,7 +3625,7 @@ export const DISHES: Dish[] = [
   {
     id: 'jing-ba-jian-jia-chang',
     name: '京八件（家常简化）',
-    image: '/dish-images/jing-eight-pastries-home-style.png',
+    image: '/dish-images/jing-eight-pastries-home-style.webp',
     category: '甜品',
     tags: ['京菜', '家常', '宴客', '特色', '小吃', '高糖'],
     mealType: ['snack'],
@@ -3657,7 +3658,7 @@ export const DISHES: Dish[] = [
   {
     id: 'guo-ta-dou-fu',
     name: '锅塌豆腐',
-    image: '/dish-images/guota-tofu.png',
+    image: '/dish-images/guota-tofu.webp',
     category: '素菜',
     tags: ['京菜', '家常', '下饭', '咸香', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -3693,7 +3694,7 @@ export const DISHES: Dish[] = [
   {
     id: 'hui-cai',
     name: '烩菜',
-    image: '/dish-images/northern-stew.png',
+    image: '/dish-images/northern-stew.webp',
     category: '汤羹',
     tags: ['北方菜', '家常', '下饭', '炖菜', '暖胃'],
     mealType: ['lunch', 'dinner'],
@@ -3732,7 +3733,7 @@ export const DISHES: Dish[] = [
   {
     id: 'you-zha-gao',
     name: '油炸糕',
-    image: '/dish-images/fried-cake.png',
+    image: '/dish-images/fried-cake.webp',
     category: '甜品',
     tags: ['北方菜', '家常', '小吃', '甜品', '高油', '高糖'],
     mealType: ['snack'],
@@ -3762,7 +3763,7 @@ export const DISHES: Dish[] = [
   {
     id: 'jiu-zhuan-da-chang',
     name: '九转大肠',
-    image: '/dish-images/jiuzhuan-intestine.png',
+    image: '/dish-images/jiuzhuan-intestine.webp',
     category: '荤菜',
     tags: ['鲁菜', '家常', '下饭', '咸甜酸辣', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -3803,7 +3804,7 @@ export const DISHES: Dish[] = [
   {
     id: 'cong-shao-hai-can-lu-ban',
     name: '葱烧海参（鲁版）',
-    image: '/dish-images/scallion-sea-cucumber-shandong.png',
+    image: '/dish-images/scallion-sea-cucumber-shandong.webp',
     category: '荤菜',
     tags: ['鲁菜', '家常', '宴客', '咸香', '下饭'],
     mealType: ['lunch', 'dinner'],
@@ -3839,7 +3840,7 @@ export const DISHES: Dish[] = [
   {
     id: 'tang-cu-li-yu',
     name: '糖醋鲤鱼',
-    image: '/dish-images/sweet-sour-carp.png',
+    image: '/dish-images/sweet-sour-carp.webp',
     category: '荤菜',
     tags: ['鲁菜', '家常', '宴客', '酸甜', '下饭'],
     mealType: ['lunch', 'dinner'],
@@ -3877,7 +3878,7 @@ export const DISHES: Dish[] = [
   {
     id: 'guo-bao-rou',
     name: '锅包肉',
-    image: '/dish-images/guobaorou.png',
+    image: '/dish-images/guobaorou.webp',
     category: '荤菜',
     tags: ['东北菜', '家常', '下饭', '酸甜', '下酒'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -3915,7 +3916,7 @@ export const DISHES: Dish[] = [
   {
     id: 'si-xi-wan-zi',
     name: '四喜丸子',
-    image: '/dish-images/four-joy-meatballs.png',
+    image: '/dish-images/four-joy-meatballs.webp',
     category: '荤菜',
     tags: ['鲁菜', '家常', '宴客', '咸香', '下饭'],
     mealType: ['lunch', 'dinner'],
@@ -3955,7 +3956,7 @@ export const DISHES: Dish[] = [
   {
     id: 'mu-xi-rou-lu-ban',
     name: '木樨肉',
-    image: '/dish-images/muxu-pork.png',
+    image: '/dish-images/muxu-pork.webp',
     category: '荤菜',
     tags: ['京菜', '家常', '下饭', '咸香', '快手'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -3994,7 +3995,7 @@ export const DISHES: Dish[] = [
   {
     id: 'fen-zheng-rou',
     name: '粉蒸肉',
-    image: '/dish-images/steamed-pork-rice-flour.png',
+    image: '/dish-images/steamed-pork-rice-flour.webp',
     category: '荤菜',
     tags: ['川菜', '家常', '下饭', '咸香', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -4032,7 +4033,7 @@ export const DISHES: Dish[] = [
   {
     id: 'yan-jian-rou',
     name: '盐煎肉',
-    image: '/dish-images/salt-fried-pork.png',
+    image: '/dish-images/salt-fried-pork.webp',
     category: '荤菜',
     tags: ['川菜', '家常', '下饭', '咸香', '快手'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -4064,7 +4065,7 @@ export const DISHES: Dish[] = [
   {
     id: 'shui-zhu-rou-pian-sheng-ji',
     name: '水煮肉片（升级版）',
-    image: '/dish-images/shuizhu-pork-slices-upgrade.png',
+    image: '/dish-images/shuizhu-pork-slices-upgrade.webp',
     category: '荤菜',
     tags: ['川菜', '家常', '下饭', '麻辣', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -4104,7 +4105,7 @@ export const DISHES: Dish[] = [
   {
     id: 'dong-po-zhou-zi',
     name: '东坡肘子',
-    image: '/dish-images/dongpo-pork-knuckle.png',
+    image: '/dish-images/dongpo-pork-knuckle.webp',
     category: '荤菜',
     tags: ['川菜', '家常', '下饭', '咸甜', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -4140,7 +4141,7 @@ export const DISHES: Dish[] = [
   {
     id: 'suan-ni-bai-rou',
     name: '蒜泥白肉',
-    image: '/dish-images/garlic-pork-slices.png',
+    image: '/dish-images/garlic-pork-slices.webp',
     category: '凉菜',
     tags: ['川菜', '家常', '下酒', '蒜香', '凉菜'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -4178,7 +4179,7 @@ export const DISHES: Dish[] = [
   {
     id: 'bo-bo-ji-jia-chang',
     name: '钵钵鸡（家常）',
-    image: '/dish-images/boboji-home-style.png',
+    image: '/dish-images/boboji-home-style.webp',
     category: '凉菜',
     tags: ['川菜', '家常', '下酒', '麻辣', '凉菜'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -4219,7 +4220,7 @@ export const DISHES: Dish[] = [
   {
     id: 'mao-cai-jia-chang',
     name: '冒菜（家常）',
-    image: '/dish-images/maocai-home-style.png',
+    image: '/dish-images/maocai-home-style.webp',
     category: '汤羹',
     tags: ['川菜', '家常', '下饭', '麻辣', '便当'],
     mealType: ['lunch', 'dinner'],
@@ -4261,7 +4262,7 @@ export const DISHES: Dish[] = [
   {
     id: 'gan-bian-si-ji-dou',
     name: '干煸四季豆',
-    image: '/dish-images/dry-fried-green-beans.png',
+    image: '/dish-images/dry-fried-green-beans.webp',
     category: '素菜',
     tags: ['川菜', '家常', '下饭', '干香', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -4296,7 +4297,7 @@ export const DISHES: Dish[] = [
   {
     id: 'ji-dou-hua',
     name: '鸡豆花',
-    image: '/dish-images/chicken-tofu-soup.png',
+    image: '/dish-images/chicken-tofu-soup.webp',
     category: '汤羹',
     tags: ['川菜', '家常', '宴客', '清淡', '高蛋白'],
     mealType: ['lunch', 'dinner'],
@@ -4333,7 +4334,7 @@ export const DISHES: Dish[] = [
   {
     id: 'leng-guo-chuan-chuan-jia-chang',
     name: '冷锅串串（家常）',
-    image: '/dish-images/lengguo-skewers-home-style.png',
+    image: '/dish-images/lengguo-skewers-home-style.webp',
     category: '凉菜',
     tags: ['川菜', '家常', '下酒', '麻辣', '特色'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -4375,7 +4376,7 @@ export const DISHES: Dish[] = [
   {
     id: 'mao-shi-hong-shao-rou',
     name: '毛氏红烧肉',
-    image: '/dish-images/mao-style-braised-pork.png',
+    image: '/dish-images/mao-style-braised-pork.webp',
     category: '荤菜',
     tags: ['湘菜', '家常', '下饭', '咸甜', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -4410,7 +4411,7 @@ export const DISHES: Dish[] = [
   {
     id: 'xiang-xi-xue-dou-fu',
     name: '湘西血豆腐',
-    image: '/dish-images/xiangxi-blood-tofu.png',
+    image: '/dish-images/xiangxi-blood-tofu.webp',
     category: '荤菜',
     tags: ['湘菜', '家常', '下饭', '特色', '下酒'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -4444,7 +4445,7 @@ export const DISHES: Dish[] = [
   {
     id: 'nong-jia-yi-wan-xiang',
     name: '农家一碗香',
-    image: '/dish-images/farmer-bowl-fragrance.png',
+    image: '/dish-images/farmer-bowl-fragrance.webp',
     category: '荤菜',
     tags: ['湘菜', '家常', '下饭', '咸辣'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -4481,7 +4482,7 @@ export const DISHES: Dish[] = [
   {
     id: 'yan-xun-la-rou-jia-chang',
     name: '烟熏腊肉（家常）',
-    image: '/dish-images/smoked-cured-meat-home-style.png',
+    image: '/dish-images/smoked-cured-meat-home-style.webp',
     category: '荤菜',
     tags: ['湘菜', '家常', '下饭', '咸香', '特色', '腊味'],
     mealType: ['lunch', 'dinner'],
@@ -4513,7 +4514,7 @@ export const DISHES: Dish[] = [
   {
     id: 'xiang-wei-jiang-ban-ya',
     name: '湘味酱板鸭（家常）',
-    image: '/dish-images/xiang-smoked-duck-home-style.png',
+    image: '/dish-images/xiang-smoked-duck-home-style.webp',
     category: '荤菜',
     tags: ['湘菜', '家常', '下饭', '咸香', '特色'],
     mealType: ['lunch', 'dinner'],
@@ -4552,7 +4553,7 @@ export const DISHES: Dish[] = [
   {
     id: 'heng-dong-tu-tou-wan',
     name: '衡东土头碗',
-    image: '/dish-images/hengdong-tou-bowl.png',
+    image: '/dish-images/hengdong-tou-bowl.webp',
     category: '汤羹',
     tags: ['湘菜', '家常', '宴客', '咸香', '特色'],
     mealType: ['lunch', 'dinner'],
@@ -4591,7 +4592,7 @@ export const DISHES: Dish[] = [
   {
     id: 'dong-an-zi-ji',
     name: '东安子鸡',
-    image: '/dish-images/dongan-chicken.png',
+    image: '/dish-images/dongan-chicken.webp',
     category: '荤菜',
     tags: ['湘菜', '家常', '下饭', '酸辣', '下酒'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -4630,7 +4631,7 @@ export const DISHES: Dish[] = [
   {
     id: 'yong-zhou-xie-ya',
     name: '永州血鸭',
-    image: '/dish-images/yongzhou-blood-duck.png',
+    image: '/dish-images/yongzhou-blood-duck.webp',
     category: '荤菜',
     tags: ['湘菜', '家常', '下饭', '咸辣', '特色'],
     mealType: ['lunch', 'dinner'],
@@ -4668,7 +4669,7 @@ export const DISHES: Dish[] = [
   {
     id: 'guang-shi-bai-qie-ji',
     name: '广式白切鸡',
-    image: '/dish-images/cantonese-white-cut-chicken.png',
+    image: '/dish-images/cantonese-white-cut-chicken.webp',
     category: '荤菜',
     tags: ['粤菜', '家常', '下饭', '清淡', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -4699,7 +4700,7 @@ export const DISHES: Dish[] = [
   {
     id: 'guang-shi-zheng-pai-gu',
     name: '广式蒸排骨',
-    image: '/dish-images/cantonese-steamed-spare-ribs.png',
+    image: '/dish-images/cantonese-steamed-spare-ribs.webp',
     category: '荤菜',
     tags: ['粤菜', '家常', '下饭', '咸香', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -4737,7 +4738,7 @@ export const DISHES: Dish[] = [
   {
     id: 'yan-jue-ji',
     name: '盐焗鸡（家常）',
-    image: '/dish-images/salt-baked-chicken-home-style.png',
+    image: '/dish-images/salt-baked-chicken-home-style.webp',
     category: '荤菜',
     tags: ['粤菜', '家常', '下饭', '咸香', '特色'],
     mealType: ['lunch', 'dinner'],
@@ -4770,7 +4771,7 @@ export const DISHES: Dish[] = [
   {
     id: 'hao-you-sheng-cai',
     name: '蚝油生菜',
-    image: '/dish-images/oyster-sauce-lettuce.png',
+    image: '/dish-images/oyster-sauce-lettuce.webp',
     category: '素菜',
     tags: ['粤菜', '家常', '快手', '清淡', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -4802,7 +4803,7 @@ export const DISHES: Dish[] = [
   {
     id: 'gan-chao-niu-he',
     name: '干炒牛河',
-    image: '/dish-images/dry-fried-beef-noodles.png',
+    image: '/dish-images/dry-fried-beef-noodles.webp',
     category: '主食',
     tags: ['粤菜', '家常', '下饭', '咸香', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -4839,7 +4840,7 @@ export const DISHES: Dish[] = [
   {
     id: 'mi-zhi-cha-shao',
     name: '蜜汁叉烧（家常）',
-    image: '/dish-images/honey-char-siu-home-style.png',
+    image: '/dish-images/honey-char-siu-home-style.webp',
     category: '荤菜',
     tags: ['粤菜', '家常', '下饭', '甜咸', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -4874,7 +4875,7 @@ export const DISHES: Dish[] = [
   {
     id: 'gu-zhi-zheng-pai-gu',
     name: '鼓汁蒸排骨',
-    image: '/dish-images/black-bean-steamed-ribs.png',
+    image: '/dish-images/black-bean-steamed-ribs.webp',
     category: '荤菜',
     tags: ['粤菜', '家常', '下饭', '咸香', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -4911,7 +4912,7 @@ export const DISHES: Dish[] = [
   {
     id: 'xian-dan-huang-zheng-rou-bing',
     name: '咸蛋黄蒸肉饼',
-    image: '/dish-images/salted-egg-steamed-pork-patty.png',
+    image: '/dish-images/salted-egg-steamed-pork-patty.webp',
     category: '荤菜',
     tags: ['粤菜', '家常', '下饭', '咸香', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -4946,7 +4947,7 @@ export const DISHES: Dish[] = [
   {
     id: 'fen-zheng-pai-gu-yue-ban',
     name: '粉蒸排骨（粤版）',
-    image: '/dish-images/steamed-ribs-rice-flour-cantonese.png',
+    image: '/dish-images/steamed-ribs-rice-flour-cantonese.webp',
     category: '荤菜',
     tags: ['粤菜', '家常', '下饭', '咸香', '便当'],
     mealType: ['lunch', 'dinner'],
@@ -4983,7 +4984,7 @@ export const DISHES: Dish[] = [
   {
     id: 'gang-shi-yun-tun-mian',
     name: '港式云吞面',
-    image: '/dish-images/hk-wonton-noodles.png',
+    image: '/dish-images/hk-wonton-noodles.webp',
     category: '主食',
     tags: ['粤菜', '家常', '清淡', '宴客', '高蛋白'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -5019,7 +5020,7 @@ export const DISHES: Dish[] = [
   {
     id: 'qing-chao-he-xia-ren',
     name: '清炒河虾仁',
-    image: '/dish-images/stir-fried-river-shrimp.png',
+    image: '/dish-images/stir-fried-river-shrimp.webp',
     category: '荤菜',
     tags: ['苏菜', '家常', '清淡', '宴客', '高蛋白'],
     mealType: ['lunch', 'dinner'],
@@ -5053,7 +5054,7 @@ export const DISHES: Dish[] = [
   {
     id: 'hong-shao-hua-shui',
     name: '红烧划水',
-    image: '/dish-images/braised-fish-tail.png',
+    image: '/dish-images/braised-fish-tail.webp',
     category: '荤菜',
     tags: ['苏菜', '家常', '下饭', '咸甜', '特色'],
     mealType: ['lunch', 'dinner'],
@@ -5090,7 +5091,7 @@ export const DISHES: Dish[] = [
   {
     id: 'xiang-you-shan-hu',
     name: '响油鳝糊',
-    image: '/dish-images/sizzling-eel-paste.png',
+    image: '/dish-images/sizzling-eel-paste.webp',
     category: '荤菜',
     tags: ['苏菜', '家常', '下饭', '咸甜', '特色'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -5129,7 +5130,7 @@ export const DISHES: Dish[] = [
   {
     id: 'you-bao-xia-ren',
     name: '油爆虾仁',
-    image: '/dish-images/quick-fried-shrimp.png',
+    image: '/dish-images/quick-fried-shrimp.webp',
     category: '荤菜',
     tags: ['苏菜', '家常', '宴客', '咸香', '高蛋白'],
     mealType: ['lunch', 'dinner'],
@@ -5163,7 +5164,7 @@ export const DISHES: Dish[] = [
   {
     id: 'tang-cu-xiao-pai',
     name: '糖醋小排',
-    image: '/dish-images/sweet-sour-spare-ribs.png',
+    image: '/dish-images/sweet-sour-spare-ribs.webp',
     category: '荤菜',
     tags: ['苏菜', '家常', '下饭', '酸甜', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -5199,7 +5200,7 @@ export const DISHES: Dish[] = [
   {
     id: 'yan-du-xian',
     name: '腌笃鲜',
-    image: '/dish-images/yan-du-xian.png',
+    image: '/dish-images/yan-du-xian.webp',
     category: '汤羹',
     tags: ['苏菜', '家常', '汤菜', '清淡', '春季'],
     mealType: ['lunch', 'dinner'],
@@ -5232,7 +5233,7 @@ export const DISHES: Dish[] = [
   {
     id: 'zui-xia',
     name: '醉虾',
-    image: '/dish-images/drunken-shrimp.png',
+    image: '/dish-images/drunken-shrimp.webp',
     category: '凉菜',
     tags: ['苏菜', '家常', '下酒', '咸鲜', '特色'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -5264,7 +5265,7 @@ export const DISHES: Dish[] = [
   {
     id: 'zui-ji',
     name: '醉鸡',
-    image: '/dish-images/drunken-chicken.png',
+    image: '/dish-images/drunken-chicken.webp',
     category: '凉菜',
     tags: ['苏菜', '家常', '下酒', '咸鲜', '冷盘'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -5296,7 +5297,7 @@ export const DISHES: Dish[] = [
   {
     id: 'you-mian-jin-sai-rou',
     name: '油面筋塞肉',
-    image: '/dish-images/fried-gluten-stuffed-pork.png',
+    image: '/dish-images/fried-gluten-stuffed-pork.webp',
     category: '荤菜',
     tags: ['苏菜', '家常', '下饭', '咸香', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -5331,7 +5332,7 @@ export const DISHES: Dish[] = [
   {
     id: 'ba-bao-la-jiang',
     name: '八宝辣酱',
-    image: '/dish-images/eight-treasure-chili-sauce.png',
+    image: '/dish-images/eight-treasure-chili-sauce.webp',
     category: '荤菜',
     tags: ['苏菜', '家常', '下饭', '咸辣', '特色'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -5372,7 +5373,7 @@ export const DISHES: Dish[] = [
   {
     id: 'cong-you-ji',
     name: '葱油鸡',
-    image: '/dish-images/scallion-oil-chicken.png',
+    image: '/dish-images/scallion-oil-chicken.webp',
     category: '荤菜',
     tags: ['苏菜', '家常', '下饭', '葱香', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -5405,7 +5406,7 @@ export const DISHES: Dish[] = [
   {
     id: 'bing-tang-jia-yu-jia-chang',
     name: '冰糖甲鱼（家常）',
-    image: '/dish-images/rock-sugar-turtle-home-style.png',
+    image: '/dish-images/rock-sugar-turtle-home-style.webp',
     category: '荤菜',
     tags: ['苏菜', '家常', '宴客', '咸甜', '特色'],
     mealType: ['lunch', 'dinner'],
@@ -5440,7 +5441,7 @@ export const DISHES: Dish[] = [
   {
     id: 'sha-guo-yu-tou-dou-fu',
     name: '砂锅鱼头豆腐',
-    image: '/dish-images/clay-pot-fish-head-tofu.png',
+    image: '/dish-images/clay-pot-fish-head-tofu.webp',
     category: '汤羹',
     tags: ['苏菜', '家常', '汤菜', '清淡', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -5475,7 +5476,7 @@ export const DISHES: Dish[] = [
   {
     id: 'xue-cai-dou-ban-su',
     name: '雪菜豆瓣酥',
-    image: '/dish-images/snow-cabbage-broad-bean-cake.png',
+    image: '/dish-images/snow-cabbage-broad-bean-cake.webp',
     category: '素菜',
     tags: ['苏菜', '家常', '下饭', '咸香', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -5508,7 +5509,7 @@ export const DISHES: Dish[] = [
   {
     id: 'hang-zhou-jiang-ya',
     name: '杭州酱鸭（家常）',
-    image: '/dish-images/hangzhou-soy-duck-home-style.png',
+    image: '/dish-images/hangzhou-soy-duck-home-style.webp',
     category: '荤菜',
     tags: ['浙菜', '家常', '下饭', '咸香', '特色'],
     mealType: ['lunch', 'dinner'],
@@ -5544,7 +5545,7 @@ export const DISHES: Dish[] = [
   {
     id: 'xi-hu-cu-yu',
     name: '西湖醋鱼',
-    image: '/dish-images/west-lake-vinegar-fish.png',
+    image: '/dish-images/west-lake-vinegar-fish.webp',
     category: '荤菜',
     tags: ['浙菜', '家常', '宴客', '酸甜', '特色'],
     mealType: ['lunch', 'dinner'],
@@ -5579,7 +5580,7 @@ export const DISHES: Dish[] = [
   {
     id: 'long-jing-xia-ren-sheng-ji',
     name: '龙井虾仁（升级版）',
-    image: '/dish-images/longjing-shrimp-upgrade.png',
+    image: '/dish-images/longjing-shrimp-upgrade.webp',
     category: '荤菜',
     tags: ['浙菜', '家常', '清淡', '宴客', '高蛋白'],
     mealType: ['lunch', 'dinner'],
@@ -5613,7 +5614,7 @@ export const DISHES: Dish[] = [
   {
     id: 'gui-hua-nuo-mi-ou',
     name: '桂花糯米藕',
-    image: '/dish-images/osmanthus-sticky-rice-lotus.png',
+    image: '/dish-images/osmanthus-sticky-rice-lotus.webp',
     category: '甜品',
     tags: ['苏菜', '家常', '甜品', '宴客', '秋季', '高糖'],
     mealType: ['snack'],
@@ -5645,7 +5646,7 @@ export const DISHES: Dish[] = [
   {
     id: 'huang-shan-dun-ge',
     name: '黄山炖鸽（家常）',
-    image: '/dish-images/huangshan-stewed-pigeon-home-style.png',
+    image: '/dish-images/huangshan-stewed-pigeon-home-style.webp',
     category: '汤羹',
     tags: ['徽菜', '家常', '汤菜', '滋补', '宴客'],
     mealType: ['lunch', 'dinner'],
@@ -5679,7 +5680,7 @@ export const DISHES: Dish[] = [
   {
     id: 'dao-ban-xiang-jia-chang',
     name: '刀板香（家常）',
-    image: '/dish-images/dao-ban-xiang-home-style.png',
+    image: '/dish-images/dao-ban-xiang-home-style.webp',
     category: '荤菜',
     tags: ['徽菜', '家常', '下饭', '咸香', '特色'],
     mealType: ['lunch', 'dinner'],
@@ -5711,7 +5712,7 @@ export const DISHES: Dish[] = [
   {
     id: 'ji-xi-chao-fen-si',
     name: '绩溪炒粉丝',
-    image: '/dish-images/jixi-glass-noodle-stir-fry.png',
+    image: '/dish-images/jixi-glass-noodle-stir-fry.webp',
     category: '素菜',
     tags: ['徽菜', '家常', '下饭', '咸香', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -5749,7 +5750,7 @@ export const DISHES: Dish[] = [
   {
     id: 'hu-shi-yi-pin-guo',
     name: '胡适一品锅（家常）',
-    image: '/dish-images/hushi-one-pot-home-style.png',
+    image: '/dish-images/hushi-one-pot-home-style.webp',
     category: '汤羹',
     tags: ['徽菜', '家常', '宴客', '咸香', '特色'],
     mealType: ['lunch', 'dinner'],
@@ -5791,7 +5792,7 @@ export const DISHES: Dish[] = [
   {
     id: 'ge-fen-yuan-zi',
     name: '葛粉圆子（家常）',
-    image: '/dish-images/kudzu-dumpling-home-style.png',
+    image: '/dish-images/kudzu-dumpling-home-style.webp',
     category: '素菜',
     tags: ['徽菜', '家常', '下饭', '咸香', '特色'],
     mealType: ['lunch', 'dinner'],
@@ -5826,7 +5827,7 @@ export const DISHES: Dish[] = [
   {
     id: 'wen-zheng-shan-sun',
     name: '问政山笋（家常）',
-    image: '/dish-images/wenzheng-bamboo-shoots-home-style.png',
+    image: '/dish-images/wenzheng-bamboo-shoots-home-style.webp',
     category: '素菜',
     tags: ['徽菜', '家常', '下饭', '咸香', '春季'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -5860,7 +5861,7 @@ export const DISHES: Dish[] = [
   {
     id: 'fo-tiao-qiang-sheng-ji',
     name: '佛跳墙（升级版）',
-    image: '/dish-images/buddha-jumps-soup-upgrade.png',
+    image: '/dish-images/buddha-jumps-soup-upgrade.webp',
     category: '汤羹',
     tags: ['闽菜', '家常', '宴客', '滋补', '高蛋白'],
     mealType: ['lunch', 'dinner'],
@@ -5899,7 +5900,7 @@ export const DISHES: Dish[] = [
   {
     id: 'min-nan-lu-mian',
     name: '闽南卤面',
-    image: '/dish-images/minnan-braised-noodles.png',
+    image: '/dish-images/minnan-braised-noodles.webp',
     category: '主食',
     tags: ['闽菜', '家常', '下饭', '咸香', '特色'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -5939,7 +5940,7 @@ export const DISHES: Dish[] = [
   {
     id: 'hai-li-jian-sheng-ji',
     name: '海蛎煎（升级版）',
-    image: '/dish-images/oyster-omelette-upgrade.png',
+    image: '/dish-images/oyster-omelette-upgrade.webp',
     category: '荤菜',
     tags: ['闽菜', '家常', '下饭', '咸香', '特色'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -5975,7 +5976,7 @@ export const DISHES: Dish[] = [
   {
     id: 'sha-cha-mian',
     name: '沙茶面（家常）',
-    image: '/dish-images/satay-noodles-home-style.png',
+    image: '/dish-images/satay-noodles-home-style.webp',
     category: '主食',
     tags: ['闽菜', '家常', '下饭', '咸香', '特色'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -6011,7 +6012,7 @@ export const DISHES: Dish[] = [
   {
     id: 'li-zhi-rou',
     name: '荔枝肉',
-    image: '/dish-images/lychee-pork.png',
+    image: '/dish-images/lychee-pork.webp',
     category: '荤菜',
     tags: ['闽菜', '家常', '下饭', '酸甜', '特色'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -6050,7 +6051,7 @@ export const DISHES: Dish[] = [
   {
     id: 'fu-jian-yu-wan-tang',
     name: '福建鱼丸汤',
-    image: '/dish-images/fujian-fish-ball-soup.png',
+    image: '/dish-images/fujian-fish-ball-soup.webp',
     category: '汤羹',
     tags: ['闽菜', '家常', '汤菜', '清淡', '高蛋白'],
     mealType: ['lunch', 'dinner'],
@@ -6084,9 +6085,9 @@ export const DISHES: Dish[] = [
   {
     id: 'yang-zhou-chao-fan',
     name: '扬州炒饭',
-    image: '/dish-images/yangzhou-fried-rice.png',
+    image: '/dish-images/yangzhou-fried-rice.webp',
     category: '主食',
-    tags: ['家常菜', '家常', '早餐', '快手', '主食', '便当'],
+    tags: ['家常', '早餐', '快手', '主食', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '扬州经典，蛋炒饭配多种配料，粒粒分明。',
     flavorDescription: '米饭加蛋液炒到金黄，配虾仁火腿青豆胡萝卜丁。颜色好看味道丰富，是炒饭里最讲究配料的一种。',
@@ -6121,7 +6122,7 @@ export const DISHES: Dish[] = [
   {
     id: 'guang-dong-chang-fen',
     name: '广东肠粉（家常）',
-    image: '/dish-images/cantonese-rice-noodle-rolls-home-style.png',
+    image: '/dish-images/cantonese-rice-noodle-rolls-home-style.webp',
     category: '早餐',
     tags: ['粤菜', '家常', '早餐', '清淡', '特色'],
     mealType: ['breakfast', 'lunch'],
@@ -6156,8 +6157,9 @@ export const DISHES: Dish[] = [
   {
     id: 'cong-hua-qian-ceng-bing',
     name: '葱花千层饼',
+    image: '/dish-images/cong-hua-qian-ceng-bing.webp',
     category: '早餐',
-    tags: ['家常菜', '家常', '早餐', '主食', '葱香', '面食'],
+    tags: ['家常', '早餐', '主食', '葱香', '面食'],
     mealType: ['breakfast', 'lunch'],
     intro: '家常面食，层次分明外酥内软，葱香浓郁。',
     flavorDescription: '面团多次擀卷加葱花，层数能数得出来。烙到两面金黄，撕开看里面一层层的，比单饼香。',
@@ -6184,9 +6186,9 @@ export const DISHES: Dish[] = [
   {
     id: 'jiu-cai-he-zi',
     name: '韭菜盒子',
-    image: '/dish-images/chive-pockets.png',
+    image: '/dish-images/chive-pockets.webp',
     category: '早餐',
-    tags: ['家常菜', '家常', '早餐', '主食', '下饭', '面食'],
+    tags: ['家常', '早餐', '主食', '下饭', '面食'],
     mealType: ['breakfast', 'lunch'],
     intro: '北方家常，韭菜鸡蛋粉丝做馅，半月形烙制。',
     flavorDescription: '烫面更软不易破，韭菜和鸡蛋粉丝做馅，包成半月形烙到两面焦黄。早餐一个能顶到中午。',
@@ -6217,7 +6219,7 @@ export const DISHES: Dish[] = [
   {
     id: 'lu-da-gun',
     name: '驴打滚（家常）',
-    image: '/dish-images/rolling-donkey-home-style.png',
+    image: '/dish-images/rolling-donkey-home-style.webp',
     category: '甜品',
     tags: ['京菜', '家常', '小吃', '甜品', '特色', '高糖'],
     mealType: ['snack'],
@@ -6248,7 +6250,7 @@ export const DISHES: Dish[] = [
   {
     id: 'rou-jia-mo',
     name: '肉夹馍（家常）',
-    image: '/dish-images/rou-jia-mo-home-style.png',
+    image: '/dish-images/rou-jia-mo-home-style.webp',
     category: '主食',
     tags: ['陕西菜', '家常', '小吃', '下饭', '特色'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -6287,7 +6289,7 @@ export const DISHES: Dish[] = [
   {
     id: 're-gan-mian',
     name: '热干面（家常）',
-    image: '/dish-images/hot-dry-noodles-home-style.png',
+    image: '/dish-images/hot-dry-noodles-home-style.webp',
     category: '早餐',
     tags: ['湖北菜', '家常', '早餐', '主食', '特色'],
     mealType: ['breakfast', 'lunch'],
@@ -6320,7 +6322,7 @@ export const DISHES: Dish[] = [
   {
     id: 'chong-qing-xiao-mian',
     name: '重庆小面（家常）',
-    image: '/dish-images/chongqing-xiaomian-home-style.png',
+    image: '/dish-images/chongqing-xiaomian-home-style.webp',
     category: '早餐',
     tags: ['川菜', '家常', '早餐', '主食', '麻辣'],
     mealType: ['breakfast', 'lunch'],
@@ -6356,7 +6358,7 @@ export const DISHES: Dish[] = [
   {
     id: 'gui-lin-mi-fen',
     name: '桂林米粉（家常）',
-    image: '/dish-images/guilin-rice-noodles-home-style.png',
+    image: '/dish-images/guilin-rice-noodles-home-style.webp',
     category: '早餐',
     tags: ['广西菜', '家常', '早餐', '主食', '特色'],
     mealType: ['breakfast', 'lunch'],
@@ -6390,7 +6392,7 @@ export const DISHES: Dish[] = [
   {
     id: 'lan-zhou-la-mian',
     name: '兰州拉面（家常）',
-    image: '/dish-images/lanzhou-beef-noodles-home-style.png',
+    image: '/dish-images/lanzhou-beef-noodles-home-style.webp',
     category: '早餐',
     tags: ['西北菜', '家常', '汤菜', '主食', '特色'],
     mealType: ['breakfast', 'lunch'],
@@ -6427,7 +6429,7 @@ export const DISHES: Dish[] = [
   {
     id: 'wu-han-re-gan-mian',
     name: '武汉热干面',
-    image: '/dish-images/wuhan-hot-dry-noodles.png',
+    image: '/dish-images/wuhan-hot-dry-noodles.webp',
     category: '早餐',
     tags: ['湖北菜', '家常', '早餐', '主食', '特色'],
     mealType: ['breakfast', 'lunch'],
@@ -6460,7 +6462,7 @@ export const DISHES: Dish[] = [
   {
     id: 'shang-hai-sheng-jian',
     name: '上海生煎（家常）',
-    image: '/dish-images/shanghai-pan-fried-bun-home-style.png',
+    image: '/dish-images/shanghai-pan-fried-bun-home-style.webp',
     category: '早餐',
     tags: ['上海菜', '家常', '早餐', '主食', '小吃'],
     mealType: ['breakfast'],
@@ -6498,9 +6500,9 @@ export const DISHES: Dish[] = [
   {
     id: 'guo-tie',
     name: '锅贴（家常）',
-    image: '/dish-images/potstickers-home-style.png',
+    image: '/dish-images/potstickers-home-style.webp',
     category: '早餐',
-    tags: ['家常菜', '家常', '早餐', '主食', '下饭', '面食'],
+    tags: ['家常', '早餐', '主食', '下饭', '面食'],
     mealType: ['breakfast'],
     intro: '家常锅贴，从和面、调馅、包制到底部煎脆一次做完整，底壳焦香、馅心多汁。',
     flavorDescription: '饺子皮包入肉馅排进平底锅，先煎后加水焖。底壳焦脆馅心多汁，配一碟醋和辣油吃。',
@@ -6534,9 +6536,9 @@ export const DISHES: Dish[] = [
   {
     id: 'cong-you-bing-sheng-ji',
     name: '葱油饼（升级版）',
-    image: '/dish-images/scallion-pancake-upgrade.png',
+    image: '/dish-images/scallion-pancake-upgrade.webp',
     category: '早餐',
-    tags: ['家常菜', '家常', '早餐', '主食', '葱香', '面食'],
+    tags: ['家常', '早餐', '主食', '葱香', '面食'],
     mealType: ['breakfast', 'lunch'],
     intro: '上海经典葱油饼升级版，层次多葱香浓。',
     flavorDescription: '面团擀薄抹葱油层层卷起，烙到金黄。葱香比家常版浓，外面更脆里面更松。',
@@ -6563,7 +6565,7 @@ export const DISHES: Dish[] = [
   {
     id: 'rou-mo-suan-dou-jiao-mian',
     name: '肉末酸豆角面',
-    image: '/dish-images/minced-pork-pickled-bean-noodles.png',
+    image: '/dish-images/minced-pork-pickled-bean-noodles.webp',
     category: '主食',
     tags: ['湘菜', '家常', '早餐', '主食', '下饭'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -6599,9 +6601,9 @@ export const DISHES: Dish[] = [
   {
     id: 'yu-mi-lao',
     name: '玉米烙',
-    image: '/dish-images/corn-pancake.png',
+    image: '/dish-images/corn-pancake.webp',
     category: '甜品',
-    tags: ['家常菜', '家常', '早餐', '主食', '甜品', '小孩爱'],
+    tags: ['家常', '早餐', '主食', '甜品', '小孩爱'],
     mealType: ['snack'],
     intro: '甜脆可口的玉米烙，做法简单小孩爱。',
     flavorDescription: '玉米粒拌一点淀粉，平底锅用一点油煎到金黄成饼。咸甜都行，孩子最爱的一道。',
@@ -6628,7 +6630,7 @@ export const DISHES: Dish[] = [
   {
     id: 'zha-jiang-mian',
     name: '炸酱面（家常）',
-    image: '/dish-images/zhajiang-noodles-home-style.png',
+    image: '/dish-images/zhajiang-noodles-home-style.webp',
     category: '主食',
     tags: ['京菜', '家常', '主食', '咸香', '下饭'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -6665,9 +6667,9 @@ export const DISHES: Dish[] = [
   {
     id: 'man-tou-jia-chang',
     name: '馒头（家常）',
-    image: '/dish-images/steamed-bun-home-style.png',
+    image: '/dish-images/steamed-bun-home-style.webp',
     category: '早餐',
-    tags: ['家常菜', '家常', '早餐', '主食', '清淡', '面食'],
+    tags: ['家常', '早餐', '主食', '清淡', '面食'],
     mealType: ['breakfast'],
     intro: '基础发酵面食，不是简单“蒸熟”即可，关键在揉面、一次发酵、排气、二次醒发和冷水上锅后的焖蒸。',
     flavorDescription: '面粉加酵母揉到三光，发酵到两倍大，排气醒发后冷水上锅蒸。皮光内松，自己蒸的总比买的香。',
@@ -6695,9 +6697,9 @@ export const DISHES: Dish[] = [
   {
     id: 'lian-ou-pai-gu-tang',
     name: '莲藕排骨汤',
-    image: '/dish-images/lian-ou-pai-gu-tang.png',
+    image: '/dish-images/lian-ou-pai-gu-tang.webp',
     category: '汤羹',
-    tags: ['家常菜', '家常', '汤菜', '清淡', '暖胃', '秋季'],
+    tags: ['家常', '汤菜', '清淡', '暖胃', '秋季'],
     mealType: ['lunch', 'dinner'],
     intro: '家常滋补汤，莲藕粉糯排骨软烂。',
     flavorDescription: '莲藕切大块和排骨同炖到粉糯，撒点葱花。汤里有一点藕的清香，秋冬常做的一锅。',
@@ -6728,9 +6730,9 @@ export const DISHES: Dish[] = [
   {
     id: 'yin-er-hong-zao-tang',
     name: '银耳红枣汤',
-    image: '/dish-images/yin-er-hong-zao-tang.png',
+    image: '/dish-images/yin-er-hong-zao-tang.webp',
     category: '甜品',
-    tags: ['家常菜', '家常', '汤菜', '甜品', '滋补', '秋季'],
+    tags: ['家常', '汤菜', '甜品', '滋补', '秋季'],
     mealType: ['snack'],
     intro: '家常甜汤，银耳软糯红枣香甜。',
     flavorDescription: '银耳泡发撕小朵，加红枣枸杞小火慢炖到汤稠。喝一碗润润嗓子，秋冬常做的一锅。',
@@ -6756,9 +6758,9 @@ export const DISHES: Dish[] = [
   {
     id: 'lao-ya-fen-si-tang',
     name: '老鸭粉丝汤',
-    image: '/dish-images/lao-ya-fen-si-tang.png',
+    image: '/dish-images/lao-ya-fen-si-tang.webp',
     category: '汤羹',
-    tags: ['家常菜', '家常', '汤菜', '咸香', '暖胃', '特色'],
+    tags: ['家常', '汤菜', '咸香', '暖胃', '特色'],
     mealType: ['lunch', 'dinner'],
     intro: '南京名小吃，鸭汤浓郁粉丝筋道。',
     flavorDescription: '老鸭熬出浓汤，下粉丝和鸭血鸭杂同煮。汤浓粉丝筋道，南京人最熟悉的一碗。',
@@ -6791,9 +6793,9 @@ export const DISHES: Dish[] = [
   {
     id: 'luo-bo-gu-tou-tang',
     name: '萝卜骨头汤',
-    image: '/dish-images/luo-bo-gu-tou-tang.png',
+    image: '/dish-images/luo-bo-gu-tou-tang.webp',
     category: '汤羹',
-    tags: ['家常菜', '家常', '汤菜', '清淡', '暖胃'],
+    tags: ['家常', '汤菜', '清淡', '暖胃'],
     mealType: ['lunch', 'dinner'],
     intro: '家常清汤，白萝卜排骨慢炖，清甜不油腻。',
     flavorDescription: '白萝卜切块和筒骨慢炖，萝卜煮到透明吸了汤汁。清淡不腻，天凉的时候喝最舒服。',
@@ -6824,9 +6826,9 @@ export const DISHES: Dish[] = [
   {
     id: 'ji-za-tang',
     name: '鸡杂汤',
-    image: '/dish-images/ji-za-tang.png',
+    image: '/dish-images/ji-za-tang.webp',
     category: '汤羹',
-    tags: ['家常菜', '家常', '汤菜', '咸香', '下饭', '特色'],
+    tags: ['家常', '汤菜', '咸香', '下饭', '特色'],
     mealType: ['lunch', 'dinner'],
     intro: '家常汤，鸡杂切丝煮汤，咸香开胃。',
     flavorDescription: '鸡心鸡肝鸡胗切丝焯水，加姜片煮汤。咸香开胃，是家里杀过鸡之后第二天的一道顺手菜。',
@@ -6862,9 +6864,9 @@ export const DISHES: Dish[] = [
   {
     id: 'zhu-ti-huang-dou-tang',
     name: '猪蹄黄豆汤',
-    image: '/dish-images/zhu-ti-huang-dou-tang.png',
+    image: '/dish-images/zhu-ti-huang-dou-tang.webp',
     category: '汤羹',
-    tags: ['家常菜', '家常', '汤菜', '滋补', '暖胃'],
+    tags: ['家常', '汤菜', '滋补', '暖胃'],
     mealType: ['lunch', 'dinner'],
     intro: '家常滋补汤，猪蹄软糯黄豆粉糯。',
     flavorDescription: '猪蹄焯水去腥，和黄豆一起慢炖到软糯。汤浓豆沙糯，配米饭吃也行单喝也行。',
@@ -6895,9 +6897,9 @@ export const DISHES: Dish[] = [
   {
     id: 'wu-ji-tang',
     name: '乌鸡汤（家常）',
-    image: '/dish-images/wu-ji-tang.png',
+    image: '/dish-images/wu-ji-tang.webp',
     category: '汤羹',
-    tags: ['家常菜', '家常', '汤菜', '滋补', '暖胃'],
+    tags: ['家常', '汤菜', '滋补', '暖胃'],
     mealType: ['lunch', 'dinner'],
     intro: '滋补家常汤，乌鸡炖至软糯，汤清味醇。',
     flavorDescription: '乌鸡焯水后加红枣枸杞慢炖两小时，汤色清亮。喝起来温润不重，是想补一下又不想太油腻时常做的。',
@@ -6928,9 +6930,9 @@ export const DISHES: Dish[] = [
   {
     id: 'hong-dou-yi-mi-tang',
     name: '红豆薏米汤',
-    image: '/dish-images/hong-dou-yi-mi-tang.png',
+    image: '/dish-images/hong-dou-yi-mi-tang.webp',
     category: '甜品',
-    tags: ['家常菜', '家常', '汤菜', '清淡', '暖胃'],
+    tags: ['家常', '汤菜', '清淡', '暖胃'],
     mealType: ['snack'],
     intro: '家常祛湿汤，红豆薏米慢炖，软糯香甜。',
     flavorDescription: '红豆和薏米提前泡过，加水慢炖到红豆开花薏米软。微甜不腻，夏天喝祛湿。',
@@ -6956,9 +6958,9 @@ export const DISHES: Dish[] = [
   {
     id: 'hua-sheng-hong-dou-tang',
     name: '花生红豆汤',
-    image: '/dish-images/hua-sheng-hong-dou-tang.png',
+    image: '/dish-images/hua-sheng-hong-dou-tang.webp',
     category: '甜品',
-    tags: ['家常菜', '家常', '汤菜', '甜品', '暖胃'],
+    tags: ['家常', '汤菜', '甜品', '暖胃'],
     mealType: ['snack'],
     intro: '家常甜汤，花生红豆慢炖，粉糯香甜。',
     flavorDescription: '花生和红豆提前泡一夜，慢炖到花生粉糯红豆开花，加一点冰糖。是冬天放学回家妈妈炖好的那种甜汤。',
@@ -6984,9 +6986,9 @@ export const DISHES: Dish[] = [
   {
     id: 'cha-shu-gu-lao-ya-tang',
     name: '茶树菇老鸭汤',
-    image: '/dish-images/cha-shu-gu-lao-ya-tang.png',
+    image: '/dish-images/cha-shu-gu-lao-ya-tang.webp',
     category: '汤羹',
-    tags: ['家常菜', '家常', '汤菜', '咸香', '滋补', '暖胃'],
+    tags: ['家常', '汤菜', '咸香', '滋补', '暖胃'],
     mealType: ['lunch', 'dinner'],
     intro: '家常滋补汤，茶树菇吸味老鸭软烂。',
     flavorDescription: '茶树菇泡软和老鸭同炖，菇香吸进汤里。汤清不油，老鸭软烂，秋天喝正合适。',
@@ -7019,9 +7021,9 @@ export const DISHES: Dish[] = [
   {
     id: 'liang-ban-pi-dan-dou-fu',
     name: '凉拌皮蛋豆腐',
-    image: '/dish-images/liang-ban-pi-dan-dou-fu.png',
+    image: '/dish-images/liang-ban-pi-dan-dou-fu.webp',
     category: '凉菜',
-    tags: ['家常菜', '家常', '快手', '凉菜', '下酒', '开胃', '补钙'],
+    tags: ['家常', '快手', '凉菜', '下酒', '开胃', '补钙'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '经典家常凉菜，皮蛋配嫩豆腐淋酱汁，开胃下饭。',
     flavorDescription: '嫩豆腐切块铺底，皮蛋切瓣摆上面，淋酱油香醋和小米辣。开胃下饭，五分钟一道菜。',
@@ -7055,9 +7057,9 @@ export const DISHES: Dish[] = [
   {
     id: 'liang-ban-san-si',
     name: '凉拌三丝',
-    image: '/dish-images/liang-ban-san-si.png',
+    image: '/dish-images/liang-ban-san-si.webp',
     category: '凉菜',
-    tags: ['家常菜', '家常', '快手', '凉菜', '下酒', '开胃', '高纤维'],
+    tags: ['家常', '快手', '凉菜', '下酒', '开胃', '高纤维'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '经典凉菜，黄瓜海带胡萝卜丝，爽脆开胃。',
     flavorDescription: '黄瓜丝、海带丝、胡萝卜丝焯一下水，加蒜末和酸甜汁拌匀。爽脆解腻，夏天常做的一碟。',
@@ -7091,9 +7093,9 @@ export const DISHES: Dish[] = [
   {
     id: 'liang-ban-fu-zhu',
     name: '凉拌腐竹',
-    image: '/dish-images/liang-ban-fu-zhu.png',
+    image: '/dish-images/liang-ban-fu-zhu.webp',
     category: '凉菜',
-    tags: ['家常菜', '家常', '快手', '凉菜', '下酒', '开胃', '高蛋白'],
+    tags: ['家常', '快手', '凉菜', '下酒', '开胃', '高蛋白'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '经典凉菜，腐竹泡发拌制，咸香有嚼劲。',
     flavorDescription: '腐竹泡到能掐动切段，加木耳和黄瓜拌酱汁。咸香有嚼劲，是带便当也不容易坏的一碟。',
@@ -7130,7 +7132,7 @@ export const DISHES: Dish[] = [
   {
     id: 'liang-ban-hai-zhe',
     name: '凉拌海蜇',
-    image: '/dish-images/liang-ban-hai-zhe.png',
+    image: '/dish-images/liang-ban-hai-zhe.webp',
     category: '凉菜',
     tags: ['轻食', '家常', '快手', '凉菜', '下酒', '开胃', '低热量'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -7165,9 +7167,9 @@ export const DISHES: Dish[] = [
   {
     id: 'lao-cu-hua-sheng',
     name: '老醋花生',
-    image: '/dish-images/lao-cu-hua-sheng.png',
+    image: '/dish-images/lao-cu-hua-sheng.webp',
     category: '凉菜',
-    tags: ['家常菜', '家常', '凉菜', '下酒', '开胃', '特色', '便当'],
+    tags: ['家常', '凉菜', '下酒', '开胃', '特色', '便当'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '经典下酒小菜，花生米裹糖醋汁，咸香酸甜。',
     flavorDescription: '花生米油炸到酥脆，淋陈醋糖汁拌一下，撒香菜末。咸香酸甜，是下酒桌上最经典的一碟小菜。',
@@ -7198,7 +7200,7 @@ export const DISHES: Dish[] = [
   {
     id: 'kou-shui-ji-sheng-ji',
     name: '口水鸡（升级版）',
-    image: '/dish-images/kou-shui-ji-sheng-ji.png',
+    image: '/dish-images/kou-shui-ji-sheng-ji.webp',
     category: '凉菜',
     tags: ['川菜', '家常', '下酒', '麻辣', '凉菜', '高蛋白'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -7237,7 +7239,7 @@ export const DISHES: Dish[] = [
   {
     id: 'fu-qi-fei-pian-sheng-ji',
     name: '夫妻肺片（升级版）',
-    image: '/dish-images/fu-qi-fei-pian-sheng-ji.png',
+    image: '/dish-images/fu-qi-fei-pian-sheng-ji.webp',
     category: '凉菜',
     tags: ['川菜', '家常', '下酒', '麻辣', '凉菜'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -7280,7 +7282,7 @@ export const DISHES: Dish[] = [
   {
     id: 'wu-xi-xiang-chang',
     name: '无锡香肠',
-    image: '/dish-images/wu-xi-xiang-chang.png',
+    image: '/dish-images/wu-xi-xiang-chang.webp',
     category: '凉菜',
     tags: ['苏菜', '家常', '下酒', '咸甜', '特色', '腊味'],
     mealType: ['lunch', 'dinner', 'bento'],
@@ -7317,9 +7319,9 @@ export const DISHES: Dish[] = [
   {
     id: 'ma-jiang-ban-dou-jiao',
     name: '麻酱拌豆角',
-    image: '/dish-images/ma-jiang-ban-dou-jiao.png',
+    image: '/dish-images/ma-jiang-ban-dou-jiao.webp',
     category: '凉菜',
-    tags: ['家常菜', '家常', '快手', '凉菜', '下饭', '清淡'],
+    tags: ['家常', '快手', '凉菜', '下饭', '清淡'],
     mealType: ['lunch', 'dinner', 'bento'],
     intro: '家常凉拌，豆角焯水淋麻酱，蒜香浓郁。',
     flavorDescription: '豆角焯水到刚熟还翠绿，沥干切段淋上调稀的麻酱。蒜香浓郁，北方家里夏天常做的一道。',

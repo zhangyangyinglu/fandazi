@@ -1,0 +1,24 @@
+.lazy-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 16px;
+  color: var(--fd-muted, #888);
+}
+
+.lazy-spinner {
+  width: 56px;
+  height: 56px;
+  animation: lazy-bounce 1s ease-in-out infinite;
+}
+
+.lazy-fallback p {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+@keyframes lazy-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}

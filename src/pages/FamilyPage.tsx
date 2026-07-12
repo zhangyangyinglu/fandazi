@@ -1,7 +1,7 @@
 /**
  * 家庭空间 / 饭搭子组合设置
  *
- * 公开 Demo 使用示例成员；正式部署后由用户自定义饭搭子组合。
+ * 初次打开使用默认成员；正式使用时由用户自定义饭搭子组合。
  * 与 /health 的健康档案互补：这里管"谁在搭饭 + 今天谁掌勺"，/health 管"每个人的健康约束"。
  */
 import { useEffect, useState } from 'react'
@@ -15,9 +15,10 @@ import {
 } from '@/data/familySharing'
 import { EMPTY_DISH_PREFERENCES } from '@/data/dishPreferences'
 import { readHealthProfiles, type HealthProfile } from '@/components/healthProfileStorage'
+import { FantuanIcon } from '@/components/FantuanIcon'
 import './FamilyPage.css'
 
-const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36)
+const uid = () => crypto.randomUUID()
 
 const AVATAR_OPTIONS = ['🐶', '🐱', '🐰', '🐻', '🐼', '🦊', '🐹', '🐨', '🦁', '🐯']
 
@@ -39,7 +40,7 @@ export function FamilyPage() {
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [])
 
-  const isDemo = !isCustomized
+  const isDefaultGroup = !isCustomized
 
   const updateMember = (memberId: string, patch: Partial<BuddyMember>) => {
     setGroup((prev) => ({
@@ -72,7 +73,13 @@ export function FamilyPage() {
   }
 
   const saveGroup = () => {
-    writeBuddyGroup(group)
+    const emptyName = group.members.find((m) => !m.name.trim())
+    if (emptyName) {
+      return // 有空名成员时不保存
+    }
+    const trimmed = { ...group, members: group.members.map((m) => ({ ...m, name: m.name.trim() })) }
+    writeBuddyGroup(trimmed)
+    setGroup(trimmed)
     setIsCustomized(true)
     setEditing(false)
     setSaved(true)
@@ -89,10 +96,10 @@ export function FamilyPage() {
   return (
     <div className="family-page">
       <section className="fd-hero-card family-hero">
-        <div className="hero-label">家庭空间 · 饭搭子组合</div>
+        <div className="hero-label"><FantuanIcon name="buddy-collab" size={20} /> 家庭空间 · 饭搭子组合</div>
         <h2>谁在搭饭，今天谁掌勺</h2>
         <p>
-          公开 Demo 用示例成员。正式使用时，改成你和搭饭的人。掌勺人当天有决策权，但偏好冲突时双方意见都看得到。
+          初次打开会先给你一组默认成员。正式使用时，改成你和搭饭的人——也可以只有你自己一个人。搭子可以是另一个人、家里的宠物、或不会用电脑的老人。掌勺人当天有决策权，但偏好冲突时双方意见都看得到。
         </p>
         <div className="cta-row">
           {!editing ? (
@@ -100,8 +107,8 @@ export function FamilyPage() {
           ) : (
             <button className="fd-btn fd-btn-primary" onClick={saveGroup}>保存</button>
           )}
-          {isDemo && <span className="fd-badge gold">Demo 示例数据</span>}
-          {!isDemo && <button className="fd-btn fd-btn-secondary" onClick={resetGroup}>恢复 Demo</button>}
+          {isDefaultGroup && <span className="fd-badge gold">默认成员，可编辑</span>}
+          {!isDefaultGroup && <button className="fd-btn fd-btn-secondary" onClick={resetGroup}>恢复默认成员</button>}
           <Link to="/health" className="fd-btn fd-btn-secondary">健康问卷</Link>
         </div>
         {saved && <p className="family-save-note">已保存到本机 localStorage：fandazi.buddyGroup</p>}
@@ -136,7 +143,7 @@ export function FamilyPage() {
                     <span className="member-role">{isChef ? '今日掌勺' : '搭饭人'}</span>
                   </div>
                   {editing && group.members.length > 1 && (
-                    <button className="member-remove" onClick={() => removeMember(member.id)}>✕</button>
+                    <button className="member-remove" onClick={() => removeMember(member.id)} aria-label={`删除成员 ${member.name}`}>✕</button>
                   )}
                 </div>
                 {editing && (
@@ -146,6 +153,7 @@ export function FamilyPage() {
                         key={emoji}
                         className={member.avatar === emoji ? 'avatar-option active' : 'avatar-option'}
                         onClick={() => updateMember(member.id, { avatar: emoji })}
+                        aria-label={`将 ${member.name} 的头像设为 ${emoji}`}
                       >
                         {emoji}
                       </button>
@@ -191,10 +199,10 @@ export function FamilyPage() {
       <aside className="fd-side-card family-aside">
         <h4>关于家庭空间</h4>
         <ul className="family-faq">
+          <li><strong>一个人也能用</strong>：家庭组里可以只有你自己，搭子可以是宠物或不会用电脑的老人，由你代为设置。</li>
           <li><strong>掌勺权</strong>：今天谁做饭，谁有最终决策权，但搭饭人的偏好都看得到。</li>
           <li><strong>健康共享</strong>：组合内健康档案不隔离，推荐时所有成员的限制都会叠加。</li>
-          <li><strong>正式使用</strong>：部署自己的版本后，改成真实成员昵称和头像。</li>
-          <li><strong>后续 Supabase</strong>：多设备同步需要后端，当前版本数据在本地 localStorage。</li>
+          <li><strong>多设备同步</strong>：开启 Supabase 同步后，冰箱/计划/购物/做饭记录/饭团进度在家庭组内共享。</li>
         </ul>
       </aside>
     </div>

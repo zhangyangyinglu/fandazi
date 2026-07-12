@@ -133,6 +133,63 @@ function isHeartyDish(dish: Dish): boolean {
   return false
 }
 
+function hasProteinRole(dish: Dish): boolean {
+  return dish.ingredients.some((ingredient) => ingredient.group === '肉蛋')
+}
+
+function hasVegetableRole(dish: Dish): boolean {
+  return dish.category === '素菜' || dish.ingredients.some((ingredient) => ingredient.group === '蔬菜')
+}
+
+function hasStapleRole(dish: Dish): boolean {
+  return dish.category === '主食' || dish.ingredients.some((ingredient) => ingredient.group === '主食')
+}
+
+/**
+ * 在贪心排序后做一次餐盘结构修复。
+ * 评分只能表达“更像晚餐”，不能保证一定有主食；这里把 2026 餐盘结构变成硬性收口条件。
+ */
+function repairPlateStructure(
+  picks: Dish[],
+  scored: Array<{ dish: Dish; score: number }>,
+  mealTime: MealTime,
+): Dish[] {
+  if (!['lunch', 'dinner', 'bento'].includes(mealTime)) return picks
+
+  const next = [...picks]
+  const roles = [
+    { has: hasProteinRole, label: 'protein' },
+    { has: hasVegetableRole, label: 'vegetable' },
+    { has: hasStapleRole, label: 'staple' },
+  ]
+
+  for (const role of roles) {
+    if (next.some(role.has)) continue
+    const candidate = scored
+      .filter((item) => role.has(item.dish) && !next.some((dish) => dish.id === item.dish.id))
+      .sort((a, b) => b.score - a.score)[0]
+    if (!candidate) continue
+
+    let replacementIndex = -1
+    let bestGapCount = Number.POSITIVE_INFINITY
+    next.forEach((current, index) => {
+      // 不拿唯一的蛋白/蔬菜/主食去换另一类，避免修一处又破坏另一处。
+      const remaining = next.filter((_, currentIndex) => currentIndex !== index)
+      if (hasProteinRole(current) && remaining.filter(hasProteinRole).length === 0 && role.label !== 'protein') return
+      if (hasVegetableRole(current) && remaining.filter(hasVegetableRole).length === 0 && role.label !== 'vegetable') return
+      if (hasStapleRole(current) && remaining.filter(hasStapleRole).length === 0 && role.label !== 'staple') return
+      const trial = [...remaining, candidate.dish]
+      const gapCount = checkPlateStructure(trial).gaps.length
+      if (gapCount < bestGapCount) {
+        bestGapCount = gapCount
+        replacementIndex = index
+      }
+    })
+    if (replacementIndex >= 0) next[replacementIndex] = candidate.dish
+  }
+  return next
+}
+
 /**
  * 动态推荐数量：根据人数 + 餐型 + 候选池是否有大菜
  *
@@ -214,6 +271,7 @@ export function recommendMeal(input: RecommendInput): RecommendResult | null {
         memberPreferences,
         currentMealType,
         healthProfiles,
+        seed: input.seed,
       }),
     }))
     .filter((c) => CATEGORY_PREFERENCE[mealTime][c.dish.category] > 0)
@@ -292,6 +350,9 @@ export function recommendMeal(input: RecommendInput): RecommendResult | null {
     if (pk) usedProteinKeys.push(pk)
     totalKcal += best.n.kcal
   }
+
+  const repairedPicks = repairPlateStructure(picks, scored, mealTime)
+  picks.splice(0, picks.length, ...repairedPicks)
 
   // snack 模式只需 1 道菜; 其他模式至少 2 道
   if (picks.length < minPicks) return null
@@ -376,6 +437,7 @@ function scoreCandidate(
     memberPreferences?: Record<string, DishPreferences>
     currentMealType?: CurrentMealTime
     healthProfiles?: HealthProfile[]
+    seed?: number
   },
 ): CandidateScore {
   let score = 1
@@ -427,6 +489,13 @@ function scoreCandidate(
     prefFilter = pref.filter
     prefReasons = pref.reasons
     disagreement = pref.disagreement
+  }
+
+  // “改一下”只改变同等条件下的排序，不会绕过健康/忌口/餐盘结构约束。
+  if (ctx?.seed) {
+    let hash = 0
+    for (const char of dish.id) hash = (hash * 31 + char.charCodeAt(0)) % 997
+    score += ((hash + ctx.seed * 131) % 17) * 0.012
   }
 
   return { score, prefFilter: prefFilter || healthFilter, prefReasons: [...healthReasons, ...prefReasons], disagreement }

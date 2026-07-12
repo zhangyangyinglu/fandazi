@@ -1,0 +1,5 @@
+# Vercel 部署时忽略的本地目录（不随部署上传）
+# 这些目录仅用于本地 QA / 备份，不进生产
+backups/
+dish-image-alpha-workbench/
+dist/

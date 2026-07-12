@@ -1,0 +1,47 @@
+{
+  "updatedAt": "2026-07-10 14:13 +0800",
+  "sourceFolder": "/Users/miki/Desktop/图标",
+  "note": "Only accepted mascot-state assets are imported. Other generated icons need regeneration according to docs/图标重生成提示词清单_2026-07-10.md.",
+  "items": [
+    {
+      "source": "饭团默认态.png",
+      "file": "/icons/fantuan-states/fantuan-default.png",
+      "bytes": 1631473
+    },
+    {
+      "source": "饭团入口.png",
+      "file": "/icons/fantuan-states/fantuan-entry.png",
+      "bytes": 1605185
+    },
+    {
+      "source": "饭团对话态.png",
+      "file": "/icons/fantuan-states/fantuan-chat.png",
+      "bytes": 1650996
+    },
+    {
+      "source": "饭团开心态.png",
+      "file": "/icons/fantuan-states/fantuan-happy.png",
+      "bytes": 1634679
+    },
+    {
+      "source": "饭团思考态.png",
+      "file": "/icons/fantuan-states/fantuan-thinking.png",
+      "bytes": 1663908
+    },
+    {
+      "source": "饭团提醒态.png",
+      "file": "/icons/fantuan-states/fantuan-reminder.png",
+      "bytes": 1657727
+    },
+    {
+      "source": "饭团做饭态.png",
+      "file": "/icons/fantuan-states/fantuan-cooking.png",
+      "bytes": 1651663
+    },
+    {
+      "source": "饭团休息态.png",
+      "file": "/icons/fantuan-states/fantuan-resting.png",
+      "bytes": 1647254
+    }
+  ]
+}

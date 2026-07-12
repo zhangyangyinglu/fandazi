@@ -36,6 +36,13 @@
   grid-template-columns: 1.35fr 0.65fr;
   gap: 18px;
   margin-bottom: 18px;
+  align-items: start;
+}
+
+.hero-main-stack {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
 }
 
 .hero-label {
@@ -56,6 +63,28 @@
   font-size: 16px;
   color: var(--fd-muted);
   margin: 0 0 18px;
+}
+
+.home-filters-panel {
+  min-width: 0;
+  padding: 16px 22px 4px;
+  background: var(--fd-surface);
+  border: 1px solid var(--fd-line);
+  border-radius: 24px;
+}
+
+.home-filters-panel .filters-section {
+  padding: 0 0 12px;
+}
+
+.home-filters-panel .filter-label {
+  margin-bottom: 6px;
+}
+
+.home-filters-panel .filter-help {
+  font-size: 13px;
+  line-height: 1.4;
+  margin: 0 0 10px;
 }
 
 .cta-row {
@@ -95,6 +124,26 @@
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+@media (min-width: 1001px) {
+  .fd-topbar {
+    flex-wrap: nowrap;
+  }
+
+  .fd-nav {
+    min-width: 0;
+  }
+
+  .fd-top-right {
+    margin-left: auto;
+    min-width: 0;
+  }
+
+  .fd-inline-search.open {
+    width: min(360px, 42vw);
+    min-width: 0;
+  }
 }
 
 /* 分区 */
@@ -357,4 +406,27 @@
     font-size: 10px !important;
     padding: 3px 6px !important;
   }
+}
+
+/* 更多筛选面板 */
+.more-filter-panel {
+  margin-top: 8px;
+  padding: 12px 14px;
+  background: var(--fd-surface-soft, #f8f5f0);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-group-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fd-muted, #999);
+  margin-right: 8px;
+  white-space: nowrap;
+}
+
+.filter-tabs-extra {
+  align-items: center;
 }

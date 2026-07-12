@@ -1,270 +1,138 @@
-# 饭搭子 Fandazi Web Tool
+# 🍚 饭搭子 — 让家人一起好好吃饭
 
-饭搭子是一个 **GitHub 开源型 Web 工具版家庭做饭助手**：打开网页就能从菜品、冰箱、计划、购物清单、我家版做饭记录、饭团游戏化和 AI 厨房开始使用。
+> 家庭做饭助手：从"今天吃什么"到"冰箱里有什么"到"买什么"到"做出来好不好吃"，一条龙。
+> 209 道家常菜谱 + 冰箱管理 + 智能计划 + 购物清单 + 饭团游戏化 + 家庭空间 + 家庭同步。AI 厨房与健康分析当前仅保留入口，暂未接通外部服务。
 
-> 当前线上 Demo：<https://fandazi-web-tool.vercel.app>
+🔗 **在线体验**：[fandazi-web-tool.vercel.app](https://fandazi-web-tool.vercel.app)
 
-## 这个项目解决什么
+---
 
-很多家庭做饭的问题不是“不会做菜”，而是：
+## ✨ 核心功能
 
-- 今天不知道吃什么；
-- 冰箱里有什么记不清；
-- 计划和购物清单分离；
-- 做过的口味调整下次又忘；
-- AI 生成菜谱很强，但缺少家庭上下文；
-- 健康建议、家庭偏好、做饭记录没有沉淀。
+| 功能 | 说明 |
+|------|------|
+| 🍳 菜品推荐 | 209 道家常菜谱，按冰箱食材、健康标签、家庭偏好智能排序 |
+| 🧊 冰箱管理 | 记录食材、保质期提醒、自动匹配"冰箱可做"菜品 |
+| 📅 计划日历 | 按天排菜，标记做过后自动沉淀到"我家版" |
+| 🛒 购物清单 | 按菜品自动生成购物清单，支持勾选采购、按菜分组 |
+| 🏠 我家版本 | 每次做完记录口味反馈，沉淀成你家独有的菜谱变体 |
+| 🍙 饭团游戏化 | 签到赚米粒、副本挑战、抽卡图鉴——让做饭变成小游戏 |
+| 🤖 AI 厨房 | 当前暂未接通外部服务，不要求外部服务密钥，不读取或上传健康/冰箱/计划数据 |
+| 💚 健康接口 | 当前仅保留入口，不采集健康档案；菜品标签仅作本地筛选参考 |
+| 👨‍👩‍👧 家庭空间 | 自定义家庭成员、掌勺人轮换、健康问卷、搭子偏好 |
+| ☁️ 家庭同步 | Supabase 后端，一个家庭一个共享云端，多人多设备同步 |
 
-饭搭子把这些串成一个可演示、可自用、可继续扩展的 Web 工具。
+## 🚀 快速开始
 
-## 主要功能
+### 环境要求
 
-### 菜品工作区
+- Node.js 20+
+- npm 10+
 
-- 打开即进入菜品库，不做传统 App 首页；
-- 支持搜索、场景筛选、健康标签、冰箱匹配；
-- 菜品卡可加入计划、加入购物清单、查看详情；
-- 支持桌面与移动端布局。
-
-### 菜品详情
-
-- 菜品说明、预计用时、份量、健康负担；
-- 食材清单显示冰箱已有 / 缺少；
-- 做法步骤；
-- 健康摘要；
-- 饭团建议；
-- 加入今晚计划 / 加入购物清单 / 标记做过 / 改成我家版。
-
-### 冰箱
-
-- Demo 冰箱库存；
-- 食材分类、数量、保质期、状态；
-- 查看可做、记录用掉、补采购；
-- 与计划和购物清单联动。
-
-### 计划 + 购物清单
-
-- 晚餐计划；
-- 根据计划和冰箱库存计算缺失食材；
-- 购物清单按菜品来源分组；
-- checkbox 勾选采购；
-- 做完后回流到做饭记录和我家版。
-
-### 我家版 + 做饭记录
-
-- 记录家里真实做过的菜；
-- 沉淀“我家口味”与“阿川偏好”；
-- 做饭记录 timeline；
-- 米粒奖励；
-- 下次做同一道菜时带上历史调整。
-
-### 饭团游戏化
-
-- 饭团状态、等级、米粒；
-- 签到、副本、抽饭团、图鉴；
-- 将做饭行为变成轻量陪伴和反馈。
-
-### AI 厨房
-
-- 用户自配 API Key；
-- 根据菜名生成菜谱；
-- 根据冰箱食材推荐菜；
-- 可取消请求；
-- 调试输出折叠；
-- 无 Key 时可作为普通菜品/计划/冰箱工具使用。
-
-## Demo 与私人数据分离
-
-本项目默认展示公开 Demo 数据，方便 GitHub 访问者直接理解产品：
-
-- Demo 菜品、冰箱、计划、购物、我家版记录均为演示数据；
-- 用户真实使用数据默认保存在浏览器 `localStorage`；
-- AI API Key 只保存在用户本机浏览器 `localStorage`，不会上传到本项目服务器；
-- 若后续接入 Supabase / 数据库，应将公开 Demo 与私人家庭空间隔离。
-
-当前 localStorage key：
-
-```text
-fandazi-web-tool
-fandazi.aiKitchen.apiConfig
-```
-
-## 技术栈
-
-- Vite 8
-- React 19
-- TypeScript 6
-- React Router 7
-- Zustand 5 + persist
-- vite-plugin-pwa
-- Vercel 静态部署
-
-## 本地运行
-
-需要 Node.js 22+。
+### 安装 & 本地运行
 
 ```bash
-npm install
-npm run dev
-```
-
-默认本地开发地址：
-
-```text
-http://localhost:5173
-```
-
-## 构建
-
-```bash
-npm run build
-```
-
-本项目构建会执行：
-
-```bash
-tsc -b && vite build
-```
-
-## 预览构建结果
-
-```bash
-npm run preview
-```
-
-## 部署到 Vercel
-
-### 使用 Vercel CLI
-
-```bash
-npm install -g vercel
-vercel --prod
-```
-
-本项目包含 `vercel.json`，用于修复 React Router 子路由刷新 404：
-
-```json
-{
-  "rewrites": [
-    {
-      "source": "/((?!manifest.webmanifest|sw.js|workbox-.*\\.js|registerSW.js|assets/.*|icons/.*).*)",
-      "destination": "/index.html"
-    }
-  ]
-}
-```
-
-### 部署后建议验证
-
-```bash
-for path in / /mine /pantry /plan /shopping /recipes/broccoli-chicken-egg /ai-kitchen /fantuan /manifest.webmanifest /sw.js; do
-  code=$(curl -s -o /dev/null -w '%{http_code}' "https://YOUR_DOMAIN$path")
-  echo "$path $code"
-done
-```
-
-所有路径应返回 `200`。
-
-## 本地部署（你和家人怎么用起来）
-
-### 方式一：直接用线上 Demo
-
-打开 <https://fandazi-web-tool.vercel.app> 就能用，不需要安装任何东西。数据存在你自己的浏览器里。
-
-### 方式二：本地运行（推荐家庭自用）
-
-```bash
-# 1. 确保已安装 Node.js 18+ 和 npm
-node -v  # 应显示 v18 或更高
-
-# 2. 克隆仓库
 git clone https://github.com/fandazi/fandazi-web-tool.git
 cd fandazi-web-tool
-
-# 3. 安装依赖
-npm install
-
-# 4. 启动开发服务器
-npm run dev
-# 打开 http://localhost:5173
-
-# 5. 构建生产版本
-npm run build
-
-# 6. 本地预览生产版本
-npm run preview
-```
-
-你和家人各自在自己电脑上运行，就可以使用了。当前数据存在各自浏览器中，多设备同步功能开发中。
-
-### 方式三：部署到你自己的 Vercel
-
-1. Fork 这个仓库到你自己的 GitHub
-2. 在 [vercel.com](https://vercel.com) 导入该仓库
-3. 自动识别 Vite 项目，直接部署
-4. 获得你自己的域名，家人访问即可使用
-
-## AI Key 配置
-
-进入 `AI厨房` 页面后，可选择服务商并填写 API Key。
-
-注意：
-
-- Key 只保存在浏览器 localStorage；
-- 本项目不提供后端代理；
-- 如果直接在浏览器调用第三方 OpenAI-compatible API，需确认该服务允许浏览器跨域请求；
-- 公开 Demo 不应内置任何真实 API Key。
-
-## 健康与法律边界
-
-饭搭子的健康信息只用于家庭饮食参考：
-
-- 不是医疗建议；
-- 不替代医生、营养师或专业诊断；
-- 对过敏、疾病、药物禁忌、孕产、儿童、老人等特殊情况，用户需要自行咨询专业人士；
-- AI 生成内容需要人工确认后再使用。
-
-## 数据与素材边界
-
-- Demo 菜品与说明用于产品演示；
-- 若加入真实菜品图片，请确认图片来源、版权与授权；
-- 不要把私人家庭数据、真实 API Key、未授权图片提交到公开仓库；
-- 若公开发布，建议使用演示数据与可授权素材。
-
-## 推荐开发流程
-
-```bash
 npm install
 npm run dev
-npm run build
 ```
 
-提交或部署前至少检查：
+浏览器打开 `http://localhost:5173` 即可。
+
+### 构建
 
 ```bash
-npm run build
+npm run build      # tsc 类型检查 + vite 生产构建
+npm run preview    # 本地预览生产构建
 ```
 
-如已部署到 Vercel，检查关键路由：
+### 测试 & 代码检查
 
 ```bash
-for path in / /mine /pantry /plan /shopping /recipes/broccoli-chicken-egg /manifest.webmanifest /sw.js; do
-  code=$(curl -s -o /dev/null -w '%{http_code}' "https://fandazi-web-tool.vercel.app$path")
-  echo "$path $code"
-done
+npm test           # vitest 单元测试
+npx eslint src/    # eslint 代码规范检查
+npx tsc -b --noEmit  # TypeScript 类型检查
 ```
 
-## 当前状态
+## 📦 技术栈
 
-- P0：方向收口 + 完整功能排期 + 旧代码审计 ✅
-- P1：UI 设计系统 + v6 渲染图 + 前端骨架 ✅
-- P2：菜品主链路 + 冰箱 + 计划 + 购物 + 我家版 ✅
-- P3：家庭共用能力已在功能层演示；Supabase 多设备同步开发中 🔄
-- P4：饭团游戏化 + 抽卡 + 图鉴 ✅
-- P5：AI 厨房 ✅
-- P6：健康分析增强版 ⏳
-- P7：GitHub 开源包装 / README / 部署说明 🔄
+| 技术 | 版本 | 用途 |
+|------|------|------|
+| React | 19 | UI 框架 |
+| TypeScript | 6 | 类型安全 |
+| Vite | 8 | 构建工具 |
+| React Router | 7 | 路由 |
+| Zustand | 5 | 状态管理 |
+| Supabase | 2 | 后端同步（可选） |
+| vite-plugin-pwa | 1.3 | PWA 离线支持 |
+| Vitest | 4 | 单元测试 |
 
-## License
+## ☁️ 家庭同步配置（可选）
 
-MIT
+饭搭子默认纯本地运行（数据存在浏览器 localStorage）。如需多设备同步：
+
+1. 在 [Supabase](https://supabase.com) 创建一个项目
+2. 打开 App 的「同步」页面，填入 Supabase URL 和 anon key
+3. 注册账号 → 创建家庭组 → 获得邀请包（URL + key + 邀请码）
+4. 家庭成员在各设备填入同一组凭据即可同步
+
+> 一个家庭 = 一个共享 Supabase 后端。一个人也可以用一个家庭组。
+
+## 🤖 AI 厨房与健康接口
+
+当前版本的 AI 厨房和健康页是**预留入口**：
+
+- 不要求填写外部服务密钥
+- 不调用外部 AI 服务
+- 不读取或上传健康、冰箱、计划、购物清单数据
+- 健康相关标签仅用于本地筛选参考，不构成医疗或营养诊断
+
+后续如接入外部服务，会先在页面和隐私政策中明确数据流向、开关与边界。
+
+## 🖼️ 图片与素材来源
+
+- 菜品图与食材图用于本项目展示与本地使用；发布前需确认素材来源/授权，不使用用户私人源图路径入仓。
+- 工程内展示图统一放在 `public/dish-images/` 与 `public/ingredient-images/`，发布仓库不应包含本机 `~/Pictures/`、临时工作台或未压缩源文件。
+- 图标与品牌素材位于 `public/icons/`、`public/favicon.png`、`public/apple-touch-icon.png`、`public/brand-logo.png`。
+
+## 🔐 隐私与数据边界
+
+- 默认数据存储在浏览器 localStorage。
+- 开启家庭同步时，用户自行配置 Supabase 项目；一个人也可以使用一个家庭组。
+- Supabase anon key 是前端公开 key；不要提交 service_role key、PAT 或任何私人 token。
+- 隐私政策见应用内 `/privacy` 页面与仓库 `PRIVACY.md`。
+
+## 📐 项目结构
+
+```
+src/
+├── app/           # 应用入口 & 路由
+├── components/    # 通用组件（TopNav, FloatingFantuan, healthProfileStorage...）
+├── data/          # 数据层（dishes, nutrition, recommend, gamification, aiRecipe...）
+├── design/        # 设计令牌（tokens.css）
+├── lib/           # 基础设施（supabaseClient, familyCloudSync, familyAuth...）
+├── pages/         # 页面组件（12 个路由页面）
+├── stores/        # Zustand store
+└── types.ts       # 全局类型定义
+```
+
+## 📄 License
+
+[MIT](./LICENSE)
+
+## 🤝 贡献
+
+欢迎提 Issue 和 PR。目前仍在积极开发中。
+
+## ⚠️ 免责声明
+
+- 营养数据来源于《中国食物成分表》第 6 版 / USDA FoodData Central，仅供家庭参考，不作为医疗级数据
+- 健康推荐基于《中国居民膳食指南》2026 版，**不替代专业医疗或营养建议**
+- 有特定健康问题（糖尿病、肾病、过敏等）请遵医嘱
+
+## 🗓️ 项目状态
+
+- **版本**：0.1.0
+- **状态**：积极开发中，发布前 QA 收口阶段
+- **最新更新**：2026-07-06

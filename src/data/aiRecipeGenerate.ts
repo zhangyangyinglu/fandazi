@@ -20,7 +20,7 @@ export const DEFAULT_AI_RECIPE_PROVIDER: AIRecipeProviderKey = 'deepseek'
 export const DEFAULT_AI_RECIPE_ENDPOINT = AI_RECIPE_PROVIDERS[DEFAULT_AI_RECIPE_PROVIDER].endpoint
 export const DEFAULT_AI_RECIPE_MODEL = AI_RECIPE_PROVIDERS[DEFAULT_AI_RECIPE_PROVIDER].model
 
-type FetchLike = (input: string, init: {
+type FetchLike = (_input: string, _init: {
   method: 'POST'
   headers: Record<string, string>
   body: string
@@ -91,7 +91,7 @@ export async function generateAIRecipeJson(options: GenerateAIRecipeOptions): Pr
   const recipeText = options.recipeText.trim()
   const apiKey = options.apiKey.trim()
   if (!recipeText) throw new Error('菜名或菜谱原文不能为空')
-  if (!apiKey) throw new Error('API Key 不能为空')
+  if (!apiKey) throw new Error('外部服务密钥不能为空')
 
   const providerDefaults = resolveAIRecipeProvider(options.provider)
   const endpoint = options.endpoint?.trim() || providerDefaults.endpoint

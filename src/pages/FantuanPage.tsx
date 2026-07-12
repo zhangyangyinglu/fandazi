@@ -23,6 +23,8 @@ import {
   type Fantuanzi,
   type QuestLevel,
 } from '@/data/gamification'
+import { FantuanIcon } from '@/components/FantuanIcon'
+import { FantuanPetImage } from '@/components/FantuanPetImage'
 import './FantuanPage.css'
 
 const LEVEL_LABELS: Record<QuestLevel, string> = {
@@ -69,9 +71,9 @@ export function FantuanPage() {
   }
   const refreshFantuanziState = () => setFtState(readFantuanzi())
 
-  // 同步 store 的 fantuan.mili 到 gamification.ts 的 miliState
-  // store.fantuan.mili 是"快速米粒"（做完了 +15），gamification.ts 是完整历史
-  const displayMili = miliState.balance + fantuanStore.mili - 128 // 去掉初始 128 避免重复
+  // store.fantuan.mili 是唯一米粒来源（签到/做菜/副本/抽卡都通过 addMili 同步到 store）
+  // gamification.ts 的 miliState.balance 仅用于签到去重和历史记录，不重复计入
+  const displayMili = fantuanStore.mili
 
   const handleCheckin = () => {
     const result = dailyCheckin()
@@ -138,13 +140,13 @@ export function FantuanPage() {
   return (
     <div className="fantuan-page">
       <span className="fd-page-tag">饭团 · 游戏化</span>
-      <h2>🍙 饭团的家</h2>
+      <h2><FantuanIcon name="home" size={34} /> 饭团的家</h2>
       <p className="fd-muted">做饭攒米粒，抽饭团宠物，完成副本升等级</p>
 
       {/* 饭团状态卡 */}
       <section className="fd-panel ft-status-card">
         <div className="ft-pet-display">
-          <span className="ft-pet-emoji">{activeFantuanzi?.emoji || '🍙'}</span>
+          <span className="ft-pet-emoji"><FantuanPetImage state={activeFantuanzi ? 'happy' : 'default'} /></span>
           <div className="ft-pet-info">
             <span className="ft-pet-name">{activeFantuanzi?.name || '白饭团'}</span>
             <span className="ft-pet-rarity" style={{ color: RARITY_COLORS[activeFantuanzi?.rarity || 'N'] }}>
@@ -160,7 +162,9 @@ export function FantuanPage() {
           </div>
           <div className="ft-stat">
             <span className="ft-stat-label">🏅 等级</span>
-            <strong className="ft-stat-value">{LEVEL_EMOJI[currentLevel]} {LEVEL_LABELS[currentLevel]}</strong>
+            <strong className="ft-stat-value">
+              {currentLevel === 'diamond' ? <FantuanIcon name="diamond" size={20} /> : LEVEL_EMOJI[currentLevel]} {LEVEL_LABELS[currentLevel]}
+            </strong>
           </div>
           <div className="ft-stat">
             <span className="ft-stat-label">🍳 做过</span>
@@ -172,14 +176,14 @@ export function FantuanPage() {
           onClick={handleCheckin}
           disabled={hasCheckedIn}
         >
-          {hasCheckedIn ? '✅ 今日已签到' : `📅 每日签到 +${MILI_REWARDS.DAILY_CHECKIN}🌾`}
+          {hasCheckedIn ? '✅ 今日已签到' : <><FantuanIcon name="checkin" size={22} /> 每日签到 +{MILI_REWARDS.DAILY_CHECKIN}🌾</>}
         </button>
       </section>
 
       {/* 副本系统 */}
       <section className="fd-panel">
         <div className="ft-section-header">
-          <h3>🗺️ 副本挑战</h3>
+          <h3><FantuanIcon name="challenge-copy" size={26} /> 副本挑战</h3>
           <div className="ft-level-progress">
             {(Object.keys(questProgress) as QuestLevel[]).map((lv) => (
               <span key={lv} className={`ft-level-badge ${lv}`}>
@@ -231,7 +235,7 @@ export function FantuanPage() {
 
       {/* 抽卡 */}
       <section className="fd-panel">
-        <h3>🎰 抽饭团</h3>
+        <h3><FantuanIcon name="draw" size={26} /> 抽饭团</h3>
         <p className="fd-muted">100🌾 单抽 · 1000🌾 十连（保底 R+）</p>
         <div className="ft-gacha-buttons">
           <button
@@ -252,11 +256,11 @@ export function FantuanPage() {
 
         {gachaResult && (
           <div className="ft-gacha-result">
-            <h4>🎉 抽到了！</h4>
+            <h4><FantuanIcon name="celebration" size={24} /> 抽到了！</h4>
             <div className={`ft-gacha-grid ${gachaResult.length > 1 ? 'ten' : ''}`}>
               {gachaResult.map((ft, i) => (
                 <div key={i} className="ft-gacha-card" style={{ borderColor: RARITY_COLORS[ft.rarity] }}>
-                  <span className="ft-gacha-emoji">{ft.emoji}</span>
+                  <span className="ft-gacha-emoji"><FantuanPetImage state="happy" /></span>
                   <span className="ft-gacha-name">{ft.name}</span>
                   <span className="ft-gacha-rarity" style={{ color: RARITY_COLORS[ft.rarity] }}>{ft.rarity}</span>
                 </div>
@@ -269,7 +273,7 @@ export function FantuanPage() {
 
       {/* 饭团图鉴 */}
       <section className="fd-panel">
-        <h3>📖 饭团图鉴</h3>
+        <h3><FantuanIcon name="catalog" size={26} /> 饭团图鉴</h3>
         <p className="fd-muted">已收集 {ownedCount}/{totalCount} · {Math.round((ownedCount / totalCount) * 100)}%</p>
         <div className="ft-dex-progress">
           <div className="ft-dex-progress-fill" style={{ width: `${(ownedCount / totalCount) * 100}%` }} />
@@ -285,7 +289,7 @@ export function FantuanPage() {
                 style={{ borderColor: owned ? RARITY_COLORS[ft.rarity] : undefined }}
                 onClick={() => owned && handleSetActive(ft.id)}
               >
-                <span className="ft-dex-emoji">{owned ? ft.emoji : '❓'}</span>
+                <span className="ft-dex-emoji">{owned ? <FantuanPetImage state="happy" /> : '❓'}</span>
                 <span className="ft-dex-name">{owned ? ft.name : '???'}</span>
                 <span className="ft-dex-rarity" style={{ color: owned ? RARITY_COLORS[ft.rarity] : undefined }}>
                   {owned ? ft.rarity : '?'}
@@ -310,10 +314,10 @@ export function FantuanPage() {
                 {key === 'COMPLETE_QUEST' && '🗺️ 完成副本'}
                 {key === 'READ_RECIPE' && '📖 读完菜谱'}
                 {key === 'MEAL_CHECKIN' && '✅ 餐后打卡'}
-                {key === 'FLOP_SHARE' && '💥 翻车分享'}
-                {key === 'STREAK_7DAYS' && '🔥 连续 7 天'}
+                {key === 'FLOP_SHARE' && <><FantuanIcon name="fail-share" size={20} /> 翻车分享</>}
+                {key === 'STREAK_7DAYS' && <><FantuanIcon name="streak" size={20} /> 连续 7 天</>}
                 {key === 'LEVEL_UP' && '⬆️ 升级'}
-                {key === 'INVITE_COMPANION' && '🤝 邀请搭子'}
+                {key === 'INVITE_COMPANION' && <><FantuanIcon name="buddy-collab" size={20} /> 邀请搭子</>}
                 {key === 'COMPANION_LEVELUP' && '🎉 搭子升级'}
                 {key === 'WATCH_FREE_LESSON' && '🎓 看免费课'}
               </span>

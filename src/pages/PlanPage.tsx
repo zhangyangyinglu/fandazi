@@ -2,11 +2,12 @@
  * 计划页 — P2-3
  * 对应渲染图：P1-1d 计划+购物联动页 v6
  */
-import { useState } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useFandaziStore } from '@/stores/fandaziStore'
 import { DISHES } from '@/data/dishes'
 import type { PlanStatus } from '@/types'
+import { FantuanIcon } from '@/components/FantuanIcon'
 import './PlanPage.css'
 
 const STATUS_INFO: Record<PlanStatus, { text: string; cls: string }> = {
@@ -20,6 +21,18 @@ const STATUS_INFO: Record<PlanStatus, { text: string; cls: string }> = {
 
 function todayStr() {
   return new Date().toISOString().slice(0, 10)
+}
+
+function tomorrowStr() {
+  const d = new Date()
+  d.setDate(d.getDate() + 1)
+  return d.toISOString().slice(0, 10)
+}
+
+function dayAfterTomorrowStr() {
+  const d = new Date()
+  d.setDate(d.getDate() + 2)
+  return d.toISOString().slice(0, 10)
 }
 
 function dateLabel(dateStr: string) {
@@ -52,11 +65,15 @@ export function PlanPage() {
   const [rating, setRating] = useState<'good' | 'ok' | 'bad'>('good')
   const [note, setNote] = useState('')
 
-  const [showAdd, setShowAdd] = useState(false)
+  // 计划页的加菜入口默认展开：来源和可选范围直接可见，不再藏在按钮后面。
+  const [showAdd, setShowAdd] = useState(true)
   const [selectedDate, setSelectedDate] = useState(todayStr())
+  const [quickDishQuery, setQuickDishQuery] = useState('')
+  const quickAddRef = useRef<HTMLDivElement>(null)
+  const quickSearchRef = useRef<HTMLInputElement>(null)
 
   // 冰箱匹配计算（在 selector 外）
-  const pantryNames = new Set(pantry.map((p) => p.ingredientName))
+  const pantryNames = useMemo(() => new Set(pantry.map((p) => p.ingredientName)), [pantry])
   const getMatchForDish = (dishId: string) => {
     const dish = getDishById(dishId)
     if (!dish) return { have: 0, missing: 0 }
@@ -79,6 +96,31 @@ export function PlanPage() {
   const upcomingPlans = mealPlans
     .filter((p) => p.planDate > selectedDate)
     .sort((a, b) => a.planDate.localeCompare(b.planDate))
+  const tomorrowPlans = mealPlans.filter((p) => p.planDate === tomorrowStr())
+
+  const quickDishes = useMemo(() => {
+    const query = quickDishQuery.trim().toLowerCase()
+    if (!query) return DISHES
+    return DISHES.filter((dish) => (
+      dish.name.toLowerCase().includes(query)
+      || dish.category.toLowerCase().includes(query)
+      || dish.tags.some((tag) => tag.toLowerCase().includes(query))
+      || dish.ingredients.some((ingredient) => ingredient.name.toLowerCase().includes(query))
+    ))
+  }, [quickDishQuery])
+
+  const openQuickAdd = () => {
+    setShowAdd(true)
+    window.requestAnimationFrame(() => {
+      quickAddRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      quickSearchRef.current?.focus()
+    })
+  }
+
+  useEffect(() => {
+    if (!showAdd) return
+    window.requestAnimationFrame(() => quickAddRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  }, [showAdd])
 
   const handleMarkDone = (planId: string, dishId: string) => {
     const dish = getDishById(dishId)
@@ -93,7 +135,7 @@ export function PlanPage() {
     if (!feedbackPlan) return
     updatePlanStatus(feedbackPlan.planId, 'done')
     addCookingLog({
-      id: Math.random().toString(36).slice(2, 10),
+      id: crypto.randomUUID(),
       dishId: feedbackPlan.dishId,
       dishName: feedbackPlan.dishName,
       date: todayStr(),
@@ -103,8 +145,8 @@ export function PlanPage() {
     })
     addMili(15)
 
-    // 如果有备注，沉淀到我家版
-    if (note.trim()) {
+    // 如果有备注或口味评分，沉淀到我家版
+    if (note.trim() || rating) {
       const dish = getDishById(feedbackPlan.dishId)
       if (dish) {
         const existing = useFandaziStore.getState().myDishVersions.find((v) => v.dishId === feedbackPlan.dishId)
@@ -113,7 +155,8 @@ export function PlanPage() {
           ingredients: existing?.ingredients ?? dish.ingredients,
           steps: existing?.steps ?? dish.steps,
           cookTime: existing?.cookTime ?? dish.cookTime,
-          myNote: note.trim(),
+          myNote: note.trim() || existing?.myNote || '',
+          rating: rating || existing?.rating,
           createdAt: existing?.createdAt ?? Date.now(),
           updatedAt: Date.now(),
         })
@@ -128,7 +171,7 @@ export function PlanPage() {
     if (!feedbackPlan) return
     updatePlanStatus(feedbackPlan.planId, 'done')
     addCookingLog({
-      id: Math.random().toString(36).slice(2, 10),
+      id: crypto.randomUUID(),
       dishId: feedbackPlan.dishId,
       dishName: feedbackPlan.dishName,
       date: todayStr(),
@@ -143,7 +186,7 @@ export function PlanPage() {
       {/* Hero */}
       <div className="plan-hero">
         <div className="fd-hero-card">
-          <div className="hero-label">今晚 · 小夏 + 阿川</div>
+          <div className="hero-label">今晚计划</div>
           <h2>
             {displayMissingTotal > 0
               ? `今晚计划差 ${displayMissingTotal} 样食材，买完就能开做`
@@ -155,11 +198,21 @@ export function PlanPage() {
               : `已计划 ${displayPlans.length} 道菜，做完后自动沉淀到我家版。`}
           </p>
           <div className="cta-row">
-            <Link to="/shopping"><button className="fd-btn fd-btn-primary">打开购物清单</button></Link>
-            <button className="fd-btn fd-btn-secondary" onClick={() => setShowAdd(!showAdd)}>
-              {showAdd ? '收起加菜' : '让饭团重搭'}
+            <Link to="/shopping" className="fd-btn fd-btn-primary">打开购物清单</Link>
+            <button className="fd-btn fd-btn-secondary" onClick={() => showAdd ? setShowAdd(false) : openQuickAdd()}>
+              {showAdd ? '收起加菜' : <><FantuanIcon name="takeout" size={20} /> 让饭团重搭</>}
             </button>
-            <button className="fd-btn fd-btn-green">标记采购完成</button>
+            <button
+              className="fd-btn fd-btn-green"
+              onClick={() => {
+                todayPlans
+                  .filter((p) => p.status === 'planned')
+                  .forEach((p) => updatePlanStatus(p.id, 'shopping_done'))
+              }}
+              disabled={todayPlans.length === 0}
+            >
+              标记采购完成
+            </button>
           </div>
         </div>
         <div className="fd-side-card plan-summary-card">
@@ -193,7 +246,7 @@ export function PlanPage() {
 
       {/* 快速加菜 */}
       {showAdd && (
-        <div className="fd-panel">
+        <div id="quick-add-panel" className="fd-panel quick-add-panel" ref={quickAddRef}>
           <h3>快速加菜到 {dateLabel(selectedDate)}</h3>
           <input
             type="date"
@@ -201,8 +254,19 @@ export function PlanPage() {
             onChange={(e) => setSelectedDate(e.target.value)}
             className="date-picker"
           />
+          <div className="quick-dish-toolbar">
+            <input
+              className="quick-dish-search"
+              value={quickDishQuery}
+              onChange={(event) => setQuickDishQuery(event.target.value)}
+              ref={quickSearchRef}
+              placeholder={`搜索 209 道菜品…`}
+              aria-label="搜索可加入计划的菜品"
+            />
+            <span>显示 {quickDishes.length} / {DISHES.length} 道</span>
+          </div>
           <div className="quick-dishes">
-            {DISHES.slice(0, 12).map((dish) => (
+            {quickDishes.map((dish) => (
               <button
                 key={dish.id}
                 className="quick-dish-btn"
@@ -219,11 +283,18 @@ export function PlanPage() {
         <div>
           <section className="fd-panel">
             <div className="day-tabs">
-              <button className="fd-tab active">今天</button>
-              <button className="fd-tab">明天</button>
-              <button className="fd-tab">本周</button>
-              <button className="fd-tab">一起吃</button>
-              <button className="fd-tab">带饭</button>
+              <button
+                className={`fd-tab ${selectedDate === todayStr() ? 'active' : ''}`}
+                onClick={() => setSelectedDate(todayStr())}
+              >今天</button>
+              <button
+                className={`fd-tab ${selectedDate === tomorrowStr() ? 'active' : ''}`}
+                onClick={() => setSelectedDate(tomorrowStr())}
+              >明天</button>
+              <button
+                className={`fd-tab ${selectedDate === dayAfterTomorrowStr() ? 'active' : ''}`}
+                onClick={() => setSelectedDate(dayAfterTomorrowStr())}
+              >后天</button>
             </div>
             <h3>今日计划</h3>
             <div className="meal-grid">
@@ -250,11 +321,11 @@ export function PlanPage() {
                   )
                 })}
                 <div className="dish-actions">
-                  <Link to="/"><button>查看菜品</button></Link>
-                  <button onClick={() => setShowAdd(true)}>调整计划</button>
+                  <Link to="/">查看菜品</Link>
+                  <button onClick={openQuickAdd}>调整计划</button>
                   <button className="done" onClick={() => {
-                    const firstReal = todayPlans[0]
-                    if (firstReal) handleMarkDone(firstReal.id, firstReal.dishId)
+                    const targetPlan = todayPlans[0] ?? displayPlans[0]
+                    if (targetPlan) handleMarkDone(targetPlan.id, targetPlan.dishId)
                   }}>标记做过</button>
                 </div>
               </article>
@@ -262,46 +333,78 @@ export function PlanPage() {
                 <div className="meal-head">
                   <div>
                     <h4>明日午餐 · 顺手带饭</h4>
-                    <span className="match-info">从今晚剩余食材里顺手安排</span>
+                    <span className="match-info">
+                      {tomorrowPlans.length > 0
+                        ? `已计划 ${tomorrowPlans.length} 道菜`
+                        : '还没排明日午餐，去计划页加一道吧'}
+                    </span>
                   </div>
-                  <span className="fd-badge green">可调整</span>
+                  <span className={`fd-badge ${tomorrowPlans.length > 0 ? 'green' : ''}`}>
+                    {tomorrowPlans.length > 0 ? '可调整' : '待规划'}
+                  </span>
                 </div>
-                <div className="meal-dish-row">
-                  <div>
-                    <strong>鸡胸肉蔬菜便当</strong>
-                    <span>复用西兰花 / 鸡胸肉，减少浪费</span>
+                {tomorrowPlans.length > 0 ? (
+                  tomorrowPlans.map((plan) => {
+                    const dish = getDishById(plan.dishId)
+                    if (!dish) return null
+                    const match = getMatchForDish(plan.dishId)
+                    return (
+                      <div key={plan.id} className="meal-dish-row">
+                        <div>
+                          <Link to={`/recipes/${dish.id}`} className="plan-dish-name">{dish.name}</Link>
+                          <span>已有 {match.have}/{match.have + match.missing}{match.missing > 0 ? ` · 缺 ${match.missing} 项` : ' · 可直接做'}</span>
+                        </div>
+                        <span className={`fd-badge ${match.missing > 0 ? 'red' : 'green'}`}>{match.missing > 0 ? '需采购' : '可做'}</span>
+                      </div>
+                    )
+                  })
+                ) : (
+                  <div className="meal-dish-row">
+                    <div>
+                      <strong>明日午餐待规划</strong>
+                      <span>从今晚剩余食材里顺手安排，减少浪费</span>
+                    </div>
+                    <button
+                      className="fd-btn fd-btn-secondary"
+                      onClick={() => {
+                        const t = tomorrowStr()
+                        setSelectedDate(t)
+                        openQuickAdd()
+                      }}
+                    >
+                      去加菜
+                    </button>
                   </div>
-                  <span className="fd-badge green">省事</span>
-                </div>
-                <div className="dish-actions"><button>明天再定</button><button>换一道</button></div>
+                )}
+                {tomorrowPlans.length > 0 && (
+                  <div className="dish-actions">
+                    <button onClick={() => {
+                      setSelectedDate(tomorrowStr())
+                      openQuickAdd()
+                    }}>调整计划</button>
+                  </div>
+                )}
               </article>
             </div>
           </section>
         </div>
 
         <aside>
-          <section className="fd-side-card fantuan-reminder">
-            <h4>🍙 饭团提醒</h4>
-            <div className="fd-bubble">
-              有几道菜还缺食材，去购物清单看看要买什么吧～买完回来标记做过，可以沉淀到我家版。
+          <section className="fd-side-card pantry-shopping-note">
+            <h4>🛒 购物补齐</h4>
+            <div className="sticky-note-list">
+              {displayPlans.slice(0, 3).map((plan) => {
+                const dish = getDishById(plan.dishId)
+                const match = getMatchForDish(plan.dishId)
+                if (!dish) return null
+                return (
+                  <div key={plan.id} className="fd-list-item sticky-note-item">
+                    <span>{dish.name}</span>
+                    <strong>{match.missing > 0 ? `缺 ${match.missing} 项` : '可做'}</strong>
+                  </div>
+                )
+              })}
             </div>
-            <div className="cta-row" style={{ marginTop: '14px' }}>
-              <Link to="/shopping"><button className="fd-btn fd-btn-primary">看购物清单</button></Link>
-            </div>
-          </section>
-          <section className="fd-side-card">
-            <h4>购物补齐</h4>
-            {displayPlans.slice(0, 3).map((plan) => {
-              const dish = getDishById(plan.dishId)
-              const match = getMatchForDish(plan.dishId)
-              if (!dish) return null
-              return (
-                <div key={plan.id} className="fd-list-item">
-                  <span>{dish.name}</span>
-                  <strong>{match.missing > 0 ? `缺 ${match.missing} 项` : '可做'}</strong>
-                </div>
-              )
-            })}
           </section>
         </aside>
       </div>
@@ -333,7 +436,7 @@ export function PlanPage() {
         <div className="feedback-overlay" onClick={() => handleSkipFeedback()}>
           <div className="feedback-modal" onClick={(e) => e.stopPropagation()}>
             <div className="feedback-bubble">
-              <h4>🍙 饭团问一下</h4>
+              <h4><FantuanIcon name="chat" size={22} /> 饭团问一下</h4>
               <p className="feedback-dish-name">{feedbackPlan.dishName} 做好了吗？</p>
               <p className="feedback-question">今天这道菜味道怎么样？</p>
               <div className="feedback-ratings">

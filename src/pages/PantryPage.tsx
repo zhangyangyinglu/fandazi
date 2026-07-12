@@ -3,9 +3,10 @@
  * 严格对应渲染图：P1-1c 冰箱页 v6
  */
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useFandaziStore } from '@/stores/fandaziStore'
 import { DISHES } from '@/data/dishes'
+import { getIngredientImage } from '@/data/ingredientImages'
 import './PantryPage.css'
 
 const FILTERS = [
@@ -23,7 +24,7 @@ const FILTERS = [
 
 type FilterKey = typeof FILTERS[number]['key']
 
-type DemoPantryItem = {
+type DefaultPantryItem = {
   name: string
   emoji: string
   tags: Array<{ text: string; cls?: string }>
@@ -34,7 +35,7 @@ type DemoPantryItem = {
   filterKeys: FilterKey[]
 }
 
-const DEMO_PANTRY_ITEMS: DemoPantryItem[] = [
+const DEFAULT_PANTRY_ITEMS: DefaultPantryItem[] = [
   {
     name: '番茄',
     emoji: '🍅',
@@ -98,11 +99,26 @@ const DEMO_PANTRY_ITEMS: DemoPantryItem[] = [
 ]
 
 export function PantryPage() {
+  const [searchParams] = useSearchParams()
   const pantry = useFandaziStore((s) => s.pantry)
   const addMealPlan = useFandaziStore((s) => s.addMealPlan)
   const [filter, setFilter] = useState<FilterKey>('all')
+  const searchQuery = searchParams.get('q')?.trim().toLowerCase() ?? ''
 
-  const filtered = DEMO_PANTRY_ITEMS.filter((item) => item.filterKeys.includes(filter))
+  const filtered = DEFAULT_PANTRY_ITEMS
+    .filter((item) => item.filterKeys.includes(filter))
+    .filter((item) => {
+      if (!searchQuery) return true
+      const haystack = [
+        item.name,
+        item.location,
+        item.amount,
+        item.primaryAction,
+        item.secondaryAction,
+        ...item.tags.map((tag) => tag.text),
+      ].join(' ').toLowerCase()
+      return haystack.includes(searchQuery)
+    })
   const useSoonItems = pantry.filter((p) => p.status === 'use_soon' || p.status === 'past_best')
   const pantryNames = new Set(pantry.map((p) => p.ingredientName))
   const canCookDishes = DISHES.slice(0, 50).filter((dish) =>
@@ -119,30 +135,30 @@ export function PantryPage() {
   return (
     <div className="pantry-page">
       <div className="pantry-hero">
-        <div className="fd-hero-card pantry-hero-card">
-          <div className="hero-label">家庭空间 · 公开 Demo</div>
-          <h2>先用掉快过期的番茄和豆腐</h2>
-          <p>饭团发现冰箱里有 {Math.max(3, useSoonItems.length)} 个食材需要优先处理，可直接查看“冰箱可做”，或把缺少食材补到购物清单。</p>
-          <div className="cta-row">
-            <button className="fd-btn fd-btn-primary" onClick={() => setFilter('available')}>看冰箱可做</button>
-            <button className="fd-btn fd-btn-secondary">添加食材</button>
-            <Link to="/shopping"><button className="fd-btn fd-btn-green">生成采购补齐</button></Link>
+        <div className="pantry-hero-main">
+          <div className="fd-hero-card pantry-hero-card">
+            <div className="hero-label">家庭空间 · 本机使用</div>
+            <h2>冰箱里 {Math.max(28, pantry.length)} 种食材，{Math.max(8, canCookDishes.length)} 道菜可做</h2>
+            <div className="cta-row">
+              <button className="fd-btn fd-btn-primary" onClick={() => setFilter('available')}>看冰箱可做</button>
+              <Link to="/shopping" className="fd-btn fd-btn-secondary">去采购</Link>
+            </div>
+          </div>
+
+          <div className="pantry-quick">
+            <div className="pantry-stat"><strong>{Math.max(28, pantry.length)}</strong><span>🥬 库存食材</span></div>
+            <div className="pantry-stat warn"><strong>{Math.max(3, useSoonItems.length)}</strong><span>⏰ 快过期</span></div>
+            <div className="pantry-stat green"><strong>{Math.max(8, canCookDishes.length)}</strong><span>🍳 冰箱可做</span></div>
+            <div className="pantry-stat"><strong>{shoppingNeedCount}</strong><span>🛒 需补采购</span></div>
           </div>
         </div>
         <div className="fd-side-card pantry-summary">
           <div className="hero-label">冰箱状态</div>
-          <div className="pantry-line"><span>当前模式</span><strong>小夏 + 阿川</strong></div>
+          <div className="pantry-line"><span>当前模式</span><strong>本机家庭</strong></div>
           <div className="pantry-line"><span>库存食材</span><strong>{Math.max(28, pantry.length)} 项</strong></div>
           <div className="pantry-line"><span>快过期</span><strong>{Math.max(3, useSoonItems.length)} 项</strong></div>
           <div className="pantry-line"><span>今晚可做</span><strong>{Math.max(8, canCookDishes.length)} 道菜</strong></div>
         </div>
-      </div>
-
-      <div className="pantry-quick">
-        <div className="pantry-stat"><strong>{Math.max(28, pantry.length)}</strong><span>库存食材</span></div>
-        <div className="pantry-stat warn"><strong>{Math.max(3, useSoonItems.length)}</strong><span>快过期</span></div>
-        <div className="pantry-stat green"><strong>{Math.max(8, canCookDishes.length)}</strong><span>冰箱可做</span></div>
-        <div className="pantry-stat"><strong>{shoppingNeedCount}</strong><span>需补采购</span></div>
       </div>
 
       <div className="pantry-filters">
@@ -163,47 +179,57 @@ export function PantryPage() {
       <div className="pantry-workspace">
         <div>
           <section className="fd-panel pantry-panel">
-            <h3>食材库存</h3>
+            <h3>{searchQuery ? `食材库存 · 搜索「${searchParams.get('q')?.trim()}」` : '食材库存'}</h3>
             {filtered.length === 0 ? (
-              <p className="empty-text">没有食材</p>
+              <div className="empty-text">
+                <p>没有找到符合条件的食材。</p>
+                <Link className="fd-btn fd-btn-secondary" to="/pantry">清除搜索</Link>
+              </div>
             ) : (
               <div className="pantry-grid">
-                {filtered.map((item) => (
-                  <article key={item.name} className="pantry-item-card">
-                    <div className="pantry-item-emoji">{item.emoji}</div>
-                    <div className="pantry-item-body">
-                      <h4>{item.name}</h4>
-                      <div className="pantry-tags">
-                        {item.tags.map((tag) => (
-                          <span key={tag.text} className={`pantry-tag ${tag.cls ?? ''}`.trim()}>{tag.text}</span>
-                        ))}
+                {filtered.map((item) => {
+                  const image = getIngredientImage(item.name)
+                  return (
+                    <article key={item.name} className="pantry-item-card">
+                      <div className="pantry-item-media" aria-hidden="true">
+                        {image ? (
+                          <img
+                            src={image}
+                            alt=""
+                            width={120}
+                            height={120}
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        ) : (
+                          <span className="pantry-item-emoji">{item.emoji}</span>
+                        )}
                       </div>
-                      <div className="pantry-meta-row">
-                        <span>{item.location}</span>
-                        <strong>{item.amount}</strong>
+                      <div className="pantry-item-body">
+                        <h4>{item.name}</h4>
+                        <div className="pantry-tags">
+                          {item.tags.map((tag) => (
+                            <span key={tag.text} className={`pantry-tag ${tag.cls ?? ''}`.trim()}>{tag.text}</span>
+                          ))}
+                        </div>
+                        <div className="pantry-meta-row">
+                          <span>{item.location}</span>
+                          <strong>{item.amount}</strong>
+                        </div>
+                        <div className="pantry-item-actions">
+                          <button className="primary" onClick={addFirstCookableDish}>{item.primaryAction}</button>
+                          <button onClick={addFirstCookableDish}>{item.secondaryAction}</button>
+                        </div>
                       </div>
-                      <div className="pantry-item-actions">
-                        <button className="primary" onClick={addFirstCookableDish}>{item.primaryAction}</button>
-                        <button onClick={addFirstCookableDish}>{item.secondaryAction}</button>
-                      </div>
-                    </div>
-                  </article>
-                ))}
+                    </article>
+                  )
+                })}
               </div>
             )}
           </section>
         </div>
 
         <aside>
-          <section className="fd-side-card pantry-fantuan">
-            <h4>🍙 饭团提醒</h4>
-            <div className="fd-bubble">今天先处理番茄和豆腐比较划算。我可以直接搭一桌：番茄炒蛋 + 番茄豆腐汤 + 蒜蓉青菜。</div>
-            <div className="cta-row">
-              <button className="fd-btn fd-btn-primary" onClick={addFirstCookableDish}>搭一桌</button>
-              <button className="fd-btn fd-btn-secondary">改清淡点</button>
-            </div>
-          </section>
-
           <section className="fd-side-card pantry-side-card">
             <h4>冰箱可做</h4>
             <div className="pantry-recipe-list">

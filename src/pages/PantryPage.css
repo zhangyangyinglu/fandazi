@@ -8,10 +8,17 @@
   grid-template-columns: 1fr 360px;
   gap: 18px;
   margin-bottom: 18px;
+  align-items: start;
+}
+
+.pantry-hero-main {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
 }
 
 .pantry-hero-card {
-  padding: 24px;
+  padding: 22px;
   border-radius: 26px;
 }
 
@@ -31,9 +38,22 @@
 }
 
 .pantry-hero p {
-  font-size: 16px;
+  font-size: 15px;
   color: var(--fd-muted);
-  margin: 0 0 18px;
+  margin: 0 0 12px;
+}
+
+.pantry-hero .cta-row {
+  margin-top: 12px;
+  gap: 12px;
+}
+
+.pantry-hero .cta-row .fd-btn {
+  min-width: 130px;
+  min-height: 48px;
+  justify-content: center;
+  flex: 1;
+  max-width: 180px;
 }
 
 .pantry-summary {
@@ -44,9 +64,11 @@
 .pantry-line {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   border-bottom: 1px dashed var(--fd-line-soft);
-  padding: 11px 0;
+  padding: 12px 0;
   font-size: 14px;
+  min-height: 44px;
 }
 
 .pantry-line:last-child {
@@ -61,7 +83,6 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;
-  margin-bottom: 18px;
 }
 
 .pantry-stat {
@@ -100,18 +121,44 @@
 }
 
 .pantry-filters {
-  background: #fff;
-  border: 1px solid var(--fd-line-soft);
-  border-radius: 22px;
-  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: transparent;
+  border-top: 1px solid var(--fd-line-soft);
+  border-bottom: 1px solid var(--fd-line-soft);
+  padding: 12px 0;
   margin-bottom: 18px;
+}
+
+.pantry-filters .hero-label {
+  flex: 0 0 auto;
+  margin-bottom: 0;
 }
 
 .pantry-filter-row {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  margin-top: 10px;
+  margin-top: 0;
+}
+
+@media (max-width: 800px) {
+  .pantry-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .pantry-quick {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pantry-filters {
+    display: block;
+  }
+
+  .pantry-filters .hero-label {
+    margin-bottom: 8px;
+  }
 }
 
 .pantry-chip {
@@ -172,9 +219,23 @@
   background: #fff;
 }
 
+.pantry-item-media {
+  height: 112px;
+  display: grid;
+  place-items: center;
+  padding: 10px 10px 0;
+}
+
+.pantry-item-media img {
+  width: 104px;
+  height: 104px;
+  object-fit: contain;
+  display: block;
+}
+
 .pantry-item-emoji {
-  height: 92px;
-  background: linear-gradient(135deg, #fde4bd, #fff6e7);
+  width: 104px;
+  height: 104px;
   display: grid;
   place-items: center;
   font-size: 42px;

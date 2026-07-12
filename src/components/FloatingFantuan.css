@@ -16,19 +16,26 @@
 
 .fantuan-float-button {
   position: relative;
-  width: 58px;
-  height: 58px;
+  width: 64px;
+  height: 64px;
   border: 0;
-  border-radius: 22px 22px 22px 10px;
-  background: linear-gradient(145deg, #fff7df, #f69a12);
-  box-shadow: 0 18px 36px rgba(111, 78, 43, 0.22);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
   cursor: pointer;
   display: grid;
   place-items: center;
+  transition: transform 0.2s;
+}
+
+.fantuan-float-button:hover {
+  transform: scale(1.05);
 }
 
 .fantuan-face {
-  font-size: 28px;
+  width: 64px;
+  height: 64px;
   transform: translateY(1px);
 }
 
@@ -41,59 +48,371 @@
   border-radius: 50%;
   background: var(--fd-success);
   box-shadow: 0 0 0 5px rgba(111, 143, 86, 0.18);
+  animation: ft-pulse 1.5s infinite;
 }
 
+@keyframes ft-pulse {
+  0%, 100% { box-shadow: 0 0 0 5px rgba(111, 143, 86, 0.18); }
+  50% { box-shadow: 0 0 0 8px rgba(111, 143, 86, 0.08); }
+}
+
+/* === Popover === */
 .fantuan-popover {
-  width: min(320px, calc(100vw - 56px));
+  width: min(340px, calc(100vw - 56px));
   background: var(--fd-surface);
   border: 1px solid var(--fd-line);
   border-radius: 24px 24px 8px 24px;
   box-shadow: var(--shadow);
-  padding: 16px;
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 480px;
 }
 
+/* === 头部 === */
 .fantuan-popover-head {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
   align-items: center;
+  padding: 14px 16px 10px;
+  background: var(--fd-surface-warm);
+  border-bottom: 1px solid var(--fd-line-soft);
 }
 
-.fantuan-popover-head strong {
-  font: 900 18px var(--serif);
-}
-
-.fantuan-popover-head span {
-  color: var(--fd-muted);
-  font-size: 12px;
-  font-weight: 900;
-}
-
-.fantuan-popover p {
-  margin: 12px 0;
-  line-height: 1.7;
-  color: var(--fd-muted);
-  font-size: 14px;
-}
-
-.fantuan-actions {
+.fantuan-head-left {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
 }
 
-.fantuan-actions a {
-  border-radius: var(--r-pill);
-  border: 1px solid var(--fd-line-soft);
-  padding: 7px 10px;
+.fantuan-avatar {
+  width: 34px;
+  height: 34px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.fantuan-head-left strong {
+  font: 900 16px var(--serif);
+  display: block;
+}
+
+.fantuan-head-sub {
+  color: var(--fd-muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.fantuan-close {
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--fd-muted);
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.fantuan-close:hover {
+  background: var(--fd-surface-soft);
+}
+
+/* === Tab 栏 === */
+.fantuan-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  background: var(--fd-surface-warm);
+  border-bottom: 1px solid var(--fd-line-soft);
+}
+
+.ft-tab {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: 800 12px var(--sans);
+  color: var(--fd-muted);
+  padding: 7px 6px;
+  border-radius: 10px;
+  transition: background 0.15s, color 0.15s;
+  position: relative;
+}
+
+.ft-tab.active {
+  background: var(--fd-surface);
   color: var(--fd-ink);
-  font-size: 12px;
-  font-weight: 900;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.ft-tab-dot {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--fd-success);
+}
+
+/* === 对话 Tab === */
+.fantuan-chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 280px;
+  max-height: 400px;
+}
+
+/* 打字指示器 */
+.ft-typing {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 10px 14px;
+}
+
+.ft-typing-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--fd-muted);
+  animation: ft-typing-bounce 1.2s infinite;
+}
+
+.ft-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.ft-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes ft-typing-bounce {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-4px); }
+}
+
+/* 快捷建议 */
+.ft-quick-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 12px 8px;
+}
+
+.ft-quick-chip {
+  border: 1px solid var(--fd-line);
+  background: var(--fd-surface);
+  color: var(--fd-ink);
+  border-radius: var(--r-pill);
+  padding: 6px 12px;
+  font: 800 12px var(--sans);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.ft-quick-chip:hover {
+  border-color: var(--fd-fantuan, #f69a12);
   background: var(--fd-surface-warm);
 }
 
+.fantuan-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-behavior: smooth;
+}
+
+.ft-chat-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  max-width: 90%;
+}
+
+.ft-chat-msg.user {
+  flex-direction: row-reverse;
+  align-self: flex-end;
+}
+
+.ft-chat-avatar {
+  width: 24px;
+  height: 24px;
+  overflow: hidden;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ft-chat-bubble {
+  padding: 8px 12px;
+  border-radius: 14px 14px 14px 4px;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+.ft-chat-msg.fantuan .ft-chat-bubble {
+  background: var(--fd-surface-warm);
+  color: var(--fd-ink);
+}
+
+.ft-chat-msg.user .ft-chat-bubble {
+  background: var(--fd-fantuan, #f69a12);
+  color: #fff;
+  border-radius: 14px 14px 4px 14px;
+}
+
+.fantuan-chat-input {
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--fd-line-soft);
+  background: var(--fd-surface);
+}
+
+.fantuan-chat-input input {
+  flex: 1;
+  border: 1px solid var(--fd-line);
+  border-radius: var(--r-pill);
+  padding: 8px 14px;
+  font: 700 13px var(--sans);
+  color: var(--fd-ink);
+  background: var(--fd-page);
+  outline: 0;
+}
+
+.fantuan-chat-input input:focus {
+  border-color: var(--fd-fantuan, #f69a12);
+}
+
+.fantuan-chat-input button {
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--fd-fantuan, #f69a12);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  transition: transform 0.15s;
+}
+
+.fantuan-chat-input button:hover {
+  transform: scale(1.08);
+}
+
+.ft-local-mode-hint {
+  display: block;
+  text-align: center;
+  font-size: 11px;
+  color: #b8860b;
+  background: #fff8e8;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin: 0 4px 6px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.ft-local-mode-hint:hover {
+  background: #fef0d9;
+}
+
+/* === 口味 Tab === */
+.fantuan-taste {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  max-height: 360px;
+}
+
+.ft-taste-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ft-taste-row label {
+  font: 900 12px var(--sans);
+  color: var(--fd-muted);
+}
+
+.ft-taste-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ft-taste-chip {
+  border: 1px solid var(--fd-line);
+  background: var(--fd-surface);
+  color: var(--fd-muted);
+  border-radius: var(--r-pill);
+  padding: 6px 12px;
+  font: 800 12px var(--sans);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ft-taste-chip:hover {
+  border-color: var(--fd-fantuan, #f69a12);
+}
+
+.ft-taste-chip.active {
+  background: var(--fd-fantuan, #f69a12);
+  color: #fff;
+  border-color: var(--fd-fantuan, #f69a12);
+}
+
+.ft-taste-note {
+  border: 1px solid var(--fd-line);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font: 600 13px var(--sans);
+  color: var(--fd-ink);
+  background: var(--fd-page);
+  outline: 0;
+}
+
+.ft-taste-note:focus {
+  border-color: var(--fd-fantuan, #f69a12);
+}
+
+.ft-taste-hint {
+  font-size: 11px;
+  color: var(--fd-muted);
+  font-weight: 700;
+  margin: 0;
+  padding-top: 4px;
+  border-top: 1px dashed var(--fd-line-soft);
+}
+
+/* === 提醒 Tab === */
+.fantuan-insights {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.ft-no-insight {
+  color: var(--fd-muted);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  padding: 20px 0;
+}
+
 .fantuan-insight {
-  margin: 8px 0;
+  margin: 0;
   padding: 8px 10px;
   border-radius: 12px;
   background: var(--fd-surface-warm);
@@ -114,6 +433,7 @@
   line-height: 1.5;
   color: var(--fd-ink);
   font-size: 13px;
+  font-weight: 600;
 }
 
 .fantuan-insight-link {
@@ -123,6 +443,30 @@
   text-decoration: none;
 }
 
+.fantuan-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.fantuan-actions a {
+  border-radius: var(--r-pill);
+  border: 1px solid var(--fd-line-soft);
+  padding: 7px 10px;
+  color: var(--fd-ink);
+  font-size: 12px;
+  font-weight: 900;
+  background: var(--fd-surface-warm);
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.fantuan-actions a:hover {
+  background: var(--fd-surface-soft);
+}
+
+/* === 移动端 === */
 @media (max-width: 600px) {
   .floating-fantuan {
     right: 16px;
@@ -130,7 +474,17 @@
   }
 
   .fantuan-float-button {
-    width: 52px;
-    height: 52px;
+    width: 58px;
+    height: 58px;
+  }
+
+  .fantuan-face {
+    width: 58px;
+    height: 58px;
+  }
+
+  .fantuan-popover {
+    width: calc(100vw - 32px);
+    max-height: 70vh;
   }
 }

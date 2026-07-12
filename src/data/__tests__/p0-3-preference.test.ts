@@ -111,6 +111,27 @@ function runLunch(group?: BuddyGroup, prefMap?: Record<string, DishPreferences>)
   })
 }
 
+function runLunchWithSeed(seed: number) {
+  return recommendMeal({
+    mealTime: 'lunch',
+    pantryItems: PANTRY,
+    candidateDishes: pool,
+    currentMealType: 'lunch',
+    seed,
+  })
+}
+
+function rerunLunchWithout(previousIds: string[]) {
+  return recommendMeal({
+    mealTime: 'lunch',
+    pantryItems: PANTRY,
+    candidateDishes: pool,
+    currentMealType: 'lunch',
+    seed: 1,
+    excludeDishIds: previousIds,
+  })
+}
+
 // ── tests ──
 
 describe('P0-3 偏好参与推荐', () => {
@@ -209,5 +230,14 @@ describe('P0-3 偏好参与推荐', () => {
     const reasons = result!.perDishReasons[targetId]
     expect(reasons).toBeDefined()
     expect(reasons!.some((r) => r.includes('不一致'))).toBe(true)
+  })
+
+  it('T5: 换版会排除上一桌，确保推荐真的发生变化', () => {
+    const first = runLunchWithSeed(0)
+    const second = first ? rerunLunchWithout(first.dishes.map((item) => item.id)) : null
+
+    expect(first).not.toBeNull()
+    expect(second).not.toBeNull()
+    expect(second!.dishes.map((item) => item.id)).not.toEqual(first!.dishes.map((item) => item.id))
   })
 })

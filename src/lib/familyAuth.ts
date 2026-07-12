@@ -7,10 +7,12 @@
  *   3. 家人输入邀请码加入
  *   4. 登录后缓存 householdId 到 localStorage
  */
-import { getSupabase } from '@/lib/supabaseClient'
+import { FANDAZI_SYNC_CONFIG_EVENT, getSupabase } from '@/lib/supabaseClient'
 
-function generateInviteCode(): string {
-  return Math.random().toString(36).slice(2, 8).toUpperCase()
+function notifySyncConfigChanged(): void {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event(FANDAZI_SYNC_CONFIG_EVENT))
+  }
 }
 
 export interface AuthUser {
@@ -58,6 +60,7 @@ export async function signOut(): Promise<void> {
   if (!supabase) return
   await supabase.auth.signOut()
   localStorage.removeItem('fandazi.householdId')
+  notifySyncConfigChanged()
 }
 
 /** 获取当前登录用户 */
@@ -72,68 +75,54 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   return null
 }
 
-/** 创建家庭空间 */
+/** 创建家庭空间。
+ * 走 security definer RPC，避免前端分三次 insert 时被 RLS / 未刷新 schema 状态卡住。
+ */
 export async function createHousehold(name: string, creatorId: string): Promise<{ household: Household | null; error: string | null }> {
+  void creatorId
   const supabase = getSupabase()
   if (!supabase) return { household: null, error: 'Supabase 未配置' }
 
-  const inviteCode = generateInviteCode()
-
-  const { data: house, error: houseErr } = await supabase
-    .from('households')
-    .insert({ name, invite_code: inviteCode, created_by: creatorId })
-    .select()
+  const { data: house, error } = await supabase
+    .rpc('create_household_with_owner', { household_name: name })
     .single()
 
-  if (houseErr || !house) return { household: null, error: houseErr?.message ?? '创建失败' }
+  if (error || !house) return { household: null, error: error?.message ?? '创建失败' }
 
-  // 添加创建者为 owner
-  await supabase.from('household_members').insert({
-    household_id: house.id,
-    user_id: creatorId,
-    display_name: '我',
-    role: 'owner',
-  })
-
-  // 初始化饭团状态
-  await supabase.from('fantuan_state').insert({
-    household_id: house.id,
-    mili: 0,
-    level: 1,
-  })
-
-  localStorage.setItem('fandazi.householdId', house.id)
+  const raw = house as { id: string; name: string; invite_code: string }
+  localStorage.setItem('fandazi.householdId', raw.id)
+  notifySyncConfigChanged()
 
   return {
-    household: { id: house.id, name: house.name, inviteCode: house.invite_code },
+    household: { id: raw.id, name: raw.name, inviteCode: raw.invite_code },
     error: null,
   }
 }
 
-/** 通过邀请码加入家庭 */
-export async function joinHousehold(inviteCode: string, userId: string, displayName: string): Promise<{ household: Household | null; error: string | null }> {
+/** 通过邀请码加入家庭。
+ * 注意：非成员不能直接 select households（RLS 会拦截），必须走 schema.sql 中的
+ * security definer RPC `join_household_by_invite`。
+ */
+export async function joinHousehold(inviteCode: string, _userId: string, displayName: string): Promise<{ household: Household | null; error: string | null }> {
+  void _userId
   const supabase = getSupabase()
   if (!supabase) return { household: null, error: 'Supabase 未配置' }
 
-  const { data: house, error: findErr } = await supabase
-    .from('households')
-    .select()
-    .eq('invite_code', inviteCode.toUpperCase())
+  const { data: house, error } = await supabase
+    .rpc('join_household_by_invite', {
+      target_invite_code: inviteCode.toUpperCase(),
+      member_display_name: displayName,
+    })
     .single()
 
-  if (findErr || !house) return { household: null, error: '邀请码无效' }
+  if (error || !house) return { household: null, error: error?.message ?? '邀请码无效或加入失败' }
 
-  await supabase.from('household_members').insert({
-    household_id: house.id,
-    user_id: userId,
-    display_name: displayName,
-    role: 'member',
-  })
-
-  localStorage.setItem('fandazi.householdId', house.id)
+  const raw = house as { id: string; name: string; invite_code: string }
+  localStorage.setItem('fandazi.householdId', raw.id)
+  notifySyncConfigChanged()
 
   return {
-    household: { id: house.id, name: house.name, inviteCode: house.invite_code },
+    household: { id: raw.id, name: raw.name, inviteCode: raw.invite_code },
     error: null,
   }
 }
@@ -157,6 +146,7 @@ export async function getMyHousehold(userId: string): Promise<Household | null> 
     const h = Array.isArray(raw.households) ? raw.households[0] : raw.households
     if (h) {
       localStorage.setItem('fandazi.householdId', h.id)
+      notifySyncConfigChanged()
       return { id: h.id, name: h.name, inviteCode: h.invite_code }
     }
   }

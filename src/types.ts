@@ -85,8 +85,10 @@ export type MyDishVersion = {
   steps: string[]
   /** 覆盖烹饪时长(如 "70 分钟") */
   cookTime: string
-  /** 我家备注 — 灵魂字段(120 字内) */
+  /** 我家备注 - 灵魂字段(120 字内) */
   myNote: string
+  /** 口味评分 ('good' | 'okay' | 'bad') */
+  rating?: string
   /** 首次创建时间 */
   createdAt: number
   /** 最后修改时间 */

@@ -3,22 +3,34 @@
  * 对应渲染图：P1-1d 计划+购物联动页 v6
  * 从计划中缺失食材自动生成购物清单
  */
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useFandaziStore } from '@/stores/fandaziStore'
+import { DISHES } from '@/data/dishes'
 import './ShoppingPage.css'
+
+const AUTO_CHECKED_STORAGE_KEY = 'fandazi.shopping.autoChecked'
+
+function readCheckedAuto(): Set<string> {
+  try {
+    const raw = localStorage.getItem(AUTO_CHECKED_STORAGE_KEY)
+    const parsed = raw ? JSON.parse(raw) : []
+    return new Set(Array.isArray(parsed) ? parsed.filter((value): value is string => typeof value === 'string') : [])
+  } catch {
+    return new Set()
+  }
+}
 
 export function ShoppingPage() {
   const mealPlans = useFandaziStore((s) => s.mealPlans)
   const pantry = useFandaziStore((s) => s.pantry)
   const shoppingList = useFandaziStore((s) => s.shoppingList)
   const toggleShoppingItem = useFandaziStore((s) => s.toggleShoppingItem)
-  const getDishById = useFandaziStore((s) => s.getDishById)
 
-  // 自动项的勾选状态（本地 state，不持久化）
-  const [checkedAuto, setCheckedAuto] = useState<Set<string>>(new Set())
+  // 自动项的勾选状态：持久化到 localStorage，避免用户刷新后丢失采购进度
+  const [checkedAuto, setCheckedAuto] = useState<Set<string>>(() => readCheckedAuto())
 
-  // 自动从计划中缺失食材生成购物清单；公开 Demo 首屏没有用户 localStorage 时也要展示示例链路
+  // 自动从计划中缺失食材生成购物清单；首屏没有用户 localStorage 时也要展示默认链路
   const autoItems = useMemo(() => {
     const pantryNames = new Set(pantry.map((p) => p.ingredientName))
     const items: { name: string; amount: string; source: string; key: string }[] = []
@@ -31,7 +43,7 @@ export function ShoppingPage() {
         ]
     for (const plan of sourcePlans) {
       if (plan.status === 'done' || plan.status === 'skipped') continue
-      const dish = getDishById(plan.dishId)
+      const dish = DISHES.find((d) => d.id === plan.dishId)
       if (!dish) continue
       for (const ing of dish.ingredients) {
         if (!pantryNames.has(ing.name)) {
@@ -40,7 +52,16 @@ export function ShoppingPage() {
       }
     }
     return items
-  }, [mealPlans, pantry, getDishById])
+  }, [mealPlans, pantry])
+
+  useEffect(() => {
+    // 清理已不在 autoItems 中的旧 key，防止 localStorage 无限增长
+    const validKeys = new Set(autoItems.map((i) => i.key))
+    const cleaned = [...checkedAuto].filter((k) => validKeys.has(k))
+    localStorage.setItem(AUTO_CHECKED_STORAGE_KEY, JSON.stringify(cleaned))
+  }, [checkedAuto, autoItems])
+
+  const autoItemKeys = useMemo(() => new Set(autoItems.map((item) => item.key)), [autoItems])
 
   // 按菜品来源分组
   const grouped = useMemo(() => {
@@ -61,7 +82,7 @@ export function ShoppingPage() {
     })
   }
 
-  const autoCheckedCount = checkedAuto.size
+  const autoCheckedCount = [...checkedAuto].filter((key) => autoItemKeys.has(key)).length
   const autoTotal = autoItems.length
   const manualCheckedCount = shoppingList.filter((i) => i.checked).length
   const manualTotal = shoppingList.length
@@ -71,7 +92,7 @@ export function ShoppingPage() {
       {/* Hero */}
       <div className="shopping-hero">
         <div className="fd-hero-card">
-          <div className="hero-label">购物清单 · DEMO</div>
+          <div className="hero-label">购物清单 · 本机使用</div>
           <h2>
             {autoItems.length > 0
               ? `要买 ${autoItems.length} 样食材`
@@ -82,9 +103,10 @@ export function ShoppingPage() {
               ? '从计划中缺失食材自动生成，按菜品来源分组。'
               : '加入计划后，缺失食材会自动出现在这里。'}
           </p>
-          <div className="cta-row">
-            <Link to="/plan"><button className="fd-btn fd-btn-secondary">看计划</button></Link>
-            <Link to="/pantry"><button className="fd-btn fd-btn-secondary">看冰箱</button></Link>
+          <div className="cta-row shopping-cta-row">
+            <Link to="/plan" className="fd-btn fd-btn-primary">返回计划</Link>
+            <Link to="/pantry" className="fd-btn fd-btn-secondary">看冰箱</Link>
+            <Link to="/" className="fd-btn fd-btn-secondary">继续选菜</Link>
           </div>
         </div>
         <div className="fd-side-card">
@@ -113,16 +135,6 @@ export function ShoppingPage() {
         </div>
       </div>
 
-      {/* 饭团提醒 */}
-      {autoItems.length > 0 && (
-        <div className="fd-panel fantuan-reminder">
-          <h4>🍙 饭团提醒</h4>
-          <div className="fd-bubble">
-            买完这些，今晚计划就完整了！采购完记得回来标记"做完了"拿米粒～
-          </div>
-        </div>
-      )}
-
       {/* 自动生成的购物清单（按菜品分组） */}
       {Object.keys(grouped).length > 0 && (
         <div className="fd-panel">
@@ -133,7 +145,7 @@ export function ShoppingPage() {
               {items.map((item) => {
                 const isChecked = checkedAuto.has(item.key)
                 return (
-                  <div key={item.key} className="shopping-item fd-list-item">
+                  <label key={item.key} className="shopping-item fd-list-item">
                     <input
                       type="checkbox"
                       className="shopping-check"
@@ -144,7 +156,7 @@ export function ShoppingPage() {
                       {item.name}
                     </span>
                     <span className="shopping-item-amount">{item.amount}</span>
-                  </div>
+                  </label>
                 )
               })}
             </div>
@@ -157,7 +169,7 @@ export function ShoppingPage() {
         <div className="fd-panel">
           <h3>手动添加</h3>
           {shoppingList.map((item) => (
-            <div key={item.id} className="shopping-item fd-list-item">
+            <label key={item.id} className="shopping-item fd-list-item">
               <input
                 type="checkbox"
                 className="shopping-check"
@@ -168,7 +180,7 @@ export function ShoppingPage() {
                 {item.name}
               </span>
               <span className="shopping-item-amount">{item.amount}</span>
-            </div>
+            </label>
           ))}
         </div>
       )}

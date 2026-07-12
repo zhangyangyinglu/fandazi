@@ -182,3 +182,143 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* 免责声明 */
+.health-disclaimer {
+  border-left: 4px solid #e8a040;
+  background: #fffbf5;
+}
+
+.health-disclaimer h3 {
+  color: #b8731a;
+  margin-bottom: 12px;
+}
+
+.health-disclaimer ul {
+  padding-left: 20px;
+  line-height: 2;
+  color: #664;
+}
+
+.health-disclaimer li {
+  margin-bottom: 4px;
+}
+
+/* 营养标签说明 */
+.health-tag-guide {
+  margin-top: 16px;
+}
+
+.health-tag-guide h3 {
+  margin-bottom: 8px;
+}
+
+.tag-guide-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.tag-guide-grid h4 {
+  font-size: 15px;
+  margin-bottom: 10px;
+  color: var(--fd-text, #555);
+}
+
+.tag-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.tag-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--fd-border, #f0f0f0);
+  vertical-align: top;
+}
+
+.tag-table td:first-child {
+  white-space: nowrap;
+  width: 100px;
+}
+
+.tag-table td:last-child {
+  color: var(--fd-muted, #888);
+}
+
+.health-privacy-link {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* 健康档案列表 */
+.health-facts-panel h3 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.health-facts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.health-fact-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.health-fact-cat {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fd-orange, #e8943a);
+}
+
+.health-fact-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.health-fact-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--fd-surface-soft, #f8f5f0);
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.health-fact-label {
+  color: var(--fd-ink, #333);
+  font-weight: 500;
+}
+
+.health-fact-detail {
+  font-size: 12px;
+  color: var(--fd-muted, #888);
+}
+
+.health-fact-delete {
+  background: none;
+  border: none;
+  color: var(--fd-muted, #aaa);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.health-fact-delete:hover {
+  color: var(--fd-danger-ink, #c44);
+}
+
+@media (max-width: 640px) {
+  .tag-guide-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
