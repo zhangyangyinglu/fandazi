@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_NAME="${REPO_NAME:-fandazi-web-tool}"
+REPO_NAME="${REPO_NAME:-fandazi}"
 DESCRIPTION="饭搭子 — GitHub 开源型 Web 工具版家庭做饭助手"
 VISIBILITY="${VISIBILITY:-public}"
 
