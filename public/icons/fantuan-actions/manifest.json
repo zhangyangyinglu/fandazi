@@ -1,6 +1,5 @@
 {
   "updatedAt": "2026-07-11 22:05 +0800",
-  "sourceFolder": "/Users/miki/Desktop/未命名文件夹",
   "note": "14 张新生成饭团功能图标已录入，并按保守页面映射完成正式 UI 接入；食材 emoji、成员头像和饭团状态图保留。",
   "items": [
     { "source": "副本挑战.png", "file": "/icons/fantuan-actions/fantuan-challenge-copy.png", "use": "副本挑战" },
