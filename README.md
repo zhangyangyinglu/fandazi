@@ -32,9 +32,8 @@
 ### 安装 & 本地运行
 
 ```bash
-# 发布后替换为你的 GitHub 仓库地址
-git clone https://github.com/your-username/fandazi-web-tool.git
-cd fandazi-web-tool
+git clone https://github.com/zhangyangyinglu/fandazi.git
+cd fandazi
 npm install
 npm run dev
 ```
@@ -132,5 +131,5 @@ src/
 ## 🗓️ 项目状态
 
 - **版本**：0.1.0
-- **状态**：发布候选已完成本地 QA，等待 GitHub 远程发布权限
+- **状态**：GitHub 已发布；线上生产部署需单独确认
 - **最新更新**：2026-07-12
