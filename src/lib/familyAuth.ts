@@ -9,9 +9,31 @@
  */
 import { FANDAZI_SYNC_CONFIG_EVENT, getSupabase } from '@/lib/supabaseClient'
 
+const LAST_ACTIVE_KEY = 'fandazi.auth.lastActiveAt'
+const INACTIVITY_LIMIT_MS = 30 * 24 * 60 * 60 * 1000
+
 function notifySyncConfigChanged(): void {
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new Event(FANDAZI_SYNC_CONFIG_EVENT))
+  }
+}
+
+function markActive(): void {
+  try {
+    localStorage.setItem(LAST_ACTIVE_KEY, String(Date.now()))
+  } catch {
+    // 隐私模式或 localStorage 不可用时，交给 Supabase 会话继续管理。
+  }
+}
+
+function hasExpiredByInactivity(): boolean {
+  try {
+    const raw = localStorage.getItem(LAST_ACTIVE_KEY)
+    if (!raw) return false
+    const lastActiveAt = Number(raw)
+    return Number.isFinite(lastActiveAt) && Date.now() - lastActiveAt > INACTIVITY_LIMIT_MS
+  } catch {
+    return false
   }
 }
 
@@ -35,6 +57,8 @@ export async function signUp(email: string, password: string): Promise<{ user: A
   if (error) return { user: null, error: error.message }
 
   if (data.user) {
+    markActive()
+    notifySyncConfigChanged()
     return { user: { id: data.user.id, email: data.user.email! }, error: null }
   }
   return { user: null, error: '注册失败' }
@@ -49,6 +73,8 @@ export async function signIn(email: string, password: string): Promise<{ user: A
   if (error) return { user: null, error: error.message }
 
   if (data.user) {
+    markActive()
+    notifySyncConfigChanged()
     return { user: { id: data.user.id, email: data.user.email! }, error: null }
   }
   return { user: null, error: '登录失败' }
@@ -60,6 +86,7 @@ export async function signOut(): Promise<void> {
   if (!supabase) return
   await supabase.auth.signOut()
   localStorage.removeItem('fandazi.householdId')
+  localStorage.removeItem(LAST_ACTIVE_KEY)
   notifySyncConfigChanged()
 }
 
@@ -69,7 +96,12 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   if (!supabase) return null
 
   const { data } = await supabase.auth.getUser()
+  if (data.user && hasExpiredByInactivity()) {
+    await signOut()
+    return null
+  }
   if (data.user) {
+    markActive()
     return { id: data.user.id, email: data.user.email! }
   }
   return null

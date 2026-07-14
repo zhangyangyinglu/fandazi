@@ -8,6 +8,8 @@ import { DISHES } from '@/data/dishes'
 import type { Dish } from '@/types'
 import { useFandaziStore } from '@/stores/fandaziStore'
 import { readHealthProfiles, type HealthProfile } from '@/components/healthProfileStorage'
+import { FANDAZI_SYNC_CONFIG_EVENT } from '@/lib/supabaseClient'
+import { readBuddyGroup } from '@/data/familySharing'
 import { checkPlateStructure } from '@/data/healthRecommend'
 import { recommendMeal, type MealTime } from '@/data/recommend'
 import './RecipeWorkspacePage.css'
@@ -127,6 +129,7 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
   const [recommendationSeed, setRecommendationSeed] = useState(0)
   const [recommendationExcludeIds, setRecommendationExcludeIds] = useState<string[]>([])
   const [healthProfiles, setHealthProfiles] = useState<HealthProfile[]>([])
+  const [isSharedMode, setIsSharedMode] = useState(() => Boolean(localStorage.getItem('fandazi.householdId')))
   const recommendationRef = useRef<HTMLElement | null>(null)
   const filtersRef = useRef<HTMLDivElement | null>(null)
   const catalogRef = useRef<HTMLElement | null>(null)
@@ -140,6 +143,15 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
     setHealthProfiles(readHealthProfiles())
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [searchParams])
+
+  useEffect(() => {
+    const refreshMode = () => setIsSharedMode(Boolean(localStorage.getItem('fandazi.householdId')))
+    window.addEventListener(FANDAZI_SYNC_CONFIG_EVENT, refreshMode)
+    return () => window.removeEventListener(FANDAZI_SYNC_CONFIG_EVENT, refreshMode)
+  }, [])
+
+  const buddyGroup = useMemo(() => readBuddyGroup(), [])
+  const homeModeLabel = isSharedMode ? '家庭共享' : '本机使用'
 
   const pantryNames = useMemo(() => new Set(pantry.map((p) => p.ingredientName)), [pantry])
   const myDishIds = useMemo(() => new Set(myDishVersions.map((v) => v.dishId)), [myDishVersions])
@@ -316,7 +328,7 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
         <div className="hero-section">
           <div className="hero-main-stack">
             <div className="fd-hero-card hero-main">
-              <div className="hero-label">今天晚餐 · 本机家庭</div>
+              <div className="hero-label">今天晚餐 · {homeModeLabel}</div>
               <h2>饭团先帮你搭一版，不合适再改一下</h2>
               <p>{recommendationResult?.reason || `优先用冰箱里的食材，给 2 人晚餐安排。`}</p>
               <div className="cta-row hero-cta-row">
@@ -331,8 +343,8 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
           </div>
           <div className="fd-side-card summary-card">
             <div className="hero-label">家庭空间状态</div>
-            <div className="fd-list-item"><span>当前模式</span><strong>本机使用</strong></div>
-            <div className="fd-list-item"><span>家庭成员</span><strong>可在家庭空间设置</strong></div>
+            <div className="fd-list-item"><span>当前模式</span><strong>{homeModeLabel}</strong></div>
+            <div className="fd-list-item"><span>家庭成员</span><strong>{buddyGroup.members.length} 人已设置</strong></div>
             <div className="fd-list-item"><span>快过期</span><strong>{pantry.filter((p) => p.status === 'use_soon').slice(0, 3).map((p) => p.ingredientName).join(' · ') || '暂无'}</strong></div>
             <div className="fd-list-item"><span>缺少食材</span><strong>{recommendationResult ? `${recommendationResult.pantryIngredientTotal - recommendationResult.pantryIngredientCount} 项` : '—'}</strong></div>
           </div>

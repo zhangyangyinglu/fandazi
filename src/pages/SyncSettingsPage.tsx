@@ -8,10 +8,11 @@
  *   4. 显示同步状态
  */
 import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { friendlyError } from '@/lib/friendlyError'
 import {
   isSupabaseConfigured,
+  FANDAZI_SYNC_CONFIG_EVENT,
   setSupabaseConfig,
   clearSupabaseConfig,
   resetSupabaseClient,
@@ -38,11 +39,13 @@ import {
   type AiProviderConfig,
 } from '@/lib/aiProviderConfig'
 import { testAiConnection } from '@/lib/fantuanAiClient'
+import { LOCAL_MODE_CONFIRMED_KEY } from '@/components/AppAccessGate'
 import './SyncSettingsPage.css'
 
 type Step = 'config' | 'auth' | 'household' | 'done'
 
 export function SyncSettingsPage() {
+  const navigate = useNavigate()
   const [step, setStep] = useState<Step>('config')
   const [user, setUser] = useState<AuthUser | null>(null)
   const [household, setHousehold] = useState<Household | null>(null)
@@ -77,10 +80,14 @@ export function SyncSettingsPage() {
   const partnerInvitePackage = household && supabasePublicConfig
     ? [
         '饭搭子家庭邀请包',
-        `Supabase URL: ${supabasePublicConfig.url}`,
-        `Supabase anon key: ${supabasePublicConfig.anonKey}`,
+        '打开网址：https://fandazi-web-tool.vercel.app',
+        ...(supabasePublicConfig.source === 'localStorage'
+          ? [`Supabase URL: ${supabasePublicConfig.url}`, `Supabase anon key: ${supabasePublicConfig.anonKey}`]
+          : []),
         `家庭邀请码: ${household.inviteCode}`,
-        '说明：搭子不用再创建自己的 Supabase 项目；下载/部署饭搭子后，在同步页填入上面同一套家庭云端配置，再注册/登录并输入邀请码加入。',
+        supabasePublicConfig.source === 'env'
+          ? '说明：搭子打开上面网址，注册/登录后输入邀请码加入，不需要下载、部署或配置 Supabase。'
+          : '说明：这是独立部署版；搭子需要填入同一套家庭云端配置，再注册/登录并输入邀请码加入。',
       ].join('\n')
     : ''
 
@@ -320,6 +327,15 @@ export function SyncSettingsPage() {
             onChange={(e) => setSupabaseKey(e.target.value)}
           />
           <button onClick={handleSaveConfig} disabled={loading}>保存配置</button>
+          <button
+            className="sync-clear-btn"
+            type="button"
+            onClick={() => {
+              localStorage.setItem(LOCAL_MODE_CONFIRMED_KEY, 'true')
+              window.dispatchEvent(new Event(FANDAZI_SYNC_CONFIG_EVENT))
+              navigate('/welcome')
+            }}
+          >仅在本机体验（不共享数据）</button>
           {error && <p className="sync-error">{error}</p>}
         </section>
       )}
@@ -418,6 +434,9 @@ export function SyncSettingsPage() {
             )}
             <p><strong>当前账号：</strong>{user.email}</p>
           </div>
+          <button style={visiblePrimaryButtonStyle} onClick={() => navigate('/welcome')}>
+            继续首次设置
+          </button>
           <button onClick={handleSignOut} className="sync-logout-btn">退出登录</button>
         </section>
       )}

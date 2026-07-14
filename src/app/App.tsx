@@ -5,6 +5,7 @@ import { FloatingFantuan } from '@/components/FloatingFantuan'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { OnboardingHint } from '@/components/OnboardingHint'
 import { FantuanPetImage } from '@/components/FantuanPetImage'
+import { AppAccessGate } from '@/components/AppAccessGate'
 import { RecipeWorkspacePage } from '@/pages/RecipeWorkspacePage'
 import { RecipeDetailPage } from '@/pages/RecipeDetailPage'
 import { useFamilySync } from '@/lib/useFamilySync'
@@ -22,6 +23,7 @@ const HealthPage = lazy(() => import('@/pages/HealthPage').then(m => ({ default:
 const FamilyPage = lazy(() => import('@/pages/FamilyPage').then(m => ({ default: m.FamilyPage })))
 const SyncSettingsPage = lazy(() => import('@/pages/SyncSettingsPage').then(m => ({ default: m.SyncSettingsPage })))
 const PrivacyPage = lazy(() => import('@/pages/PrivacyPage').then(m => ({ default: m.PrivacyPage })))
+const FirstUsePage = lazy(() => import('@/pages/FirstUsePage').then(m => ({ default: m.FirstUsePage })))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })))
 
 function PageFallback() {
@@ -75,10 +77,11 @@ export function App() {
   return (
     <BrowserRouter>
       <ErrorBoundary>
-        <div className="fd-desktop-shell">
-          <TopNav />
-          <main className="fd-main">
-            <Routes>
+        <AppAccessGate>
+          <div className="fd-desktop-shell">
+            <TopNav />
+            <main className="fd-main">
+              <Routes>
             <Route path="/" element={<RecipeWorkspacePage />} />
             <Route path="/catalog" element={<RecipeWorkspacePage catalogMode />} />
             <Route path="/recipes/:id" element={<RecipeDetailPage />} />
@@ -91,11 +94,13 @@ export function App() {
             <Route path="/health" element={<Suspense fallback={<PageFallback />}><HealthPage /></Suspense>} />
             <Route path="/family" element={<Suspense fallback={<PageFallback />}><FamilyPage /></Suspense>} />
             <Route path="/sync" element={<Suspense fallback={<PageFallback />}><SyncSettingsPage /></Suspense>} />
+            <Route path="/welcome" element={<Suspense fallback={<PageFallback />}><FirstUsePage /></Suspense>} />
             <Route path="/privacy" element={<Suspense fallback={<PageFallback />}><PrivacyPage /></Suspense>} />
             <Route path="*" element={<Suspense fallback={<PageFallback />}><NotFoundPage /></Suspense>} />
-            </Routes>
-          </main>
-        </div>
+              </Routes>
+            </main>
+          </div>
+        </AppAccessGate>
       </ErrorBoundary>
       <OnboardingHint />
       <FloatingFantuan />

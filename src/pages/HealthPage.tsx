@@ -1,9 +1,7 @@
 /**
- * 健康页 - 饭团聊出来的健康档案
+ * 健康页 - 首次轻量问卷 + 饭团对话共同积累的健康档案
  *
- * 用户和饭团聊天时随口提到的健康信息会自动提取存档，
- * 在这里可以看到完整的健康画像。
- * 不需要填问卷，聊着聊着就建好了。
+ * 首次使用时先完成少量饮食偏好设置，后续和饭团聊天时提到的健康信息再自动补充。
  */
 import { useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
@@ -32,12 +30,12 @@ export function HealthPage() {
     <div className="health-page">
       <section className="health-hero">
         <div className="fd-hero-card health-hero-main">
-          <div className="hero-label">健康档案 · 饭团聊出来的</div>
+          <div className="hero-label">健康档案 · 问卷 + 对话</div>
           <h2>{totalFacts > 0 ? `已记录 ${totalFacts} 条健康信息` : '还没有健康信息'}</h2>
           <p>
             {totalFacts > 0
-              ? '这些信息是你在和饭团聊天时随口提到的，饭团帮你记住了。推荐时会考虑这些因素。'
-              : '不需要填问卷。和饭团聊天时说到"我对花生过敏""我在控糖""最近在吃降压药"之类的，饭团会自动记下来，慢慢积累成你的健康档案。'}
+              ? '这些信息来自首次设置和你与饭团的对话。推荐时会考虑这些因素，你也可以随时删除或补充。'
+              : '首次使用先完成少量饮食偏好设置；之后和饭团聊天时说到"我对花生过敏""我在控糖"等信息，饭团会继续帮你记住。'}
           </p>
           <div className="cta-row">
             <Link to="/" className="fd-btn fd-btn-primary">回到菜品页</Link>
@@ -90,9 +88,9 @@ export function HealthPage() {
         <section className="fd-panel health-guide-panel">
           <div>
             <div className="hero-label">怎么积累健康档案</div>
-            <h3>和饭团聊天就行</h3>
+            <h3>先填几项，再边用边补充</h3>
             <p>
-              打开右下角饭团对话框，随便聊。说到健康相关信息时，饭团会自动帮你记下来。
+              首次设置会收集最影响推荐的少量偏好；打开右下角饭团对话框继续聊天，说到健康相关信息时，饭团会自动帮你记下来。
             </p>
           </div>
           <div className="plate-grid">
