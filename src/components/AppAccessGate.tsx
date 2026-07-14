@@ -69,7 +69,7 @@ export function AppAccessGate({ children }: { children: ReactNode }) {
 
   // 同步页承担配置、登录、注册和创建/加入家庭流程，必须允许未完成用户进入。
   if (location.pathname === '/sync') return <>{children}</>
-  if (location.pathname === '/welcome' && state === 'first-use') return <>{children}</>
+  if ((location.pathname === '/welcome' || location.pathname === '/health') && state === 'first-use') return <>{children}</>
 
   if (state === 'configuration') {
     return <Navigate to="/sync" replace />

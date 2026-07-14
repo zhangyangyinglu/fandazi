@@ -30,6 +30,65 @@
   color: var(--fd-fantuan) !important;
 }
 
+.health-questionnaire {
+  display: grid;
+  gap: 16px;
+}
+
+.health-question-block {
+  display: grid;
+  gap: 10px;
+}
+
+.health-question-block h4 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.health-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.health-choice,
+.health-choice-tag {
+  border: 1px solid var(--fd-line-soft);
+  background: var(--fd-surface-warm);
+  border-radius: 14px;
+  padding: 13px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.health-choice strong,
+.health-choice span {
+  display: block;
+}
+
+.health-choice span {
+  margin-top: 5px;
+  color: var(--fd-muted);
+  font-size: 13px;
+}
+
+.health-choice.selected,
+.health-choice-tag.selected {
+  border-color: var(--fd-fantuan);
+  background: #fff1d8;
+}
+
+.health-choice-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.health-choice-tag {
+  border-radius: var(--r-pill);
+  padding: 10px 15px;
+}
+
 .health-mode-card,
 .health-side {
   display: grid;
@@ -178,7 +237,8 @@
   .health-guide-panel,
   .health-workspace,
   .profile-grid,
-  .plate-grid {
+  .plate-grid,
+  .health-choice-grid {
     grid-template-columns: 1fr;
   }
 }

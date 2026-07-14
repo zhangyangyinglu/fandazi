@@ -1,112 +1,27 @@
-import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { EMPTY_DISH_PREFERENCES } from '@/data/dishPreferences'
-import { writeBuddyGroup, type BuddyGroup, type BuddyMember } from '@/data/familySharing'
-import { writeHealthProfiles, type HealthProfile } from '@/components/healthProfileStorage'
-import { FIRST_USE_COMPLETED_EVENT, FIRST_USE_COMPLETED_KEY } from '@/components/AppAccessGate'
 import './FirstUsePage.css'
-
-const GOAL_OPTIONS = [
-  ['meal-planning', '日常家常', '每天吃得简单、稳定'],
-  ['sugar-control', '控脂控糖', '少油少糖，更轻松'],
-  ['light-diet', '清淡一点', '少盐少重口'],
-  ['shopping-efficiency', '省钱快手', '少买菜，快点做完'],
-] as const
-
-const RESTRICTION_OPTIONS = [
-  ['no-seafood', '海鲜'],
-  ['no-beef-lamb', '牛羊肉'],
-  ['no-egg', '鸡蛋'],
-  ['no-dairy', '奶制品'],
-  ['no-nuts', '坚果'],
-  ['no-spicy', '辣味'],
-] as const
-
-const uid = () => crypto.randomUUID()
-
-function createMember(name: string, avatar: string, id = uid()): BuddyMember {
-  return {
-    id,
-    name,
-    avatar,
-    healthProfile: { goals: [], restrictions: [], notes: '' },
-    preferences: { ...EMPTY_DISH_PREFERENCES },
-  }
-}
 
 export function FirstUsePage() {
   const navigate = useNavigate()
-  const [name, setName] = useState('')
-  const [goals, setGoals] = useState<string[]>([])
-  const [restrictions, setRestrictions] = useState<string[]>([])
-
-  const toggle = (value: string, current: string[], setter: (next: string[]) => void) => {
-    setter(current.includes(value) ? current.filter((item) => item !== value) : [...current, value])
-  }
-
-  const finish = () => {
-    const ownerName = name.trim() || localStorage.getItem('fandazi.currentDisplayName') || '家庭成员'
-
-    const members = [createMember(ownerName, '🍚')]
-    const group: BuddyGroup = {
-      id: `buddy-group-${uid()}`,
-      name: members.map((member) => member.name).join('和'),
-      members,
-      todayChefId: members[0].id,
-    }
-    writeBuddyGroup(group)
-
-    const now = Date.now()
-    const profile: HealthProfile = {
-      id: `health-${uid()}`,
-      name: ownerName,
-      role: 'owner',
-      goals: goals as HealthProfile['goals'],
-      healthStatuses: [],
-      restrictions: restrictions as HealthProfile['restrictions'],
-      nutritionFocus: [],
-      priorityGoals: goals.slice(0, 1) as HealthProfile['priorityGoals'],
-      notes: '首次使用轻量问卷记录，可随时在健康页修改。',
-      createdAt: now,
-      updatedAt: now,
-    }
-    writeHealthProfiles([profile])
-    localStorage.setItem(FIRST_USE_COMPLETED_KEY, 'true')
-    window.dispatchEvent(new Event(FIRST_USE_COMPLETED_EVENT))
-    navigate('/')
-  }
 
   return (
     <div className="first-use-page">
       <section className="first-use-hero">
         <div className="hero-label">第一次使用 · 只需几分钟</div>
         <h1>先把你的这一餐搭起来</h1>
-        <p>先填写你自己的饮食偏好和健康约束。加入同一个家庭组后，饭搭子会结合家庭成员各自的设置，给出更适合这一家的推荐。</p>
+        <p>先了解饭搭子会怎么工作。你的饮食目标和需要避开的内容，请统一在“健康”里填写，之后也可以随时修改。</p>
       </section>
 
       <section className="first-use-panel">
-        <div className="first-use-step"><span>1</span><div><h2>谁在一起吃饭？</h2><p>填写真实称呼，之后可以随时在家庭空间修改。</p></div></div>
-        <label>你的称呼（可选）<input value={name} onChange={(event) => setName(event.target.value)} placeholder="例如：杨老师；不填写也可以继续" /></label>
+        <div className="first-use-step"><span>1</span><div><h2>先填写自己的健康问卷</h2><p>每个人填写自己的饮食目标和限制，家庭推荐会据此调整。</p></div></div>
       </section>
 
       <section className="first-use-panel">
-        <div className="first-use-step"><span>2</span><div><h2>你更在意什么？</h2><p>不需要填医学信息，先告诉饭团你的日常目标即可。</p></div></div>
-        <div className="choice-grid">
-          {GOAL_OPTIONS.map(([value, label, description]) => (
-            <button key={value} className={goals.includes(value) ? 'choice-card selected' : 'choice-card'} onClick={() => toggle(value, goals, setGoals)} type="button">
-              <strong>{label}</strong><span>{description}</span>
-            </button>
-          ))}
-        </div>
+        <div className="first-use-step"><span>2</span><div><h2>看看第一份推荐</h2><p>问卷保存后，饭搭子会根据你的设置、冰箱食材和餐盘结构排序菜品。</p></div></div>
       </section>
 
       <section className="first-use-panel">
-        <div className="first-use-step"><span>3</span><div><h2>你有什么需要避开的？</h2><p>选中后，你的推荐会优先避开这些食材或口味。</p></div></div>
-        <div className="choice-tags">
-          {RESTRICTION_OPTIONS.map(([value, label]) => (
-            <button key={value} className={restrictions.includes(value) ? 'choice-tag selected' : 'choice-tag'} onClick={() => toggle(value, restrictions, setRestrictions)} type="button">{label}</button>
-          ))}
-        </div>
+        <div className="first-use-step"><span>3</span><div><h2>之后按需要继续使用</h2><p>加入计划会生成购物清单，做完饭后的反馈会慢慢沉淀成你们家的口味。</p></div></div>
       </section>
 
       <section className="first-use-logic">
@@ -119,7 +34,7 @@ export function FirstUsePage() {
         </div>
       </section>
 
-      <button className="fd-btn fd-btn-primary first-use-submit" type="button" onClick={finish}>完成设置，看看第一份推荐</button>
+      <button className="fd-btn fd-btn-primary first-use-submit" type="button" onClick={() => navigate('/health')}>去健康页完成问卷</button>
       <p className="first-use-note">健康问卷不是医学诊断；特殊疾病、过敏和用药情况请以专业医嘱为准。</p>
     </div>
   )
