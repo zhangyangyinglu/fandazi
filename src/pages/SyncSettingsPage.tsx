@@ -39,7 +39,7 @@ import {
   type AiProviderConfig,
 } from '@/lib/aiProviderConfig'
 import { testAiConnection } from '@/lib/fantuanAiClient'
-import { LOCAL_MODE_CONFIRMED_KEY } from '@/components/AppAccessGate'
+import { FIRST_USE_COMPLETED_KEY, LOCAL_MODE_CONFIRMED_KEY } from '@/components/AppAccessGate'
 import './SyncSettingsPage.css'
 
 type Step = 'config' | 'auth' | 'household' | 'done'
@@ -91,6 +91,12 @@ export function SyncSettingsPage() {
       ].join('\n')
     : ''
 
+  const continueAfterHousehold = useCallback(() => {
+    if (localStorage.getItem(FIRST_USE_COMPLETED_KEY) !== 'true') {
+      navigate('/welcome', { replace: true })
+    }
+  }, [navigate])
+
   const checkStatus = useCallback(async () => {
     setLoading(true)
     setError(null)
@@ -113,11 +119,12 @@ export function SyncSettingsPage() {
     if (h) {
       setHousehold(h)
       setStep('done')
+      continueAfterHousehold()
     } else {
       setStep('household')
     }
     setLoading(false)
-  }, [])
+  }, [continueAfterHousehold])
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -231,6 +238,7 @@ export function SyncSettingsPage() {
       if (h) {
         setHousehold(h)
         setStep('done')
+        continueAfterHousehold()
       } else {
         setStep('household')
       }
@@ -251,6 +259,7 @@ export function SyncSettingsPage() {
     } else if (result.household) {
       setHousehold(result.household)
       setStep('done')
+      continueAfterHousehold()
     }
     setLoading(false)
   }
@@ -268,6 +277,7 @@ export function SyncSettingsPage() {
     } else if (result.household) {
       setHousehold(result.household)
       setStep('done')
+      continueAfterHousehold()
     }
     setLoading(false)
   }
@@ -297,7 +307,7 @@ export function SyncSettingsPage() {
           你可以一个人用一个家庭组，也可以把搭子邀请进来。搭子可以是另一个人、家里的宠物、或不会用电脑的老人——由你自己设置。
         </p>
         <p className="sync-note">
-          一个家庭只需要一个共享 Supabase 后端。先创建家庭的人会拿到邀请包（URL + key + 邀请码），想邀请搭子时发给对方就行；不邀请也完全正常。
+          所有用户可以使用同一个线上 Supabase 后端，但每个用户都要在应用内创建自己的家庭组；只有拿到本家庭邀请码的搭子才能加入，家庭数据不会混在一起。
           饭团 AI 可在本页下方配置；健康档案家庭可见但各自编辑。
         </p>
       </div>

@@ -37,24 +37,17 @@ function createMember(name: string, avatar: string, id = uid()): BuddyMember {
 export function FirstUsePage() {
   const navigate = useNavigate()
   const [name, setName] = useState('')
-  const [companionName, setCompanionName] = useState('')
   const [goals, setGoals] = useState<string[]>([])
   const [restrictions, setRestrictions] = useState<string[]>([])
-  const [error, setError] = useState('')
 
   const toggle = (value: string, current: string[], setter: (next: string[]) => void) => {
     setter(current.includes(value) ? current.filter((item) => item !== value) : [...current, value])
   }
 
   const finish = () => {
-    const ownerName = name.trim()
-    if (!ownerName) {
-      setError('先告诉饭团怎么称呼你，之后推荐和家庭成员才不会混乱。')
-      return
-    }
+    const ownerName = name.trim() || localStorage.getItem('fandazi.currentDisplayName') || '家庭成员'
 
     const members = [createMember(ownerName, '🍚')]
-    if (companionName.trim()) members.push(createMember(companionName.trim(), '🍵'))
     const group: BuddyGroup = {
       id: `buddy-group-${uid()}`,
       name: members.map((member) => member.name).join('和'),
@@ -87,18 +80,17 @@ export function FirstUsePage() {
     <div className="first-use-page">
       <section className="first-use-hero">
         <div className="hero-label">第一次使用 · 只需几分钟</div>
-        <h1>先把你们这一餐搭起来</h1>
-        <p>饭搭子会根据成员偏好、健康约束和冰箱食材给出推荐。下面几项设置完成后，你就能直接看到第一份适合你们的晚餐。</p>
+        <h1>先把你的这一餐搭起来</h1>
+        <p>先填写你自己的饮食偏好和健康约束。加入同一个家庭组后，饭搭子会结合家庭成员各自的设置，给出更适合这一家的推荐。</p>
       </section>
 
       <section className="first-use-panel">
         <div className="first-use-step"><span>1</span><div><h2>谁在一起吃饭？</h2><p>填写真实称呼，之后可以随时在家庭空间修改。</p></div></div>
-        <label>你的称呼<input value={name} onChange={(event) => setName(event.target.value)} placeholder="例如：杨老师" /></label>
-        <label>搭子称呼（可选）<input value={companionName} onChange={(event) => setCompanionName(event.target.value)} placeholder="例如：屠老师" /></label>
+        <label>你的称呼（可选）<input value={name} onChange={(event) => setName(event.target.value)} placeholder="例如：杨老师；不填写也可以继续" /></label>
       </section>
 
       <section className="first-use-panel">
-        <div className="first-use-step"><span>2</span><div><h2>你们更在意什么？</h2><p>不需要填医学信息，先告诉饭团日常目标即可。</p></div></div>
+        <div className="first-use-step"><span>2</span><div><h2>你更在意什么？</h2><p>不需要填医学信息，先告诉饭团你的日常目标即可。</p></div></div>
         <div className="choice-grid">
           {GOAL_OPTIONS.map(([value, label, description]) => (
             <button key={value} className={goals.includes(value) ? 'choice-card selected' : 'choice-card'} onClick={() => toggle(value, goals, setGoals)} type="button">
@@ -109,7 +101,7 @@ export function FirstUsePage() {
       </section>
 
       <section className="first-use-panel">
-        <div className="first-use-step"><span>3</span><div><h2>有什么需要避开的？</h2><p>选中后，推荐会优先避开这些食材或口味。</p></div></div>
+        <div className="first-use-step"><span>3</span><div><h2>你有什么需要避开的？</h2><p>选中后，你的推荐会优先避开这些食材或口味。</p></div></div>
         <div className="choice-tags">
           {RESTRICTION_OPTIONS.map(([value, label]) => (
             <button key={value} className={restrictions.includes(value) ? 'choice-tag selected' : 'choice-tag'} onClick={() => toggle(value, restrictions, setRestrictions)} type="button">{label}</button>
@@ -127,7 +119,6 @@ export function FirstUsePage() {
         </div>
       </section>
 
-      {error && <p className="first-use-error">{error}</p>}
       <button className="fd-btn fd-btn-primary first-use-submit" type="button" onClick={finish}>完成设置，看看第一份推荐</button>
       <p className="first-use-note">健康问卷不是医学诊断；特殊疾病、过敏和用药情况请以专业医嘱为准。</p>
     </div>

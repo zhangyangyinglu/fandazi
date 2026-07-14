@@ -48,6 +48,14 @@ export interface Household {
   inviteCode: string
 }
 
+export interface HouseholdMemberRecord {
+  id: string
+  userId: string
+  displayName: string
+  avatarEmoji: string
+  role: string
+}
+
 /** 注册新用户 */
 export async function signUp(email: string, password: string): Promise<{ user: AuthUser | null; error: string | null }> {
   const supabase = getSupabase()
@@ -123,6 +131,7 @@ export async function createHousehold(name: string, creatorId: string): Promise<
 
   const raw = house as { id: string; name: string; invite_code: string }
   localStorage.setItem('fandazi.householdId', raw.id)
+  localStorage.setItem('fandazi.currentDisplayName', '家庭成员')
   notifySyncConfigChanged()
 
   return {
@@ -151,6 +160,7 @@ export async function joinHousehold(inviteCode: string, _userId: string, display
 
   const raw = house as { id: string; name: string; invite_code: string }
   localStorage.setItem('fandazi.householdId', raw.id)
+  localStorage.setItem('fandazi.currentDisplayName', displayName)
   notifySyncConfigChanged()
 
   return {
@@ -183,4 +193,26 @@ export async function getMyHousehold(userId: string): Promise<Household | null> 
     }
   }
   return null
+}
+
+/** 获取当前家庭的真实成员，不回退到 Demo 成员。 */
+export async function getMyHouseholdMembers(): Promise<HouseholdMemberRecord[]> {
+  const supabase = getSupabase()
+  const householdId = localStorage.getItem('fandazi.householdId')
+  if (!supabase || !householdId) return []
+
+  const { data, error } = await supabase
+    .from('household_members')
+    .select('id, user_id, display_name, avatar_emoji, role')
+    .eq('household_id', householdId)
+    .order('joined_at', { ascending: true })
+
+  if (error || !data) return []
+  return data.map((row) => ({
+    id: String(row.id),
+    userId: String(row.user_id),
+    displayName: String(row.display_name || '家庭成员'),
+    avatarEmoji: String(row.avatar_emoji || '🍚'),
+    role: String(row.role || 'member'),
+  }))
 }
