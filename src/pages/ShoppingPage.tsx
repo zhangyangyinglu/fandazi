@@ -1,199 +1,58 @@
-/**
- * 购物清单页 — P2-4
- * 对应渲染图：P1-1d 计划+购物联动页 v6
- * 从计划中缺失食材自动生成购物清单
- */
-import { useEffect, useMemo, useState } from 'react'
+/** 采购页：生成清单、调整规格、确认购买，再确认放入冰箱。 */
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useFandaziStore } from '@/stores/fandaziStore'
 import { DISHES } from '@/data/dishes'
 import './ShoppingPage.css'
 
-const AUTO_CHECKED_STORAGE_KEY = 'fandazi.shopping.autoChecked'
-
-function readCheckedAuto(): Set<string> {
-  try {
-    const raw = localStorage.getItem(AUTO_CHECKED_STORAGE_KEY)
-    const parsed = raw ? JSON.parse(raw) : []
-    return new Set(Array.isArray(parsed) ? parsed.filter((value): value is string => typeof value === 'string') : [])
-  } catch {
-    return new Set()
-  }
-}
-
 export function ShoppingPage() {
   const mealPlans = useFandaziStore((s) => s.mealPlans)
   const pantry = useFandaziStore((s) => s.pantry)
   const shoppingList = useFandaziStore((s) => s.shoppingList)
-  const toggleShoppingItem = useFandaziStore((s) => s.toggleShoppingItem)
+  const addShoppingItem = useFandaziStore((s) => s.addShoppingItem)
+  const updateShoppingItem = useFandaziStore((s) => s.updateShoppingItem)
+  const markShoppingPurchased = useFandaziStore((s) => s.markShoppingPurchased)
+  const storeShoppingItem = useFandaziStore((s) => s.storeShoppingItem)
 
-  // 自动项的勾选状态：持久化到 localStorage，避免用户刷新后丢失采购进度
-  const [checkedAuto, setCheckedAuto] = useState<Set<string>>(() => readCheckedAuto())
-
-  // 自动从计划中缺失食材生成购物清单；首屏没有用户 localStorage 时也要展示默认链路
-  const autoItems = useMemo(() => {
-    const pantryNames = new Set(pantry.map((p) => p.ingredientName))
-    const items: { name: string; amount: string; source: string; key: string }[] = []
-    const sourcePlans = mealPlans.length > 0
-      ? mealPlans
-      : [
-          { dishId: 'broccoli-chicken-egg', status: 'planned' },
-          { dishId: 'tomato-tofu-shrimp-soup', status: 'planned' },
-          { dishId: 'asparagus-shrimp-mushroom', status: 'shopping_done' },
-        ]
-    for (const plan of sourcePlans) {
+  const candidates = useMemo(() => {
+    const pantryNames = new Set(pantry.map((item) => item.ingredientName))
+    const byName = new Map<string, { name: string; amount: string; source: string; category: typeof DISHES[number]['ingredients'][number]['group'] }>()
+    for (const plan of mealPlans) {
       if (plan.status === 'done' || plan.status === 'skipped') continue
-      const dish = DISHES.find((d) => d.id === plan.dishId)
+      const dish = DISHES.find((item) => item.id === plan.dishId)
       if (!dish) continue
-      for (const ing of dish.ingredients) {
-        if (!pantryNames.has(ing.name)) {
-          items.push({ name: ing.name, amount: ing.amount, source: dish.name, key: `${dish.name}-${ing.name}` })
-        }
+      for (const ingredient of dish.ingredients) {
+        if (pantryNames.has(ingredient.name)) continue
+        const existing = byName.get(ingredient.name)
+        byName.set(ingredient.name, {
+          name: ingredient.name,
+          amount: existing?.amount ?? ingredient.amount,
+          source: existing ? `${existing.source}、${dish.name}` : dish.name,
+          category: existing?.category ?? ingredient.group,
+        })
       }
     }
-    return items
+    return [...byName.values()]
   }, [mealPlans, pantry])
 
-  useEffect(() => {
-    // 清理已不在 autoItems 中的旧 key，防止 localStorage 无限增长
-    const validKeys = new Set(autoItems.map((i) => i.key))
-    const cleaned = [...checkedAuto].filter((k) => validKeys.has(k))
-    localStorage.setItem(AUTO_CHECKED_STORAGE_KEY, JSON.stringify(cleaned))
-  }, [checkedAuto, autoItems])
+  const pendingCandidates = candidates.filter((candidate) => !shoppingList.some((item) => item.name === candidate.name))
+  const pendingCount = shoppingList.filter((item) => item.status !== 'stored').length
 
-  const autoItemKeys = useMemo(() => new Set(autoItems.map((item) => item.key)), [autoItems])
-
-  // 按菜品来源分组
-  const grouped = useMemo(() => {
-    const groups: Record<string, typeof autoItems> = {}
-    for (const item of autoItems) {
-      if (!groups[item.source]) groups[item.source] = []
-      groups[item.source].push(item)
-    }
-    return groups
-  }, [autoItems])
-
-  const toggleAuto = (key: string) => {
-    setCheckedAuto((prev) => {
-      const next = new Set(prev)
-      if (next.has(key)) next.delete(key)
-      else next.add(key)
-      return next
-    })
+  function generateShoppingList() {
+    pendingCandidates.forEach((candidate) => addShoppingItem({
+      id: crypto.randomUUID(), name: candidate.name, amount: candidate.amount, source: candidate.source,
+      checked: false, category: candidate.category, status: 'pending',
+    }))
   }
-
-  const autoCheckedCount = [...checkedAuto].filter((key) => autoItemKeys.has(key)).length
-  const autoTotal = autoItems.length
-  const manualCheckedCount = shoppingList.filter((i) => i.checked).length
-  const manualTotal = shoppingList.length
 
   return (
     <div className="shopping-page">
-      {/* Hero */}
-      <div className="shopping-hero">
-        <div className="fd-hero-card">
-          <div className="hero-label">购物清单 · 本机使用</div>
-          <h2>
-            {autoItems.length > 0
-              ? `要买 ${autoItems.length} 样食材`
-              : '购物清单是空的'}
-          </h2>
-          <p>
-            {autoItems.length > 0
-              ? '从计划中缺失食材自动生成，按菜品来源分组。'
-              : '加入计划后，缺失食材会自动出现在这里。'}
-          </p>
-          <div className="cta-row shopping-cta-row">
-            <Link to="/plan" className="fd-btn fd-btn-primary">返回计划</Link>
-            <Link to="/pantry" className="fd-btn fd-btn-secondary">看冰箱</Link>
-            <Link to="/" className="fd-btn fd-btn-secondary">继续选菜</Link>
-          </div>
-        </div>
-        <div className="fd-side-card">
-          <h4>🛒 清单状态</h4>
-          <div className="fd-list-item">
-            <span>自动生成</span>
-            <strong>{autoTotal} 项</strong>
-          </div>
-          <div className="fd-list-item">
-            <span>已勾选</span>
-            <strong>{autoCheckedCount + manualCheckedCount} 项</strong>
-          </div>
-          <div className="fd-list-item">
-            <span>手动添加</span>
-            <strong>{manualTotal} 项</strong>
-          </div>
-          {autoCheckedCount > 0 && (
-            <button
-              className="fd-btn fd-btn-green fd-btn-sm"
-              onClick={() => setCheckedAuto(new Set())}
-              style={{ marginTop: '10px', width: '100%' }}
-            >
-              重置勾选
-            </button>
-          )}
-        </div>
-      </div>
+      <div className="shopping-hero"><div className="fd-hero-card"><div className="hero-label">采购清单 · 家庭共享</div><h2>{shoppingList.length ? `本次采购 ${pendingCount} 项` : '还没有采购清单'}</h2><p>从计划生成后可以修改数量和规格。未确认放入冰箱前，不会写入库存。</p><div className="cta-row shopping-cta-row"><button className="fd-btn fd-btn-primary" onClick={generateShoppingList} disabled={pendingCandidates.length === 0}>{pendingCandidates.length ? '去采购（生成清单）' : shoppingList.length ? '清单已生成' : '先去计划选菜'}</button><Link to="/plan" className="fd-btn fd-btn-secondary">返回计划</Link><Link to="/pantry" className="fd-btn fd-btn-secondary">看冰箱</Link></div></div><div className="fd-side-card"><h4>🛒 清单状态</h4><div className="fd-list-item"><span>待购买</span><strong>{shoppingList.filter((item) => !item.checked).length} 项</strong></div><div className="fd-list-item"><span>已买待入库</span><strong>{shoppingList.filter((item) => item.status === 'purchased').length} 项</strong></div><div className="fd-list-item"><span>已入库</span><strong>{shoppingList.filter((item) => item.status === 'stored').length} 项</strong></div></div></div>
 
-      {/* 自动生成的购物清单（按菜品分组） */}
-      {Object.keys(grouped).length > 0 && (
-        <div className="fd-panel">
-          <h3>按菜品分组</h3>
-          {Object.entries(grouped).map(([dishName, items]) => (
-            <div key={dishName} className="shopping-group">
-              <div className="shopping-group-title">📋 {dishName}</div>
-              {items.map((item) => {
-                const isChecked = checkedAuto.has(item.key)
-                return (
-                  <label key={item.key} className="shopping-item fd-list-item">
-                    <input
-                      type="checkbox"
-                      className="shopping-check"
-                      checked={isChecked}
-                      onChange={() => toggleAuto(item.key)}
-                    />
-                    <span className={isChecked ? 'shopping-item-name checked' : 'shopping-item-name'}>
-                      {item.name}
-                    </span>
-                    <span className="shopping-item-amount">{item.amount}</span>
-                  </label>
-                )
-              })}
-            </div>
-          ))}
-        </div>
-      )}
+      {shoppingList.length > 0 ? <div className="fd-panel"><h3>本次采购清单</h3>{shoppingList.map((item) => <div key={item.id} className="shopping-item fd-list-item"><div className="shopping-item-main"><strong className={item.status === 'stored' ? 'shopping-item-name checked' : 'shopping-item-name'}>{item.name}</strong><small>{item.source} · {item.status === 'pending' ? '待购买' : item.status === 'purchased' ? '已买，待入库' : '已入库'}</small><div className="shopping-edit-row"><input aria-label={`${item.name}数量规格`} value={item.amount} onChange={(e) => updateShoppingItem(item.id, { amount: e.target.value })} placeholder="数量/重量" /><input aria-label={`${item.name}包装规格`} value={item.packageSpec ?? ''} onChange={(e) => updateShoppingItem(item.id, { packageSpec: e.target.value })} placeholder="包装规格（可选）" /></div></div>{item.status === 'pending' && <button className="fd-btn fd-btn-secondary fd-btn-sm" onClick={() => markShoppingPurchased(item.id)}>已买</button>}{item.status === 'purchased' && <button className="fd-btn fd-btn-green fd-btn-sm" onClick={() => storeShoppingItem(item.id)}>放入冰箱</button>}</div>)}</div> : null}
 
-      {/* 手动添加的购物清单 */}
-      {shoppingList.length > 0 && (
-        <div className="fd-panel">
-          <h3>手动添加</h3>
-          {shoppingList.map((item) => (
-            <label key={item.id} className="shopping-item fd-list-item">
-              <input
-                type="checkbox"
-                className="shopping-check"
-                checked={item.checked}
-                onChange={() => toggleShoppingItem(item.id)}
-              />
-              <span className={item.checked ? 'shopping-item-name checked' : 'shopping-item-name'}>
-                {item.name}
-              </span>
-              <span className="shopping-item-amount">{item.amount}</span>
-            </label>
-          ))}
-        </div>
-      )}
-
-      {/* 空状态 */}
-      {autoItems.length === 0 && shoppingList.length === 0 && (
-        <div className="fd-panel">
-          <p className="empty-text">
-            购物清单是空的。<br />
-            去<Link to="/">菜品页</Link>选菜加入计划，缺失食材会自动出现在这里。
-          </p>
-        </div>
-      )}
+      {candidates.length > 0 && pendingCandidates.length > 0 ? <div className="fd-panel"><h3>计划里缺少的食材</h3><p className="empty-text">点击上方“去采购”后才会生成正式清单：</p>{candidates.map((item) => <div className="fd-list-item" key={item.name}><span>{item.name}</span><strong>{item.amount}</strong></div>)}</div> : null}
+      {!shoppingList.length && !candidates.length ? <div className="fd-panel"><p className="empty-text">购物清单是空的。先去<Link to="/plan">计划</Link>添加菜品。</p></div> : null}
     </div>
   )
 }
