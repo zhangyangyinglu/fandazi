@@ -102,6 +102,7 @@ export function toShoppingItem(row: Record<string, unknown>): ShoppingItem {
     amount: String(row.amount ?? ''),
     source: String(row.source ?? ''),
     checked: Boolean(row.checked),
+    status: row.checked ? 'purchased' : 'pending',
   }
 }
 
