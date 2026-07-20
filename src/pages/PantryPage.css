@@ -61,6 +61,41 @@
   padding: 20px;
 }
 
+.pantry-add-panel {
+  margin-bottom: 18px;
+}
+
+.pantry-add-panel h3 {
+  margin: 4px 0 6px;
+}
+
+.pantry-form-hint {
+  color: var(--fd-muted);
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 4px 0 12px;
+}
+
+.pantry-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pantry-form input,
+.pantry-form select {
+  border: 1px solid var(--fd-border, #eadfce);
+  border-radius: 12px;
+  padding: 11px 12px;
+  font: inherit;
+  min-width: 0;
+  background: #fffdf9;
+}
+
+.pantry-form .fd-btn {
+  justify-content: center;
+}
+
 .pantry-line {
   display: flex;
   justify-content: space-between;
@@ -154,6 +189,10 @@
 
   .pantry-filters {
     display: block;
+  }
+
+  .pantry-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .pantry-filters .hero-label {
