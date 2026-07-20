@@ -1,135 +1,58 @@
-/**
- * 冰箱页 — P2-2
- * 严格对应渲染图：P1-1c 冰箱页 v6
- */
-import { useState } from 'react'
+/** 冰箱页：首次为空，支持手动录入和从采购清单确认入库。 */
+import { useMemo, useState } from 'react'
+import type { FormEvent } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { useFandaziStore } from '@/stores/fandaziStore'
 import { DISHES } from '@/data/dishes'
 import { getIngredientImage } from '@/data/ingredientImages'
+import { useFandaziStore } from '@/stores/fandaziStore'
+import type { IngredientGroup, PantryItem, PantryStorage } from '@/types'
 import './PantryPage.css'
 
 const FILTERS = [
-  { key: 'all', label: '全部', cls: '' },
-  { key: 'use_soon', label: '快过期', cls: 'hot' },
-  { key: 'available', label: '今晚可用', cls: 'green' },
-  { key: 'fridge', label: '冷藏', cls: '' },
-  { key: 'freezer', label: '冷冻', cls: '' },
-  { key: 'room', label: '常温', cls: '' },
-  { key: 'vegetable', label: '蔬菜', cls: '' },
-  { key: 'protein', label: '蛋奶豆', cls: '' },
-  { key: 'meat', label: '肉禽水产', cls: '' },
-  { key: 'shopping', label: '需要补货', cls: '' },
+  { key: 'all', label: '全部' }, { key: 'fridge', label: '冷藏' }, { key: 'freezer', label: '冷冻' },
+  { key: 'room', label: '常温' }, { key: 'vegetable', label: '蔬菜' }, { key: 'protein', label: '蛋奶豆' },
 ] as const
-
 type FilterKey = typeof FILTERS[number]['key']
+const STORAGE_LABELS: Record<PantryStorage, string> = { room: '常温', fridge: '冷藏', freezer: '冷冻' }
 
-type DefaultPantryItem = {
-  name: string
-  emoji: string
-  tags: Array<{ text: string; cls?: string }>
-  location: string
-  amount: string
-  primaryAction: string
-  secondaryAction: string
-  filterKeys: FilterKey[]
-}
-
-const DEFAULT_PANTRY_ITEMS: DefaultPantryItem[] = [
-  {
-    name: '番茄',
-    emoji: '🍅',
-    tags: [{ text: '明天到期', cls: 'red' }, { text: '晚餐可用', cls: 'green' }],
-    location: '冷藏',
-    amount: '2 个',
-    primaryAction: '看可做',
-    secondaryAction: '加入计划',
-    filterKeys: ['all', 'use_soon', 'available', 'fridge', 'vegetable'],
-  },
-  {
-    name: '鸡蛋',
-    emoji: '🥚',
-    tags: [{ text: '库存充足', cls: 'green' }, { text: '蛋奶豆' }],
-    location: '冷藏',
-    amount: '6 个',
-    primaryAction: '看可做',
-    secondaryAction: '记录用掉',
-    filterKeys: ['all', 'available', 'fridge', 'protein'],
-  },
-  {
-    name: '豆腐',
-    emoji: '◻️',
-    tags: [{ text: '今晚优先', cls: 'red' }, { text: '清淡', cls: 'green' }],
-    location: '冷藏',
-    amount: '1 盒',
-    primaryAction: '看可做',
-    secondaryAction: '加入计划',
-    filterKeys: ['all', 'use_soon', 'available', 'fridge', 'protein'],
-  },
-  {
-    name: '空心菜',
-    emoji: '🥬',
-    tags: [{ text: '建议今天买', cls: 'gold' }, { text: '蔬菜' }],
-    location: '购物清单',
-    amount: '缺少',
-    primaryAction: '补采购',
-    secondaryAction: '替换推荐',
-    filterKeys: ['all', 'shopping', 'vegetable'],
-  },
-  {
-    name: '鸡腿',
-    emoji: '🍗',
-    tags: [{ text: '冷冻' }, { text: '可带饭', cls: 'green' }],
-    location: '冷冻',
-    amount: '2 只',
-    primaryAction: '看可做',
-    secondaryAction: '解冻提醒',
-    filterKeys: ['all', 'available', 'freezer', 'meat'],
-  },
-  {
-    name: '蒜',
-    emoji: '🧄',
-    tags: [{ text: '常备', cls: 'green' }, { text: '调味' }],
-    location: '常温',
-    amount: '半头',
-    primaryAction: '看可做',
-    secondaryAction: '记录用掉',
-    filterKeys: ['all', 'available', 'room'],
-  },
-]
+function createId() { return crypto.randomUUID() }
 
 export function PantryPage() {
   const [searchParams] = useSearchParams()
   const pantry = useFandaziStore((s) => s.pantry)
-  const addMealPlan = useFandaziStore((s) => s.addMealPlan)
+  const addPantryItem = useFandaziStore((s) => s.addPantryItem)
+  const removePantryItem = useFandaziStore((s) => s.removePantryItem)
   const [filter, setFilter] = useState<FilterKey>('all')
+  const [name, setName] = useState('')
+  const [quantity, setQuantity] = useState('')
+  const [unit, setUnit] = useState('')
+  const [category, setCategory] = useState<IngredientGroup>('蔬菜')
+  const [storage, setStorage] = useState<PantryStorage>('fridge')
+  const [bestBeforeAt, setBestBeforeAt] = useState('')
+  const [note, setNote] = useState('')
   const searchQuery = searchParams.get('q')?.trim().toLowerCase() ?? ''
 
-  const filtered = DEFAULT_PANTRY_ITEMS
-    .filter((item) => item.filterKeys.includes(filter))
-    .filter((item) => {
-      if (!searchQuery) return true
-      const haystack = [
-        item.name,
-        item.location,
-        item.amount,
-        item.primaryAction,
-        item.secondaryAction,
-        ...item.tags.map((tag) => tag.text),
-      ].join(' ').toLowerCase()
-      return haystack.includes(searchQuery)
-    })
-  const useSoonItems = pantry.filter((p) => p.status === 'use_soon' || p.status === 'past_best')
-  const pantryNames = new Set(pantry.map((p) => p.ingredientName))
-  const canCookDishes = DISHES.slice(0, 50).filter((dish) =>
-    dish.ingredients.every((ing) => pantryNames.has(ing.name)),
-  )
-  const shoppingNeedCount = Math.max(5, useSoonItems.length + 2)
+  const filtered = useMemo(() => pantry.filter((item) => {
+    const matchesFilter = filter === 'all' || item.storage === filter ||
+      (filter === 'vegetable' && item.category === '蔬菜') ||
+      (filter === 'protein' && item.category === '肉蛋')
+    const haystack = `${item.ingredientName} ${item.quantity} ${item.unit} ${item.note ?? ''}`.toLowerCase()
+    return matchesFilter && (!searchQuery || haystack.includes(searchQuery))
+  }), [filter, pantry, searchQuery])
+  const useSoonItems = pantry.filter((item) => item.status === 'use_soon' || item.status === 'past_best')
+  const pantryNames = new Set(pantry.map((item) => item.ingredientName))
+  const canCookDishes = DISHES.filter((dish) => dish.ingredients.every((ing) => pantryNames.has(ing.name))).slice(0, 3)
 
-  const addFirstCookableDish = () => {
-    const dish = canCookDishes[0] ?? DISHES[0]
-    const today = new Date().toISOString().slice(0, 10)
-    addMealPlan(dish.id, today)
+  function handleAdd(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    if (!name.trim() || !quantity.trim() || !unit.trim()) return
+    const item: PantryItem = {
+      id: createId(), ingredientName: name.trim(), category, quantity: Number(quantity) || 1, unit: unit.trim(),
+      storage, boughtAt: new Date().toISOString().slice(0, 10), bestBeforeAt: bestBeforeAt.trim(),
+      source: 'manual_add', status: 'fresh', note: note.trim() || undefined,
+    }
+    addPantryItem(item)
+    setName(''); setQuantity(''); setUnit(''); setBestBeforeAt(''); setNote('')
   }
 
   return (
@@ -137,124 +60,39 @@ export function PantryPage() {
       <div className="pantry-hero">
         <div className="pantry-hero-main">
           <div className="fd-hero-card pantry-hero-card">
-            <div className="hero-label">家庭空间 · 本机使用</div>
-            <h2>冰箱里 {Math.max(28, pantry.length)} 种食材，{Math.max(8, canCookDishes.length)} 道菜可做</h2>
-            <div className="cta-row">
-              <button className="fd-btn fd-btn-primary" onClick={() => setFilter('available')}>看冰箱可做</button>
-              <Link to="/shopping" className="fd-btn fd-btn-secondary">去采购</Link>
-            </div>
+            <div className="hero-label">家庭空间 · 当前冰箱</div>
+            <h2>{pantry.length === 0 ? '冰箱还是空的' : `冰箱里有 ${pantry.length} 种食材`}</h2>
+            <p>{pantry.length === 0 ? '可以先跳过，收到家人赠送或临时买菜后，再从下方添加。' : `${canCookDishes.length} 道菜可以直接做。`}</p>
+            <div className="cta-row"><a className="fd-btn fd-btn-primary" href="#add-pantry">添加冰箱食材</a><Link to="/shopping" className="fd-btn fd-btn-secondary">去采购</Link></div>
           </div>
-
           <div className="pantry-quick">
-            <div className="pantry-stat"><strong>{Math.max(28, pantry.length)}</strong><span>🥬 库存食材</span></div>
-            <div className="pantry-stat warn"><strong>{Math.max(3, useSoonItems.length)}</strong><span>⏰ 快过期</span></div>
-            <div className="pantry-stat green"><strong>{Math.max(8, canCookDishes.length)}</strong><span>🍳 冰箱可做</span></div>
-            <div className="pantry-stat"><strong>{shoppingNeedCount}</strong><span>🛒 需补采购</span></div>
+            <div className="pantry-stat"><strong>{pantry.length}</strong><span>🥬 库存食材</span></div>
+            <div className="pantry-stat warn"><strong>{useSoonItems.length}</strong><span>⏰ 快过期</span></div>
+            <div className="pantry-stat green"><strong>{canCookDishes.length}</strong><span>🍳 冰箱可做</span></div>
+            <div className="pantry-stat"><strong>—</strong><span>🛒 待采购</span></div>
           </div>
         </div>
-        <div className="fd-side-card pantry-summary">
-          <div className="hero-label">冰箱状态</div>
-          <div className="pantry-line"><span>当前模式</span><strong>本机家庭</strong></div>
-          <div className="pantry-line"><span>库存食材</span><strong>{Math.max(28, pantry.length)} 项</strong></div>
-          <div className="pantry-line"><span>快过期</span><strong>{Math.max(3, useSoonItems.length)} 项</strong></div>
-          <div className="pantry-line"><span>今晚可做</span><strong>{Math.max(8, canCookDishes.length)} 道菜</strong></div>
-        </div>
+        <div className="fd-side-card pantry-summary"><div className="hero-label">冰箱状态</div><div className="pantry-line"><span>库存食材</span><strong>{pantry.length} 项</strong></div><div className="pantry-line"><span>快过期</span><strong>{useSoonItems.length} 项</strong></div><div className="pantry-line"><span>今晚可做</span><strong>{canCookDishes.length} 道菜</strong></div></div>
       </div>
 
-      <div className="pantry-filters">
-        <div className="hero-label">筛选食材</div>
-        <div className="pantry-filter-row">
-          {FILTERS.map((item) => (
-            <button
-              key={item.key}
-              className={`pantry-chip ${filter === item.key ? 'active' : ''} ${item.cls}`.trim()}
-              onClick={() => setFilter(item.key)}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      <section id="add-pantry" className="fd-panel pantry-add-panel">
+        <div className="hero-label">长期入口</div><h3>添加冰箱食材</h3><p className="pantry-form-hint">手动录入不依赖采购流程，只有你确认放入冰箱的采购项才会进入库存。</p>
+        <form className="pantry-form" onSubmit={handleAdd}>
+          <input aria-label="食材名称" placeholder="食材名称，例如：鸡蛋" value={name} onChange={(e) => setName(e.target.value)} />
+          <input aria-label="数量" placeholder="数量，例如：6" inputMode="decimal" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+          <input aria-label="单位" placeholder="单位，例如：个、克、包" value={unit} onChange={(e) => setUnit(e.target.value)} />
+          <select aria-label="分类" value={category} onChange={(e) => setCategory(e.target.value as IngredientGroup)}>{(['蔬菜', '肉蛋', '主食', '调味', '干货'] as IngredientGroup[]).map((item) => <option key={item}>{item}</option>)}</select>
+          <select aria-label="存放方式" value={storage} onChange={(e) => setStorage(e.target.value as PantryStorage)}><option value="fridge">冷藏</option><option value="freezer">冷冻</option><option value="room">常温</option></select>
+          <input aria-label="保质期" placeholder="保质期/到期日（可选）" value={bestBeforeAt} onChange={(e) => setBestBeforeAt(e.target.value)} />
+          <input aria-label="备注" placeholder="备注（可选）" value={note} onChange={(e) => setNote(e.target.value)} />
+          <button className="fd-btn fd-btn-primary" type="submit">添加到冰箱</button>
+        </form>
+      </section>
 
-      <div className="pantry-workspace">
-        <div>
-          <section className="fd-panel pantry-panel">
-            <h3>{searchQuery ? `食材库存 · 搜索「${searchParams.get('q')?.trim()}」` : '食材库存'}</h3>
-            {filtered.length === 0 ? (
-              <div className="empty-text">
-                <p>没有找到符合条件的食材。</p>
-                <Link className="fd-btn fd-btn-secondary" to="/pantry">清除搜索</Link>
-              </div>
-            ) : (
-              <div className="pantry-grid">
-                {filtered.map((item) => {
-                  const image = getIngredientImage(item.name)
-                  return (
-                    <article key={item.name} className="pantry-item-card">
-                      <div className="pantry-item-media" aria-hidden="true">
-                        {image ? (
-                          <img
-                            src={image}
-                            alt=""
-                            width={120}
-                            height={120}
-                            loading="lazy"
-                            decoding="async"
-                          />
-                        ) : (
-                          <span className="pantry-item-emoji">{item.emoji}</span>
-                        )}
-                      </div>
-                      <div className="pantry-item-body">
-                        <h4>{item.name}</h4>
-                        <div className="pantry-tags">
-                          {item.tags.map((tag) => (
-                            <span key={tag.text} className={`pantry-tag ${tag.cls ?? ''}`.trim()}>{tag.text}</span>
-                          ))}
-                        </div>
-                        <div className="pantry-meta-row">
-                          <span>{item.location}</span>
-                          <strong>{item.amount}</strong>
-                        </div>
-                        <div className="pantry-item-actions">
-                          <button className="primary" onClick={addFirstCookableDish}>{item.primaryAction}</button>
-                          <button onClick={addFirstCookableDish}>{item.secondaryAction}</button>
-                        </div>
-                      </div>
-                    </article>
-                  )
-                })}
-              </div>
-            )}
-          </section>
-        </div>
-
-        <aside>
-          <section className="fd-side-card pantry-side-card">
-            <h4>冰箱可做</h4>
-            <div className="pantry-recipe-list">
-              {(canCookDishes.length ? canCookDishes : DISHES).slice(0, 3).map((dish, index) => (
-                <div className="pantry-recipe" key={dish.id}>
-                  <div>
-                    <strong>{dish.name}</strong>
-                    <span>{index === 0 ? '已有 3/4 · 缺葱' : index === 1 ? '已有 3/4 · 缺虾仁' : '已有 2/3 · 需解冻'}</span>
-                  </div>
-                  <button onClick={() => addMealPlan(dish.id, new Date().toISOString().slice(0, 10))}>加入计划</button>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="fd-side-card pantry-side-card">
-            <h4>采购补齐</h4>
-            <div className="pantry-shopping">
-              <div className="pantry-shop-row"><span>葱</span><b>番茄炒蛋</b></div>
-              <div className="pantry-shop-row"><span>虾仁</span><b>番茄豆腐汤</b></div>
-              <div className="pantry-shop-row"><span>空心菜</span><b>补青菜</b></div>
-            </div>
-          </section>
-        </aside>
-      </div>
+      <div className="pantry-filters"><div className="hero-label">筛选食材</div><div className="pantry-filter-row">{FILTERS.map((item) => <button key={item.key} className={`pantry-chip ${filter === item.key ? 'active' : ''}`} onClick={() => setFilter(item.key)}>{item.label}</button>)}</div></div>
+      <section className="fd-panel pantry-panel"><h3>{searchQuery ? `食材库存 · 搜索「${searchParams.get('q')?.trim()}」` : '食材库存'}</h3>
+        {filtered.length === 0 ? <div className="empty-text"><p>{pantry.length === 0 ? '还没有食材。上方添加入口一直保留。' : '没有找到符合条件的食材。'}</p></div> : <div className="pantry-grid">{filtered.map((item) => { const image = getIngredientImage(item.ingredientName); return <article key={item.id} className="pantry-item-card"><div className="pantry-item-media" aria-hidden="true">{image ? <img src={image} alt="" width={120} height={120} /> : <span className="pantry-item-emoji">🥬</span>}</div><div className="pantry-item-body"><h4>{item.ingredientName}</h4><div className="pantry-tags"><span className="pantry-tag">{item.category}</span><span className="pantry-tag green">{STORAGE_LABELS[item.storage]}</span></div><div className="pantry-meta-row"><span>{item.bestBeforeAt ? `到期 ${item.bestBeforeAt}` : '未设置保质期'}</span><strong>{item.quantity} {item.unit}</strong></div>{item.note && <p className="pantry-form-hint">{item.note}</p>}<div className="pantry-item-actions"><button onClick={() => removePantryItem(item.id)}>从冰箱移除</button></div></div></article> })}</div>}
+      </section>
     </div>
   )
 }
