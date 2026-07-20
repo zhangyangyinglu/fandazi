@@ -46,6 +46,10 @@ export interface ShoppingItem {
   amount: string
   source: string // 菜名
   checked: boolean
+  category?: PantryItem['category']
+  packageSpec?: string
+  note?: string
+  status?: 'pending' | 'purchased' | 'stored'
 }
 
 export interface TasteProfile {
@@ -85,7 +89,10 @@ export interface FandaziStore {
   // 购物清单
   shoppingList: ShoppingItem[]
   addShoppingItem: (item: ShoppingItem) => void
+  updateShoppingItem: (id: string, patch: Partial<ShoppingItem>) => void
   toggleShoppingItem: (id: string) => void
+  markShoppingPurchased: (id: string) => void
+  storeShoppingItem: (id: string) => void
   removeShoppingItem: (id: string) => void
   clearCheckedShoppingItems: () => void
 
@@ -118,16 +125,7 @@ export interface FandaziStore {
 const uid = () => crypto.randomUUID()
 
 // 默认冰箱初始数据
-const DEFAULT_PANTRY: PantryItem[] = [
-  { id: uid(), ingredientName: '番茄', category: '蔬菜', quantity: 3, unit: '个', storage: 'fridge', boughtAt: '2026-07-01', bestBeforeAt: '2026-07-06', source: 'manual_add', status: 'fresh' },
-  { id: uid(), ingredientName: '鸡蛋', category: '肉蛋', quantity: 8, unit: '个', storage: 'fridge', boughtAt: '2026-07-01', bestBeforeAt: '2026-07-15', source: 'manual_add', status: 'fresh' },
-  { id: uid(), ingredientName: '鸡胸肉', category: '肉蛋', quantity: 500, unit: 'g', storage: 'fridge', boughtAt: '2026-06-30', bestBeforeAt: '2026-07-04', source: 'manual_add', status: 'use_soon' },
-  { id: uid(), ingredientName: '西兰花', category: '蔬菜', quantity: 1, unit: '个', storage: 'fridge', boughtAt: '2026-07-01', bestBeforeAt: '2026-07-07', source: 'manual_add', status: 'fresh' },
-  { id: uid(), ingredientName: '葱', category: '蔬菜', quantity: 2, unit: '根', storage: 'fridge', boughtAt: '2026-06-28', bestBeforeAt: '2026-07-05', source: 'manual_add', status: 'use_soon' },
-  { id: uid(), ingredientName: '蒜', category: '蔬菜', quantity: 1, unit: '头', storage: 'room', boughtAt: '2026-06-25', bestBeforeAt: '2026-07-25', source: 'manual_add', status: 'fresh' },
-  { id: uid(), ingredientName: '生抽', category: '调味', quantity: 1, unit: '瓶', storage: 'room', boughtAt: '2026-06-20', bestBeforeAt: '2026-12-20', source: 'manual_add', status: 'fresh' },
-  { id: uid(), ingredientName: '虾仁', category: '肉蛋', quantity: 200, unit: 'g', storage: 'freezer', boughtAt: '2026-06-28', bestBeforeAt: '2026-08-28', source: 'manual_add', status: 'fresh' },
-]
+const DEFAULT_PANTRY: PantryItem[] = []
 
 // ─────────────────────────────────────────────────────────────────────
 // Store
@@ -193,20 +191,66 @@ export const useFandaziStore = create<FandaziStore>()(
       // === 购物清单 ===
       shoppingList: [],
       addShoppingItem: (item) => {
-        set((s) => ({ shoppingList: [...s.shoppingList.filter((i) => i.id !== item.id), item] }))
-        void syncShoppingItem(item)
+        const next = { status: 'pending' as const, ...item }
+        set((s) => ({ shoppingList: [...s.shoppingList.filter((i) => i.id !== next.id), next] }))
+        void syncShoppingItem(next)
+      },
+      updateShoppingItem: (id, patch) => {
+        let updatedItem: ShoppingItem | undefined
+        set((s) => ({
+          shoppingList: s.shoppingList.map((item) => {
+            if (item.id !== id) return item
+            updatedItem = { ...item, ...patch }
+            return updatedItem
+          }),
+        }))
+        if (updatedItem) void syncShoppingItem(updatedItem)
       },
       toggleShoppingItem: (id) => {
         let updatedItem: ShoppingItem | undefined
         set((s) => {
           const shoppingList = s.shoppingList.map((i) => {
             if (i.id !== id) return i
-            updatedItem = { ...i, checked: !i.checked }
+            updatedItem = { ...i, checked: !i.checked, status: !i.checked ? 'purchased' : 'pending' }
             return updatedItem
           })
           return { shoppingList }
         })
         if (updatedItem) void syncShoppingItem(updatedItem)
+      },
+      markShoppingPurchased: (id) => {
+        let updatedItem: ShoppingItem | undefined
+        set((s) => ({ shoppingList: s.shoppingList.map((item) => {
+          if (item.id !== id) return item
+          updatedItem = { ...item, checked: true, status: 'purchased' }
+          return updatedItem
+        }) }))
+        if (updatedItem) void syncShoppingItem(updatedItem)
+      },
+      storeShoppingItem: (id) => {
+        const item = get().shoppingList.find((entry) => entry.id === id)
+        if (!item || item.status !== 'purchased') return
+        const quantityMatch = item.amount.match(/[\d.]+/)
+        const unitMatch = item.amount.match(/[一-龥]+|[a-zA-Z]+/)
+        const pantryItem: PantryItem = {
+          id: uid(),
+          ingredientName: item.name,
+          category: item.category ?? '蔬菜',
+          quantity: Number(quantityMatch?.[0] ?? 1),
+          unit: unitMatch?.[0] ?? '份',
+          storage: 'fridge',
+          boughtAt: new Date().toISOString().slice(0, 10),
+          bestBeforeAt: '',
+          source: 'shopping_list',
+          status: 'fresh',
+          note: item.note,
+        }
+        set((s) => ({
+          pantry: [...s.pantry, pantryItem],
+          shoppingList: s.shoppingList.map((entry) => entry.id === id ? { ...entry, status: 'stored' } : entry),
+        }))
+        void syncPantryItem(pantryItem)
+        void syncShoppingItem({ ...item, status: 'stored' })
       },
       removeShoppingItem: (id) => {
         set((s) => ({ shoppingList: s.shoppingList.filter((i) => i.id !== id) }))
