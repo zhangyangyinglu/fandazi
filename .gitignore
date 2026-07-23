@@ -27,3 +27,4 @@ dish-image-alpha-workbench/
 
 # 本地生产图替换备份（保留在本机，不提交/部署）
 backups/
+.env*

@@ -6,9 +6,8 @@
   <string>com.fandazi.auto-publish</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/Users/miki/.local/bin/npm</string>
-    <string>run</string>
-    <string>auto-publish</string>
+    <string>/Users/miki/.local/bin/node</string>
+    <string>/Users/miki/Documents/github-projects/fandazi/scripts/auto-publish.mjs</string>
   </array>
   <key>WorkingDirectory</key>
   <string>/Users/miki/Documents/github-projects/fandazi</string>
