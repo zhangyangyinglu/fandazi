@@ -46,6 +46,14 @@ npm run auto-publish
 
 该进程监听工程改动，自动执行构建检查、提交并推送 GitHub，随后由 Vercel 自动部署。构建或推送失败时会保留本地改动，修复后继续尝试。
 
+macOS 上可安装为登录后自动运行的后台服务：
+
+```bash
+npm run auto-publish:install
+```
+
+后台服务会在电脑登录后启动，断网或构建失败时每 60 秒重试；`.env`、密钥和凭据类文件会阻止自动发布。
+
 浏览器打开 `http://localhost:5173` 即可。
 
 ### 构建

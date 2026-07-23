@@ -24,7 +24,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "auto-publish": "node scripts/auto-publish.mjs"
+    "auto-publish": "node scripts/auto-publish.mjs",
+    "auto-publish:install": "bash scripts/install-auto-publish-macos.sh"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.0",
