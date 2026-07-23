@@ -23,7 +23,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "auto-publish": "node scripts/auto-publish.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.0",

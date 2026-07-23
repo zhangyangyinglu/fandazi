@@ -38,6 +38,14 @@ npm install
 npm run dev
 ```
 
+保存或上传菜品后自动更新线上版本：
+
+```bash
+npm run auto-publish
+```
+
+该进程监听工程改动，自动执行构建检查、提交并推送 GitHub，随后由 Vercel 自动部署。构建或推送失败时会保留本地改动，修复后继续尝试。
+
 浏览器打开 `http://localhost:5173` 即可。
 
 ### 构建
