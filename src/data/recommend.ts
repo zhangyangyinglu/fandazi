@@ -67,6 +67,8 @@ export type RecommendInput = {
   familySize?: number
   /** v1.11: 强制推荐指定数量（用于首页固定展示 4 道等场景，覆盖 snack 的 1 道限制） */
   forceCount?: number
+  /** 日常安排可配置主食策略；旧入口默认仍保持 required。 */
+  carbPolicy?: 'optional' | 'required' | 'none'
   /** 健康档案（2026 膳食指南 + 个人约束） */
   healthProfiles?: HealthProfile[]
 }
@@ -153,6 +155,7 @@ function repairPlateStructure(
   picks: Dish[],
   scored: Array<{ dish: Dish; score: number }>,
   mealTime: MealTime,
+  carbPolicy: 'optional' | 'required' | 'none' = 'required',
 ): Dish[] {
   if (!['lunch', 'dinner', 'bento'].includes(mealTime)) return picks
 
@@ -160,7 +163,7 @@ function repairPlateStructure(
   const roles = [
     { has: hasProteinRole, label: 'protein' },
     { has: hasVegetableRole, label: 'vegetable' },
-    { has: hasStapleRole, label: 'staple' },
+    ...(carbPolicy === 'required' ? [{ has: hasStapleRole, label: 'staple' }] : []),
   ]
 
   for (const role of roles) {
@@ -351,7 +354,7 @@ export function recommendMeal(input: RecommendInput): RecommendResult | null {
     totalKcal += best.n.kcal
   }
 
-  const repairedPicks = repairPlateStructure(picks, scored, mealTime)
+  const repairedPicks = repairPlateStructure(picks, scored, mealTime, input.carbPolicy)
   picks.splice(0, picks.length, ...repairedPicks)
 
   // snack 模式只需 1 道菜; 其他模式至少 2 道
