@@ -5,6 +5,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { DISHES } from '@/data/dishes'
 import { getIngredientImage } from '@/data/ingredientImages'
 import { useFandaziStore } from '@/stores/fandaziStore'
+import { suggestPantryPlacement } from '@/data/pantryAutoClassify'
 import type { IngredientGroup, PantryItem, PantryStorage } from '@/types'
 import './PantryPage.css'
 
@@ -30,6 +31,7 @@ export function PantryPage() {
   const [storage, setStorage] = useState<PantryStorage>('fridge')
   const [bestBeforeAt, setBestBeforeAt] = useState('')
   const [note, setNote] = useState('')
+  const mealPlans = useFandaziStore((s) => s.mealPlans)
   const searchQuery = searchParams.get('q')?.trim().toLowerCase() ?? ''
 
   const filtered = useMemo(() => pantry.filter((item) => {
@@ -46,10 +48,12 @@ export function PantryPage() {
   function handleAdd(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!name.trim() || !quantity.trim() || !unit.trim()) return
+    const plannedSoon = mealPlans.some((plan) => plan.planDate >= new Date().toISOString().slice(0, 10) && plan.planDate <= new Date(Date.now() + 3 * 86400000).toISOString().slice(0, 10) && DISHES.find((dish) => dish.id === plan.dishId)?.ingredients.some((ingredient) => ingredient.name === name.trim()))
+    const suggestion = suggestPantryPlacement(name.trim(), plannedSoon)
     const item: PantryItem = {
-      id: createId(), ingredientName: name.trim(), category, quantity: Number(quantity) || 1, unit: unit.trim(),
-      storage, boughtAt: new Date().toISOString().slice(0, 10), bestBeforeAt: bestBeforeAt.trim(),
-      source: 'manual_add', status: 'fresh', note: note.trim() || undefined,
+      id: createId(), ingredientName: name.trim(), category: suggestion.category, quantity: Number(quantity) || 1, unit: unit.trim(),
+      storage: suggestion.storage, boughtAt: new Date().toISOString().slice(0, 10), bestBeforeAt: bestBeforeAt.trim(),
+      source: 'manual_add', status: 'fresh', note: note.trim() || suggestion.reason,
     }
     addPantryItem(item)
     setName(''); setQuantity(''); setUnit(''); setBestBeforeAt(''); setNote('')

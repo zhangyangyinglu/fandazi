@@ -136,6 +136,7 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
   const mealPlans = useFandaziStore((s) => s.mealPlans)
   const cookingLogs = useFandaziStore((s) => s.cookingLogs)
   const [dailySettings, setDailySettings] = useState(readDailyMealSettings)
+  const [mealRevision, setMealRevision] = useState(0)
 
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
@@ -166,9 +167,9 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
   const recommendationResult = useMemo(() => {
     return getDailyMealRecommendation({
       date: new Date().toISOString().slice(0, 10), dishes: DISHES, pantryItems: Array.from(pantryNames), mealPlans, cookingLogs,
-      settings: dailySettings, buddyGroup, healthProfiles,
+      settings: dailySettings, buddyGroup, healthProfiles, revision: mealRevision,
     })
-  }, [pantryNames, healthProfiles, mealPlans, cookingLogs, dailySettings, buddyGroup])
+  }, [pantryNames, healthProfiles, mealPlans, cookingLogs, dailySettings, buddyGroup, mealRevision])
 
   // 推荐引擎返回的菜品；未返回时用兜底 ID
   const recommendationDishes = useMemo(() => {
@@ -326,7 +327,7 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
           <p>{recommendationResult.reason || '饭团已经替你安排好了。'}</p>
           <div className="cta-row hero-cta-row">
             <button className="fd-btn fd-btn-primary" onClick={() => scrollTo(recommendationRef.current)}>开始做</button>
-            <Link className="fd-btn fd-btn-secondary" to="/catalog">换一份</Link>
+            <button className="fd-btn fd-btn-secondary" onClick={() => setMealRevision((value) => value + 1)}>换一份</button>
             <Link className="fd-btn fd-btn-text" to="/catalog">今天特别想吃什么？</Link>
           </div>
         </div>
