@@ -87,6 +87,10 @@
   margin: 0 0 10px;
 }
 
+.daily-settings { display: flex; gap: 8px; flex-wrap: wrap; padding: 12px; background: var(--fd-surface-warm); border-radius: 14px; }
+.daily-settings label { display: grid; gap: 4px; font-size: 12px; font-weight: 800; color: var(--fd-muted); }
+.daily-settings select { border: 1px solid var(--fd-line); border-radius: 9px; background: white; padding: 6px 8px; color: var(--fd-ink); font: inherit; }
+
 .cta-row {
   display: flex;
   gap: 10px;

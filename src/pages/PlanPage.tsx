@@ -260,7 +260,7 @@ export function PlanPage() {
               value={quickDishQuery}
               onChange={(event) => setQuickDishQuery(event.target.value)}
               ref={quickSearchRef}
-              placeholder={`搜索 209 道菜品…`}
+              placeholder={`搜索 ${DISHES.length} 道菜品…`}
               aria-label="搜索可加入计划的菜品"
             />
             <span>显示 {quickDishes.length} / {DISHES.length} 道</span>

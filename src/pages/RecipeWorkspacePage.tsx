@@ -11,7 +11,7 @@ import { readHealthProfiles, type HealthProfile } from '@/components/healthProfi
 import { FANDAZI_SYNC_CONFIG_EVENT } from '@/lib/supabaseClient'
 import { readBuddyGroup } from '@/data/familySharing'
 import { checkPlateStructure } from '@/data/healthRecommend'
-import { recommendMeal, type MealTime } from '@/data/recommend'
+import { DAILY_MEAL_SETTINGS_EVENT, getDailyMealRecommendation, readDailyMealSettings, writeDailyMealSettings } from '@/data/dailyMeal'
 import './RecipeWorkspacePage.css'
 
 const QUICK_FILTERS = [
@@ -126,8 +126,6 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
   const [activeTaste, setActiveTaste] = useState('')
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') ?? '')
   const [moreFiltersOpen, setMoreFiltersOpen] = useState(catalogMode)
-  const [recommendationSeed, setRecommendationSeed] = useState(0)
-  const [recommendationExcludeIds, setRecommendationExcludeIds] = useState<string[]>([])
   const [healthProfiles, setHealthProfiles] = useState<HealthProfile[]>([])
   const [isSharedMode, setIsSharedMode] = useState(() => Boolean(localStorage.getItem('fandazi.householdId')))
   const recommendationRef = useRef<HTMLElement | null>(null)
@@ -136,6 +134,10 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
 
   const pantry = useFandaziStore((s) => s.pantry)
   const myDishVersions = useFandaziStore((s) => s.myDishVersions)
+  const mealPlans = useFandaziStore((s) => s.mealPlans)
+  const cookingLogs = useFandaziStore((s) => s.cookingLogs)
+  const [dailySettings, setDailySettings] = useState(readDailyMealSettings)
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
@@ -150,26 +152,25 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
     return () => window.removeEventListener(FANDAZI_SYNC_CONFIG_EVENT, refreshMode)
   }, [])
 
+  useEffect(() => {
+    const refresh = () => setDailySettings(readDailyMealSettings())
+    window.addEventListener(DAILY_MEAL_SETTINGS_EVENT, refresh)
+    return () => window.removeEventListener(DAILY_MEAL_SETTINGS_EVENT, refresh)
+  }, [])
+
   const buddyGroup = useMemo(() => readBuddyGroup(), [])
   const homeModeLabel = isSharedMode ? '家庭共享' : '本机使用'
 
   const pantryNames = useMemo(() => new Set(pantry.map((p) => p.ingredientName)), [pantry])
   const myDishIds = useMemo(() => new Set(myDishVersions.map((v) => v.dishId)), [myDishVersions])
 
-  // 使用推荐引擎：按膳食指南 + 冰箱匹配 + 健康档案 + 家庭偏好排序
+  // 今日安排：同一日期稳定、已计划优先、近期做过避重；健康与冰箱只参与排序。
   const recommendationResult = useMemo(() => {
-    const result = recommendMeal({
-      mealTime: 'dinner' as MealTime,
-      pantryItems: Array.from(pantryNames),
-      candidateDishes: DISHES,
-      healthProfiles,
-      familySize: 2,
-      forceCount: 4,
-      seed: recommendationSeed,
-      excludeDishIds: recommendationExcludeIds,
+    return getDailyMealRecommendation({
+      date: new Date().toISOString().slice(0, 10), dishes: DISHES, pantryItems: Array.from(pantryNames), mealPlans, cookingLogs,
+      settings: dailySettings, buddyGroup, healthProfiles,
     })
-    return result
-  }, [pantryNames, healthProfiles, recommendationSeed, recommendationExcludeIds])
+  }, [pantryNames, healthProfiles, mealPlans, cookingLogs, dailySettings, buddyGroup])
 
   // 推荐引擎返回的菜品；未返回时用兜底 ID
   const recommendationDishes = useMemo(() => {
@@ -195,6 +196,12 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
 
   const scrollTo = (node: HTMLElement | null) => {
     node?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  const updateDailySettings = (patch: Partial<typeof dailySettings>) => {
+    const next = { ...dailySettings, ...patch }
+    setDailySettings(next)
+    writeDailyMealSettings(next)
   }
 
   const displayDishes = useMemo(() => {
@@ -330,12 +337,20 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
             <div className="fd-hero-card hero-main">
               <div className="hero-label">今天晚餐 · {homeModeLabel}</div>
               <h2>饭团先帮你搭一版，不合适再改一下</h2>
-              <p>{recommendationResult?.reason || `优先用冰箱里的食材，给 2 人晚餐安排。`}</p>
+              <p>{recommendationResult.reason || '饭团已经按你家的日常设置安排好了。'}</p>
               <div className="cta-row hero-cta-row">
                 <button className="fd-btn fd-btn-primary" onClick={() => scrollTo(recommendationRef.current)}>看看推荐</button>
-                <button className="fd-btn fd-btn-secondary" onClick={() => { setRecommendationExcludeIds(recommendationDishes.map((dish) => dish.id)); setRecommendationSeed((seed) => seed + 1); setActiveFilter('全部'); setSearchQuery(''); setMoreFiltersOpen(true); scrollTo(recommendationRef.current) }}>改一下</button>
+                <button className="fd-btn fd-btn-secondary" onClick={() => { setActiveFilter('全部'); setSearchQuery(''); setMoreFiltersOpen(true); scrollTo(filtersRef.current) }}>我今天想吃别的</button>
                 <button className="fd-btn fd-btn-secondary" onClick={() => { setActiveFilter('冰箱可做'); setSearchQuery(''); scrollTo(catalogRef.current) }}>冰箱可做</button>
+                <button className="fd-btn fd-btn-secondary" onClick={() => setSettingsOpen((open) => !open)}>安排设置</button>
               </div>
+              {settingsOpen && <div className="daily-settings" aria-label="日常安排设置">
+                <label>人数<select value={dailySettings.people} onChange={(e) => updateDailySettings({ people: Number(e.target.value) })}>{[1,2,3,4,5,6].map((n) => <option key={n} value={n}>{n} 人</option>)}</select></label>
+                <label>每天<select value={dailySettings.mealsPerDay} onChange={(e) => updateDailySettings({ mealsPerDay: Number(e.target.value) as 1|2|3 })}>{[1,2,3].map((n) => <option key={n} value={n}>{n} 餐</option>)}</select></label>
+                <label>每餐<select value={dailySettings.dishesPerMeal} onChange={(e) => updateDailySettings({ dishesPerMeal: e.target.value === 'auto' ? 'auto' : Number(e.target.value) as 1|2|3 })}><option value="auto">自动安排</option><option value="1">1 道</option><option value="2">2 道</option><option value="3">3 道</option></select></label>
+                <label>主食<select value={dailySettings.carb} onChange={(e) => updateDailySettings({ carb: e.target.value as typeof dailySettings.carb })}><option value="optional">可选</option><option value="required">必配</option><option value="none">不安排</option></select></label>
+                <label>避重<select value={dailySettings.repeatWindowDays} onChange={(e) => updateDailySettings({ repeatWindowDays: Number(e.target.value) as 7|14 })}><option value="7">7 天</option><option value="14">14 天</option></select></label>
+              </div>}
             </div>
             <div className="home-filters-panel">
               {renderFilters()}
@@ -346,7 +361,7 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
             <div className="fd-list-item"><span>当前模式</span><strong>{homeModeLabel}</strong></div>
             <div className="fd-list-item"><span>家庭成员</span><strong>{buddyGroup.members.length} 人已设置</strong></div>
             <div className="fd-list-item"><span>快过期</span><strong>{pantry.filter((p) => p.status === 'use_soon').slice(0, 3).map((p) => p.ingredientName).join(' · ') || '暂无'}</strong></div>
-            <div className="fd-list-item"><span>缺少食材</span><strong>{recommendationResult ? `${recommendationResult.pantryIngredientTotal - recommendationResult.pantryIngredientCount} 项` : '—'}</strong></div>
+            <div className="fd-list-item"><span>近期避开</span><strong>{dailySettings.repeatWindowDays} 天重复菜</strong></div>
           </div>
         </div>
       )}
@@ -357,10 +372,10 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
         <section className="dish-section" ref={recommendationRef}>
           <div className="dish-header">
             <div>
-              <div className="hero-label">晚餐推荐 · {recommendationDishes.length} 道</div>
-              <h3>今天可以这样吃</h3>
+              <div className="hero-label">今日安排 · {recommendationDishes.length} 道</div>
+              <h3>今天就吃这个</h3>
             </div>
-            <span className="dish-count">按 2026 膳食指南、冰箱匹配、健康标签、家庭习惯排序</span>
+            <span className="dish-count">{dailySettings.people} 人 · 每天 {dailySettings.mealsPerDay} 餐 · 主食{dailySettings.carb === 'optional' ? '可选' : dailySettings.carb === 'required' ? '必配' : '不安排'} · {dailySettings.repeatWindowDays} 天避重</span>
           </div>
           <div className="meal-logic-strip">
             <span><strong>蛋白</strong> {plateStatus.hasProtein ? '✅ 已覆盖' : '⚠️ 缺优质蛋白'}</span>
