@@ -25,7 +25,7 @@ function readJson(relativePath) {
 }
 
 const { DISHES } = loadTypeScriptModule('src/data/dishes.ts')
-const { ingredientImages } = loadTypeScriptModule('src/data/ingredientImages.ts')
+const { INGREDIENT_IMAGE_MAP: ingredientImages } = loadTypeScriptModule('src/data/ingredientImages.ts')
 const queue = readJson('image-queue.json')
 const rules = readJson('ingredient-rules.json')
 const dishImageDir = resolve(root, 'public/dish-images')
