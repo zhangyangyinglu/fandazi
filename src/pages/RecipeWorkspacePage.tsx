@@ -10,8 +10,7 @@ import { useFandaziStore } from '@/stores/fandaziStore'
 import { readHealthProfiles, type HealthProfile } from '@/components/healthProfileStorage'
 import { FANDAZI_SYNC_CONFIG_EVENT } from '@/lib/supabaseClient'
 import { readBuddyGroup } from '@/data/familySharing'
-import { checkPlateStructure } from '@/data/healthRecommend'
-import { DAILY_MEAL_SETTINGS_EVENT, getDailyMealRecommendation, readDailyMealSettings, writeDailyMealSettings } from '@/data/dailyMeal'
+import { DAILY_MEAL_SETTINGS_EVENT, getDailyMealRecommendation, readDailyMealSettings } from '@/data/dailyMeal'
 import './RecipeWorkspacePage.css'
 
 const QUICK_FILTERS = [
@@ -137,7 +136,6 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
   const mealPlans = useFandaziStore((s) => s.mealPlans)
   const cookingLogs = useFandaziStore((s) => s.cookingLogs)
   const [dailySettings, setDailySettings] = useState(readDailyMealSettings)
-  const [settingsOpen, setSettingsOpen] = useState(false)
 
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
@@ -187,22 +185,12 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
     [recommendationDishes],
   )
 
-  const plateStatus = useMemo(() => checkPlateStructure(recommendationDishes), [recommendationDishes])
   const isFiltering = searchQuery.trim() !== '' || activeFilter !== '全部' || activeCuisine !== '' || activeTaste !== ''
-  const hasHealthProfiles = healthProfiles.length > 0
-  const combinedRestrictions = useMemo(() => (
-    Array.from(new Set(healthProfiles.flatMap((p) => p.restrictions)))
-  ), [healthProfiles])
 
   const scrollTo = (node: HTMLElement | null) => {
     node?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  const updateDailySettings = (patch: Partial<typeof dailySettings>) => {
-    const next = { ...dailySettings, ...patch }
-    setDailySettings(next)
-    writeDailyMealSettings(next)
-  }
 
   const displayDishes = useMemo(() => {
     const browseAllDishes = catalogMode || isFiltering
@@ -332,36 +320,14 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
           <p>首页只放晚餐推荐和少量展示；完整菜品库在这里，可筛选、搜索、进详情、加入计划。</p>
         </div>
       ) : (
-        <div className="hero-section">
-          <div className="hero-main-stack">
-            <div className="fd-hero-card hero-main">
-              <div className="hero-label">今天晚餐 · {homeModeLabel}</div>
-              <h2>饭团先帮你搭一版，不合适再改一下</h2>
-              <p>{recommendationResult.reason || '饭团已经按你家的日常设置安排好了。'}</p>
-              <div className="cta-row hero-cta-row">
-                <button className="fd-btn fd-btn-primary" onClick={() => scrollTo(recommendationRef.current)}>看看推荐</button>
-                <button className="fd-btn fd-btn-secondary" onClick={() => { setActiveFilter('全部'); setSearchQuery(''); setMoreFiltersOpen(true); scrollTo(filtersRef.current) }}>我今天想吃别的</button>
-                <button className="fd-btn fd-btn-secondary" onClick={() => { setActiveFilter('冰箱可做'); setSearchQuery(''); scrollTo(catalogRef.current) }}>冰箱可做</button>
-                <button className="fd-btn fd-btn-secondary" onClick={() => setSettingsOpen((open) => !open)}>安排设置</button>
-              </div>
-              {settingsOpen && <div className="daily-settings" aria-label="日常安排设置">
-                <label>人数<select value={dailySettings.people} onChange={(e) => updateDailySettings({ people: Number(e.target.value) })}>{[1,2,3,4,5,6].map((n) => <option key={n} value={n}>{n} 人</option>)}</select></label>
-                <label>每天<select value={dailySettings.mealsPerDay} onChange={(e) => updateDailySettings({ mealsPerDay: Number(e.target.value) as 1|2|3 })}>{[1,2,3].map((n) => <option key={n} value={n}>{n} 餐</option>)}</select></label>
-                <label>每餐<select value={dailySettings.dishesPerMeal} onChange={(e) => updateDailySettings({ dishesPerMeal: e.target.value === 'auto' ? 'auto' : Number(e.target.value) as 1|2|3 })}><option value="auto">自动安排</option><option value="1">1 道</option><option value="2">2 道</option><option value="3">3 道</option></select></label>
-                <label>主食<select value={dailySettings.carb} onChange={(e) => updateDailySettings({ carb: e.target.value as typeof dailySettings.carb })}><option value="optional">可选</option><option value="required">必配</option><option value="none">不安排</option></select></label>
-                <label>避重<select value={dailySettings.repeatWindowDays} onChange={(e) => updateDailySettings({ repeatWindowDays: Number(e.target.value) as 7|14 })}><option value="7">7 天</option><option value="14">14 天</option></select></label>
-              </div>}
-            </div>
-            <div className="home-filters-panel">
-              {renderFilters()}
-            </div>
-          </div>
-          <div className="fd-side-card summary-card">
-            <div className="hero-label">家庭空间状态</div>
-            <div className="fd-list-item"><span>当前模式</span><strong>{homeModeLabel}</strong></div>
-            <div className="fd-list-item"><span>家庭成员</span><strong>{buddyGroup.members.length} 人已设置</strong></div>
-            <div className="fd-list-item"><span>快过期</span><strong>{pantry.filter((p) => p.status === 'use_soon').slice(0, 3).map((p) => p.ingredientName).join(' · ') || '暂无'}</strong></div>
-            <div className="fd-list-item"><span>近期避开</span><strong>{dailySettings.repeatWindowDays} 天重复菜</strong></div>
+        <div className="fd-hero-card hero-main simple-home-hero">
+          <div className="hero-label">今晚 · {homeModeLabel}</div>
+          <h2>今晚就吃这个</h2>
+          <p>{recommendationResult.reason || '饭团已经替你安排好了。'}</p>
+          <div className="cta-row hero-cta-row">
+            <button className="fd-btn fd-btn-primary" onClick={() => scrollTo(recommendationRef.current)}>开始做</button>
+            <Link className="fd-btn fd-btn-secondary" to="/catalog">换一份</Link>
+            <Link className="fd-btn fd-btn-text" to="/catalog">今天特别想吃什么？</Link>
           </div>
         </div>
       )}
@@ -377,17 +343,6 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
             </div>
             <span className="dish-count">{dailySettings.people} 人 · 每天 {dailySettings.mealsPerDay} 餐 · 主食{dailySettings.carb === 'optional' ? '可选' : dailySettings.carb === 'required' ? '必配' : '不安排'} · {dailySettings.repeatWindowDays} 天避重</span>
           </div>
-          <div className="meal-logic-strip">
-            <span><strong>蛋白</strong> {plateStatus.hasProtein ? '✅ 已覆盖' : '⚠️ 缺优质蛋白'}</span>
-            <span><strong>蔬菜</strong> {plateStatus.hasVegetable ? '✅ 已覆盖' : '⚠️ 缺蔬菜'}</span>
-            <span><strong>主食</strong> {plateStatus.hasStaple ? '✅ 已覆盖' : '晚餐少量，可按活动量补全谷物'}</span>
-            <span><strong>健康约束</strong> {hasHealthProfiles ? `${combinedRestrictions.length} 条限制已生效` : '未填健康问卷，仅按 2026 指南默认推荐'}</span>
-          </div>
-          {plateStatus.gaps.length > 0 && (
-            <div className="plate-gap-warning">
-              ⚠️ 餐盘结构缺口：{plateStatus.gaps.join('、')}。建议从菜品库补一道。
-            </div>
-          )}
           <div className="dish-grid recommended-grid">
             {recommendationDishes.map((dish) => (
               <DishCard key={dish.id} dish={dish} compact recommendation />
@@ -396,7 +351,7 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
         </section>
       )}
 
-      <section className="dish-section dish-catalog-section" ref={catalogRef}>
+      {catalogMode && <section className="dish-section dish-catalog-section" ref={catalogRef}>
         <div className="dish-header">
           <div>
             <div className="hero-label">菜品展示</div>
@@ -430,7 +385,7 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
             ))}
           </div>
         )}
-      </section>
+      </section>}
     </div>
   )
 }
