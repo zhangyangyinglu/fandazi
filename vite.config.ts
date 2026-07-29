@@ -8,6 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      injectRegister: null,
       includeAssets: ['favicon.png', 'apple-touch-icon.png', 'brand-logo.png', 'icons/icon-maskable-512.png'],
       manifest: {
         name: '饭搭子 — 家庭做饭助手',

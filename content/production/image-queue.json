@@ -6,61 +6,66 @@
       "id": "ingredient-16e853fdba",
       "kind": "ingredient",
       "subject": "葱",
-      "status": "queued",
+      "status": "prepared",
       "priority": "blocker",
       "visualSpecVersion": "ingredient-photo-v1",
       "prompt": "Use case: product-mockup\nAsset type: ingredient image for the Fandazi cooking app\nPrimary request: Create a clear ingredient illustration of 葱 in its normal household cooking form.\nScene/backdrop: perfectly transparent background; no table, no wall, no colored square, no gradient\nStyle/medium: refined hand-painted food illustration with realistic Chinese grocery texture, matching a warm watercolor cookbook illustration\nComposition/framing: centered ingredient only, show a natural useful quantity, generous transparent margin, fully inside a square canvas\nLighting/mood: soft warm daylight, clean and appetizing\nConstraints: no people; no hands; no text; no labels; no brand; no watermark; no price tag; no visible square backdrop\nAvoid: dark background, flat icon style, collage, decorative typography",
       "outputFile": "ingredient-16e853fdba.webp",
       "attempts": [],
-      "createdAt": "2026-07-29T08:02:38.237Z"
+      "createdAt": "2026-07-29T08:02:38.237Z",
+      "batchDate": "2026-07-29"
     },
     {
       "id": "ingredient-40a03ae5ae",
       "kind": "ingredient",
       "subject": "带骨牛肋排",
-      "status": "queued",
+      "status": "prepared",
       "priority": "blocker",
       "visualSpecVersion": "ingredient-photo-v1",
       "prompt": "Use case: product-mockup\nAsset type: ingredient image for the Fandazi cooking app\nPrimary request: Create a clear ingredient illustration of 带骨牛肋排 in its normal household cooking form.\nScene/backdrop: perfectly transparent background; no table, no wall, no colored square, no gradient\nStyle/medium: refined hand-painted food illustration with realistic Chinese grocery texture, matching a warm watercolor cookbook illustration\nComposition/framing: centered ingredient only, show a natural useful quantity, generous transparent margin, fully inside a square canvas\nLighting/mood: soft warm daylight, clean and appetizing\nConstraints: no people; no hands; no text; no labels; no brand; no watermark; no price tag; no visible square backdrop\nAvoid: dark background, flat icon style, collage, decorative typography",
       "outputFile": "ingredient-40a03ae5ae.webp",
       "attempts": [],
-      "createdAt": "2026-07-29T08:02:38.241Z"
+      "createdAt": "2026-07-29T08:02:38.241Z",
+      "batchDate": "2026-07-29"
     },
     {
       "id": "ingredient-5c5d198639",
       "kind": "ingredient",
       "subject": "咖喱粉",
-      "status": "queued",
+      "status": "prepared",
       "priority": "blocker",
       "visualSpecVersion": "ingredient-photo-v1",
       "prompt": "Use case: product-mockup\nAsset type: ingredient image for the Fandazi cooking app\nPrimary request: Create a clear ingredient illustration of 咖喱粉 in its normal household cooking form.\nScene/backdrop: perfectly transparent background; no table, no wall, no colored square, no gradient\nStyle/medium: refined hand-painted food illustration with realistic Chinese grocery texture, matching a warm watercolor cookbook illustration\nComposition/framing: centered ingredient only, show a natural useful quantity, generous transparent margin, fully inside a square canvas\nLighting/mood: soft warm daylight, clean and appetizing\nConstraints: no people; no hands; no text; no labels; no brand; no watermark; no price tag; no visible square backdrop\nAvoid: dark background, flat icon style, collage, decorative typography",
       "outputFile": "ingredient-5c5d198639.webp",
       "attempts": [],
-      "createdAt": "2026-07-29T08:02:38.241Z"
+      "createdAt": "2026-07-29T08:02:38.241Z",
+      "batchDate": "2026-07-29"
     },
     {
       "id": "ingredient-80445df157",
       "kind": "ingredient",
       "subject": "冰糖",
-      "status": "queued",
+      "status": "prepared",
       "priority": "blocker",
       "visualSpecVersion": "ingredient-photo-v1",
       "prompt": "Use case: product-mockup\nAsset type: ingredient image for the Fandazi cooking app\nPrimary request: Create a clear ingredient illustration of 冰糖 in its normal household cooking form.\nScene/backdrop: perfectly transparent background; no table, no wall, no colored square, no gradient\nStyle/medium: refined hand-painted food illustration with realistic Chinese grocery texture, matching a warm watercolor cookbook illustration\nComposition/framing: centered ingredient only, show a natural useful quantity, generous transparent margin, fully inside a square canvas\nLighting/mood: soft warm daylight, clean and appetizing\nConstraints: no people; no hands; no text; no labels; no brand; no watermark; no price tag; no visible square backdrop\nAvoid: dark background, flat icon style, collage, decorative typography",
       "outputFile": "ingredient-80445df157.webp",
       "attempts": [],
-      "createdAt": "2026-07-29T08:02:38.241Z"
+      "createdAt": "2026-07-29T08:02:38.241Z",
+      "batchDate": "2026-07-29"
     },
     {
       "id": "ingredient-8cc17efcf4",
       "kind": "ingredient",
       "subject": "仔鸡或三黄鸡",
-      "status": "queued",
+      "status": "prepared",
       "priority": "blocker",
       "visualSpecVersion": "ingredient-photo-v1",
       "prompt": "Use case: product-mockup\nAsset type: ingredient image for the Fandazi cooking app\nPrimary request: Create a clear ingredient illustration of 仔鸡或三黄鸡 in its normal household cooking form.\nScene/backdrop: perfectly transparent background; no table, no wall, no colored square, no gradient\nStyle/medium: refined hand-painted food illustration with realistic Chinese grocery texture, matching a warm watercolor cookbook illustration\nComposition/framing: centered ingredient only, show a natural useful quantity, generous transparent margin, fully inside a square canvas\nLighting/mood: soft warm daylight, clean and appetizing\nConstraints: no people; no hands; no text; no labels; no brand; no watermark; no price tag; no visible square backdrop\nAvoid: dark background, flat icon style, collage, decorative typography",
       "outputFile": "ingredient-8cc17efcf4.webp",
       "attempts": [],
-      "createdAt": "2026-07-29T08:02:38.241Z"
+      "createdAt": "2026-07-29T08:02:38.241Z",
+      "batchDate": "2026-07-29"
     },
     {
       "id": "ingredient-125c1291d0",
