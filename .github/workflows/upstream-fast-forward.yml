@@ -1,0 +1,30 @@
+name: Fast-forward official updates
+
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.repository != 'zhangyangyinglu/fandazi'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Fast-forward from official upstream when safe
+        shell: bash
+        run: |
+          set -euo pipefail
+          git remote add upstream https://github.com/zhangyangyinglu/fandazi.git
+          git fetch upstream main
+          if git merge-base --is-ancestor HEAD upstream/main; then
+            git merge --ff-only upstream/main
+            git push origin HEAD:main
+            exit 0
+          fi
+          echo 'This deployment has diverged from official main; no files were overwritten.' >> "$GITHUB_STEP_SUMMARY"

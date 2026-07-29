@@ -27,4 +27,18 @@
 
 每天只从 `image-queue.json` 取最多 5 项。缺失食材图优先于依赖它的菜图；同一条菜必须在菜图和全部食材图齐全后才可发布。
 
+运行 `node scripts/prepare-daily-image-batch.mjs` 后，会自动创建 `~/Desktop/饭搭子生图/YYYY-MM-DD/`，其中含 `今日提示词.md` 与任务顺序清单。用户只需依顺序用 ChatGPT Images 生成并把原图下载进同一日期文件夹，不需要改文件名。
+
+运行 `node scripts/import-desktop-image-batches.mjs` 会扫描至少三天前的日期文件夹：图片数量与任务数量相同才会按下载时间顺序接入、标准化为 720×720 WebP 并将整个日期文件夹移至 `~/Desktop/饭搭子生图/已归档/`。数量不一致时不导入、不移动，等待补齐或清理。
+
 运行 `node scripts/audit-content-assets.mjs` 会更新 `reports/asset-baseline.json`，检查菜图、食材图、映射与待发布依赖。
+
+## 候选导入
+
+将整理好的候选 JSON 放入 `content/production/inbox/`，再运行：
+
+```bash
+node scripts/queue-recipe-candidate.mjs --input=content/production/inbox/<candidate>.json
+```
+
+候选必须含有来源链接、菜名、食材、步骤、分类、标签、烹饪方式和耗时。导入器会做精确重名去重、建立缺失食材任务、冻结菜图提示词，并把菜谱标记为 `asset-blocked`。图片全部接入、食材映射写回后，运行发布验证器才会将候选标为可发布。

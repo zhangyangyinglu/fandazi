@@ -11,10 +11,13 @@ const date = requestedDate ?? new Intl.DateTimeFormat('sv-SE', {
 }).format(new Date())
 const outboxDir = resolve(productionDir, 'outbox')
 const outputPath = resolve(outboxDir, `${date}-image-batch.md`)
+const desktopRoot = process.env.FANDAZI_IMAGE_INBOX ?? '/Users/miki/Desktop/饭搭子生图'
+const desktopBatchDir = resolve(desktopRoot, date)
 const queue = JSON.parse(readFileSync(queuePath, 'utf8'))
 
-if (existsSync(outputPath)) {
-  throw new Error(`Batch already exists: ${outputPath}. Refusing to create a duplicate.`)
+if (existsSync(resolve(desktopBatchDir, 'manifest.json'))) {
+  console.log(JSON.stringify({ outputPath, desktopBatchDir, status: 'already-prepared' }, null, 2))
+  process.exit(0)
 }
 
 const priority = { blocker: 0, high: 1, normal: 2, low: 3 }
@@ -46,4 +49,17 @@ for (const [index, item] of items.entries()) {
 
 mkdirSync(outboxDir, { recursive: true })
 writeFileSync(outputPath, `${lines.join('\n')}\n`)
-console.log(outputPath)
+mkdirSync(desktopBatchDir, { recursive: true })
+writeFileSync(resolve(desktopBatchDir, '今日提示词.md'), `${lines.join('\n')}\n`)
+writeFileSync(resolve(desktopBatchDir, 'manifest.json'), `${JSON.stringify({
+  schemaVersion: 1,
+  date,
+  status: 'awaiting-images',
+  items: items.map((item) => ({ id: item.id, kind: item.kind, subject: item.subject, outputFile: item.outputFile })),
+}, null, 2)}\n`)
+for (const item of items) {
+  item.status = 'prepared'
+  item.batchDate = date
+}
+writeFileSync(queuePath, `${JSON.stringify(queue, null, 2)}\n`)
+console.log(JSON.stringify({ outputPath, desktopBatchDir, itemCount: items.length }, null, 2))
