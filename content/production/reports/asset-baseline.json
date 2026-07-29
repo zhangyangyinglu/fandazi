@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-07-29T07:52:41.851Z",
+  "currentCatalog": {
+    "dishCount": 216,
+    "dishImageFileCount": 214,
+    "dishesMissingImage": [],
+    "uniqueIngredientCount": 239,
+    "ingredientImageFileCount": 223,
+    "ingredientMappingKeyCount": 225,
+    "ingredientMappingsMissingFiles": [],
+    "ingredientsMissingMappings": [
+      "葱",
+      "带骨牛肋排",
+      "咖喱粉",
+      "冰糖",
+      "仔鸡或三黄鸡",
+      "通海酱油或生抽",
+      "鲜鱼",
+      "青蒜",
+      "白糖",
+      "萝卜干",
+      "牛腩",
+      "郫县豆瓣酱",
+      "水淀粉",
+      "长茄子",
+      "猪里脊",
+      "干木耳"
+    ]
+  },
+  "productionQueue": {
+    "dailyAssetLimit": 5,
+    "activeItemCount": 0,
+    "pendingIngredientCount": 0
+  }
+}
