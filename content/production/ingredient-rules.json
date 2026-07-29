@@ -1,5 +1,86 @@
 {
   "schemaVersion": 1,
   "aliases": {},
-  "pendingIngredients": []
+  "pendingIngredients": [
+    {
+      "name": "葱",
+      "queueItemId": "ingredient-16e853fdba",
+      "status": "queued"
+    },
+    {
+      "name": "带骨牛肋排",
+      "queueItemId": "ingredient-40a03ae5ae",
+      "status": "queued"
+    },
+    {
+      "name": "咖喱粉",
+      "queueItemId": "ingredient-5c5d198639",
+      "status": "queued"
+    },
+    {
+      "name": "冰糖",
+      "queueItemId": "ingredient-80445df157",
+      "status": "queued"
+    },
+    {
+      "name": "仔鸡或三黄鸡",
+      "queueItemId": "ingredient-8cc17efcf4",
+      "status": "queued"
+    },
+    {
+      "name": "通海酱油或生抽",
+      "queueItemId": "ingredient-125c1291d0",
+      "status": "queued"
+    },
+    {
+      "name": "鲜鱼",
+      "queueItemId": "ingredient-db48ce4a8b",
+      "status": "queued"
+    },
+    {
+      "name": "青蒜",
+      "queueItemId": "ingredient-23d03cb05c",
+      "status": "queued"
+    },
+    {
+      "name": "白糖",
+      "queueItemId": "ingredient-bcdc796b7c",
+      "status": "queued"
+    },
+    {
+      "name": "萝卜干",
+      "queueItemId": "ingredient-13ff7bd5f9",
+      "status": "queued"
+    },
+    {
+      "name": "牛腩",
+      "queueItemId": "ingredient-418820f893",
+      "status": "queued"
+    },
+    {
+      "name": "郫县豆瓣酱",
+      "queueItemId": "ingredient-86beb6a2e2",
+      "status": "queued"
+    },
+    {
+      "name": "水淀粉",
+      "queueItemId": "ingredient-07b773f18d",
+      "status": "queued"
+    },
+    {
+      "name": "长茄子",
+      "queueItemId": "ingredient-597e83184d",
+      "status": "queued"
+    },
+    {
+      "name": "猪里脊",
+      "queueItemId": "ingredient-53fc41baa1",
+      "status": "queued"
+    },
+    {
+      "name": "干木耳",
+      "queueItemId": "ingredient-5a6adca19d",
+      "status": "queued"
+    }
+  ]
 }

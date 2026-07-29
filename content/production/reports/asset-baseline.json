@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-29T07:52:41.851Z",
+  "generatedAt": "2026-07-29T08:02:38.659Z",
   "currentCatalog": {
     "dishCount": 216,
     "dishImageFileCount": 214,
@@ -29,7 +29,7 @@
   },
   "productionQueue": {
     "dailyAssetLimit": 5,
-    "activeItemCount": 0,
-    "pendingIngredientCount": 0
+    "activeItemCount": 16,
+    "pendingIngredientCount": 16
   }
 }
