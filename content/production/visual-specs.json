@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "dish-photo-v1": {
+    "assetKind": "dish",
+    "output": {
+      "canvas": "720x720",
+      "format": "webp",
+      "background": "transparent"
+    },
+    "promptTemplate": "Use case: product-mockup\nAsset type: food card image for the Fandazi cooking app\nPrimary request: Create one finished serving of {{dishName}}. Show the defining ingredients accurately: {{keyIngredients}}. The finished dish should clearly look like {{dishName}}, prepared by {{cookMethod}}.\nScene/backdrop: perfectly transparent background; no table, no wall, no colored square, no gradient\nStyle/medium: refined hand-painted food illustration with realistic Chinese home-cooking texture, matching a warm watercolor cookbook illustration\nComposition/framing: centered single ceramic plate or bowl, slight 30 to 45 degree overhead angle, generous transparent margin, food fully inside the square canvas\nLighting/mood: soft warm daylight, appetizing but natural\nConstraints: one finished dish only; no people; no hands; no chopsticks; no text; no labels; no watermark; no restaurant logo; no collage; no visible square backdrop; no exaggerated garnish\nAvoid: photorealistic camera noise, dark background, flat icon style, oversized plate cropped by canvas"
+  },
+  "ingredient-photo-v1": {
+    "assetKind": "ingredient",
+    "output": {
+      "canvas": "720x720",
+      "format": "webp",
+      "background": "transparent"
+    },
+    "promptTemplate": "Use case: product-mockup\nAsset type: ingredient image for the Fandazi cooking app\nPrimary request: Create a clear ingredient illustration of {{ingredientName}} in its normal household cooking form.\nScene/backdrop: perfectly transparent background; no table, no wall, no colored square, no gradient\nStyle/medium: refined hand-painted food illustration with realistic Chinese grocery texture, matching a warm watercolor cookbook illustration\nComposition/framing: centered ingredient only, show a natural useful quantity, generous transparent margin, fully inside a square canvas\nLighting/mood: soft warm daylight, clean and appetizing\nConstraints: no people; no hands; no text; no labels; no brand; no watermark; no price tag; no visible square backdrop\nAvoid: dark background, flat icon style, collage, decorative typography"
+  }
+}
