@@ -7,9 +7,10 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const productionDir = resolve(root, 'content/production')
 const reportPath = resolve(productionDir, 'reports/asset-baseline.json')
 
-function loadTypeScriptModule(relativePath) {
+function loadTypeScriptModule(relativePath, expose = []) {
   const source = readFileSync(resolve(root, relativePath), 'utf8')
-  const compiled = ts.transpileModule(source, {
+  const auditExports = expose.length ? `\nexport { ${expose.join(', ')} }\n` : ''
+  const compiled = ts.transpileModule(`${source}${auditExports}`, {
     compilerOptions: {
       module: ts.ModuleKind.CommonJS,
       target: ts.ScriptTarget.ES2022,
@@ -25,7 +26,10 @@ function readJson(relativePath) {
 }
 
 const { DISHES } = loadTypeScriptModule('src/data/dishes.ts')
-const { INGREDIENT_IMAGE_MAP: ingredientImages } = loadTypeScriptModule('src/data/ingredientImages.ts')
+const { INGREDIENT_IMAGE_MAP: ingredientImages } = loadTypeScriptModule(
+  'src/data/ingredientImages.ts',
+  ['INGREDIENT_IMAGE_MAP'],
+)
 const queue = readJson('image-queue.json')
 const rules = readJson('ingredient-rules.json')
 const dishImageDir = resolve(root, 'public/dish-images')
