@@ -18,9 +18,13 @@ const missing = baseline.currentCatalog.ingredientsMissingMappings
 const existingNames = new Set(queue.items.map((item) => item.subject))
 
 for (const ingredientName of missing) {
-  if (existingNames.has(ingredientName)) continue
   const id = `ingredient-${toId(ingredientName)}`
-  const outputFile = `ingredient-${encodeURIComponent(ingredientName)}.webp`
+  const outputFile = `${id}.webp`
+  if (existingNames.has(ingredientName)) {
+    const existing = queue.items.find((item) => item.subject === ingredientName)
+    if (existing?.outputFile?.includes('%')) existing.outputFile = outputFile
+    continue
+  }
   queue.items.push({
     id,
     kind: 'ingredient',

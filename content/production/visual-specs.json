@@ -3,6 +3,7 @@
   "dish-photo-v1": {
     "assetKind": "dish",
     "output": {
+      "generationCanvas": "1024x1024",
       "canvas": "720x720",
       "format": "webp",
       "background": "transparent"
@@ -12,6 +13,7 @@
   "ingredient-photo-v1": {
     "assetKind": "ingredient",
     "output": {
+      "generationCanvas": "1024x1024",
       "canvas": "720x720",
       "format": "webp",
       "background": "transparent"

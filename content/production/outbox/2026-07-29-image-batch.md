@@ -4,7 +4,7 @@
 
 ## 1. 葱（食材图）
 - 队列 ID：`ingredient-16e853fdba`
-- 输出文件：`ingredient-%E8%91%B1.webp`
+- 输出文件：`ingredient-16e853fdba.webp`
 - 视觉规范：`ingredient-photo-v1`
 
 ```text
@@ -21,7 +21,7 @@ Avoid: dark background, flat icon style, collage, decorative typography
 
 ## 2. 带骨牛肋排（食材图）
 - 队列 ID：`ingredient-40a03ae5ae`
-- 输出文件：`ingredient-%E5%B8%A6%E9%AA%A8%E7%89%9B%E8%82%8B%E6%8E%92.webp`
+- 输出文件：`ingredient-40a03ae5ae.webp`
 - 视觉规范：`ingredient-photo-v1`
 
 ```text
@@ -38,7 +38,7 @@ Avoid: dark background, flat icon style, collage, decorative typography
 
 ## 3. 咖喱粉（食材图）
 - 队列 ID：`ingredient-5c5d198639`
-- 输出文件：`ingredient-%E5%92%96%E5%96%B1%E7%B2%89.webp`
+- 输出文件：`ingredient-5c5d198639.webp`
 - 视觉规范：`ingredient-photo-v1`
 
 ```text
@@ -55,7 +55,7 @@ Avoid: dark background, flat icon style, collage, decorative typography
 
 ## 4. 冰糖（食材图）
 - 队列 ID：`ingredient-80445df157`
-- 输出文件：`ingredient-%E5%86%B0%E7%B3%96.webp`
+- 输出文件：`ingredient-80445df157.webp`
 - 视觉规范：`ingredient-photo-v1`
 
 ```text
@@ -72,7 +72,7 @@ Avoid: dark background, flat icon style, collage, decorative typography
 
 ## 5. 仔鸡或三黄鸡（食材图）
 - 队列 ID：`ingredient-8cc17efcf4`
-- 输出文件：`ingredient-%E4%BB%94%E9%B8%A1%E6%88%96%E4%B8%89%E9%BB%84%E9%B8%A1.webp`
+- 输出文件：`ingredient-8cc17efcf4.webp`
 - 视觉规范：`ingredient-photo-v1`
 
 ```text
