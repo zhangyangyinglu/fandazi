@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { transformSync } from 'esbuild'
+import ts from 'typescript'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const productionDir = resolve(root, 'content/production')
@@ -9,7 +9,12 @@ const reportPath = resolve(productionDir, 'reports/asset-baseline.json')
 
 function loadTypeScriptModule(relativePath) {
   const source = readFileSync(resolve(root, relativePath), 'utf8')
-  const compiled = transformSync(source, { loader: 'ts', format: 'cjs', target: 'es2022' }).code
+  const compiled = ts.transpileModule(source, {
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      target: ts.ScriptTarget.ES2022,
+    },
+  }).outputText
   const module = { exports: {} }
   new Function('module', 'exports', compiled)(module, module.exports)
   return module.exports
