@@ -386,7 +386,6 @@
 
 @media (max-width: 600px) {
   .fd-desktop-shell {
-    width: 100%;
     margin: 0;
     border: 0;
     border-radius: 0;
