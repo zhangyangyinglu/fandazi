@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { DISHES } from '@/data/dishes'
 import { useFandaziStore } from '@/stores/fandaziStore'
@@ -50,6 +50,30 @@ export function RecipeDetailPage() {
   const backLabel = backState?.label ?? '返回菜品'
   const [recipeTab, setRecipeTab] = useState<'standard' | 'mine' | 'partner'>('standard')
   const [added, setAdded] = useState(false)
+  const [mobileRecipePanel, setMobileRecipePanel] = useState<'recipe' | 'missing'>('recipe')
+  const [mobileCookingMode, setMobileCookingMode] = useState(false)
+  const [cookStep, setCookStep] = useState(0)
+  const [timerSeconds, setTimerSeconds] = useState(0)
+  const [timerRunning, setTimerRunning] = useState(false)
+  const [cookingCompleted, setCookingCompleted] = useState(false)
+
+  const stepCount = Math.max(1, dish?.steps.length ?? 1)
+  const totalCookMinutes = Number.parseInt(dish?.cookTime ?? '', 10) || 30
+  const stepTimerSeconds = Math.max(60, Math.round((totalCookMinutes * 60) / stepCount))
+
+  useEffect(() => {
+    if (!mobileCookingMode || !timerRunning) return
+    const timer = window.setInterval(() => {
+      setTimerSeconds((current) => {
+        if (current <= 1) {
+          setTimerRunning(false)
+          return 0
+        }
+        return current - 1
+      })
+    }, 1000)
+    return () => window.clearInterval(timer)
+  }, [mobileCookingMode, timerRunning])
 
   if (!dish) {
     return (
@@ -106,8 +130,73 @@ export function RecipeDetailPage() {
     addMili(15)
   }
 
+  const handleNextCookStep = () => {
+    if (cookStep >= displaySteps.length - 1) {
+      if (!cookingCompleted) {
+        handleMarkCooked()
+        setCookingCompleted(true)
+      }
+      setTimerRunning(false)
+      return
+    }
+    setCookStep((current) => current + 1)
+    setTimerSeconds(stepTimerSeconds)
+    setTimerRunning(true)
+  }
+
+  const handleStartCooking = () => {
+    setCookStep(0)
+    setTimerSeconds(stepTimerSeconds)
+    setTimerRunning(true)
+    setCookingCompleted(false)
+    setMobileCookingMode(true)
+  }
+
+  const timerText = `${String(Math.floor(timerSeconds / 60)).padStart(2, '0')}:${String(timerSeconds % 60).padStart(2, '0')}`
+
   return (
     <div className="recipe-detail">
+      <section className="mobile-recipe-card" aria-label="这顿饭">
+        <div className="mobile-recipe-page-head">
+          <Link to={backTo} className="mobile-recipe-back" aria-label={backLabel}>‹</Link>
+          <div><strong>这顿饭</strong><span>{dish.cookTime}</span></div>
+        </div>
+        <p className="mobile-recipe-page-desc">把这顿饭做出来，剩下的交给饭团。</p>
+        <div className="mobile-recipe-detail-head">
+          <div className="mobile-recipe-photo" style={dish.image ? undefined : { background: `linear-gradient(135deg, ${dish.color}, #fff6e7)` }}>
+            {dish.image ? <img src={dish.image} alt={dish.name} width={800} height={520} decoding="async" /> : <span>{getDishEmoji(dish.name, dish.category, dish.tags)}</span>}
+          </div>
+          <div className="mobile-recipe-detail-copy">
+            <div className="mobile-recipe-kicker">{dish.category} · {dish.cookTime}</div>
+            <h1>{dish.name}</h1>
+            <p>{dish.flavorDescription || dish.intro}</p>
+          </div>
+        </div>
+        <div className="mobile-recipe-match"><strong>{match.have}/{dish.ingredients.length} 样食材在冰箱</strong><span>{match.missing === 0 ? '可以直接开始' : `还缺 ${match.missing} 样`}</span></div>
+        <div className="mobile-recipe-tabs">
+          <button className={mobileRecipePanel === 'recipe' ? 'active' : ''} onClick={() => setMobileRecipePanel('recipe')}>做法</button>
+          <button className={mobileRecipePanel === 'missing' ? 'active' : ''} onClick={() => setMobileRecipePanel('missing')}>缺料{match.missing > 0 ? ` ${match.missing}` : ''}</button>
+        </div>
+        {mobileRecipePanel === 'recipe' ? (
+          <ol className="mobile-step-list">
+            {displaySteps.map((step, index) => <li key={`${index}-${step}`}><span>{index + 1}</span><p>{step}</p></li>)}
+          </ol>
+        ) : (
+          <div className="mobile-missing-list">
+            {match.missingNames.length === 0 ? <p>冰箱食材刚刚好，开做吧。</p> : match.missingNames.map((name) => <span key={name}>＋ {name}</span>)}
+          </div>
+        )}
+        <button className="fd-btn fd-btn-primary mobile-start-cooking" onClick={handleStartCooking}>开始做饭</button>
+      </section>
+      {mobileCookingMode && (
+        <section className="mobile-cooking-mode" aria-label="厨房模式">
+          <div className="mobile-cooking-top"><button type="button" onClick={() => setMobileCookingMode(false)}>退出厨房</button><span>厨房模式</span><span>{cookStep + 1}/{displaySteps.length}</span></div>
+          <div className="mobile-cooking-dish"><span>正在做</span><strong>{dish.name}</strong></div>
+          <div className="mobile-cooking-timer"><span>{timerText}</span><small>{timerRunning ? '计时中' : timerSeconds === 0 ? '这一步完成' : '已暂停'}</small></div>
+          <div className="mobile-cooking-step"><span>第 {cookStep + 1} 步</span><h2>{displaySteps[cookStep]}</h2><p>饭团会在这一步结束时提醒你。</p></div>
+          <div className="mobile-cooking-actions"><button type="button" className="mobile-cooking-pause" onClick={() => setTimerRunning((running) => !running)}>{timerRunning ? '暂停计时' : '继续计时'}</button><button type="button" className="fd-btn fd-btn-primary" onClick={handleNextCookStep}>{cookStep >= displaySteps.length - 1 ? (cookingCompleted ? '已完成' : '完成这道菜') : '下一步 →'}</button></div>
+        </section>
+      )}
       <div className="detail-breadcrumb">
         <Link to={backTo} className="back-link">← {backLabel}</Link>
         <span>菜品 / {dish.category} / {dish.name}</span>

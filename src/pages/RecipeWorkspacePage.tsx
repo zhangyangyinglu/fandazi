@@ -10,6 +10,7 @@ import { useFandaziStore } from '@/stores/fandaziStore'
 import { readHealthProfiles, type HealthProfile } from '@/components/healthProfileStorage'
 import { FANDAZI_SYNC_CONFIG_EVENT } from '@/lib/supabaseClient'
 import { readBuddyGroup } from '@/data/familySharing'
+import { humanizeHealthLabel } from '@/data/healthLabels'
 import { DAILY_MEAL_SETTINGS_EVENT, getDailyMealRecommendation, readDailyMealSettings } from '@/data/dailyMeal'
 import './RecipeWorkspacePage.css'
 
@@ -164,6 +165,16 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
   )
   const availableRecommendationIngredients = recommendationIngredients.filter((name) => pantryNames.has(name))
   const missingRecommendationIngredients = recommendationIngredients.filter((name) => !pantryNames.has(name))
+  const healthPlanLabels = useMemo(() => {
+    const labels = healthProfiles.flatMap((profile) => [
+      ...profile.priorityGoals,
+      ...profile.nutritionFocus,
+      ...profile.healthStatuses,
+    ])
+    return [...new Set(labels.filter(Boolean))].slice(0, 3).map(humanizeHealthLabel)
+  }, [healthProfiles])
+  const mobileHealthReason = recommendationResult.healthReasons?.[0]
+    ?? (healthProfiles.length > 0 ? '饭团已结合你的健康计划和冰箱库存排序。' : '建立健康计划后，饭团会按你的身体需求定制推荐。')
 
   const handleConfirmRecommendation = () => {
     const today = new Date().toISOString().slice(0, 10)
@@ -307,6 +318,7 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
           <p>首页只放晚餐推荐和少量展示；完整菜品库在这里，可筛选、搜索、进详情、加入计划。</p>
         </div>
       ) : (
+        <>
         <section className="today-meal-card">
           <div className="today-meal-header">
             <div>
@@ -352,6 +364,46 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
             <Link className="fd-btn fd-btn-text" to="/catalog">今天特别想吃什么？</Link>
           </div>
         </section>
+        <section className="mobile-today-hero" aria-label="开饭推荐">
+          <div className="mobile-today-kicker">{new Date().toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' })} · {recommendationResult.persisted ? '已确认安排' : '晚餐'}</div>
+          <div className="mobile-today-title-row">
+            <h1>今晚吃什么？</h1>
+            <span className="mobile-today-seal">01</span>
+          </div>
+          <p className="mobile-today-intro">不是任务，是一顿刚好适合今天的饭。</p>
+          {recommendationDishes[0] && (
+            <article className="mobile-meal-scene">
+              <Link to={`/recipes/${recommendationDishes[0].id}`} className="mobile-today-dish-image" aria-label={`查看${recommendationDishes[0].name}`}>
+                <DishImage dish={recommendationDishes[0]} />
+              </Link>
+              <div className="mobile-meal-copy">
+                <h2>{recommendationDishes[0].name}</h2>
+                <p>{recommendationDishes[0].flavorDescription || recommendationDishes[0].intro || '家常好吃，今天刚刚好。'}</p>
+                <div className="mobile-meal-meta"><span>时间<strong>{recommendationDishes[0].cookTime.replace('分钟', ' min')}</strong></span><span>难度<strong>家常</strong></span><span>份量<strong>{dailySettings.people} 人</strong></span></div>
+              </div>
+            </article>
+          )}
+          <div className="mobile-today-status">
+            <div><span>这顿饭的准备状态</span><strong>{availableRecommendationIngredients.length} / {recommendationIngredients.length} 样食材已有</strong></div>
+            <em>{missingRecommendationIngredients.length === 0 ? '食材齐了' : `还缺 ${missingRecommendationIngredients.length} 样`}</em>
+          </div>
+          <div className="mobile-health-strip">
+            <span className="mobile-health-icon">✦</span>
+            <div>
+              <strong>{healthProfiles.length > 0 ? '符合你的健康计划' : '饭团推荐依据'}</strong>
+              <p>{mobileHealthReason}</p>
+              {healthPlanLabels.length > 0 && <div className="mobile-health-tags">{healthPlanLabels.map((label) => <span key={label}>{label}</span>)}</div>}
+            </div>
+          </div>
+          <div className="mobile-today-actions">
+            <button className="fd-btn fd-btn-primary" onClick={handleConfirmRecommendation}>
+              {missingRecommendationIngredients.length > 0 ? '补齐食材' : '打开这顿饭'}
+            </button>
+            <button className="fd-btn fd-btn-secondary" onClick={() => setMealRevision((value) => value + 1)}>换一份</button>
+          </div>
+        <p className="mobile-today-more">{recommendationDishes.length > 1 ? `还有 ${recommendationDishes.length - 1} 道搭配已为你准备` : '想从已有食材开始？去冰箱试试逆向食谱'}</p>
+        </section>
+        </>
       )}
 
       {catalogMode && renderFilters()}

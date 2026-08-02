@@ -43,11 +43,21 @@ export function getDailyMealRecommendation(input: {
   for (const log of input.cookingLogs) if (dayDiff(log.date, input.date) >= 0 && dayDiff(log.date, input.date) < input.settings.repeatWindowDays) recent.add(log.dishId)
   const today = input.mealPlans.filter((p) => p.planDate === input.date && p.status !== 'skipped')
   const todayDishes = today.map((p) => input.dishes.find((d) => d.id === p.dishId)).filter(Boolean) as Dish[]
-  if (todayDishes.length) return { dishes: todayDishes, persisted: true, reason: '这是你家今天已经确认的安排。' }
+  if (todayDishes.length) return {
+    dishes: todayDishes,
+    persisted: true,
+    reason: '这是你家今天已经确认的安排。',
+    healthReasons: [],
+  }
   const target = input.settings.dishesPerMeal === 'auto' ? (input.settings.people <= 1 ? 1 : input.settings.people <= 2 ? 2 : 3) : input.settings.dishesPerMeal
   const prefs = Object.fromEntries(input.buddyGroup.members.map((m) => [m.id, m.preferences])) as Record<string, DishPreferences>
   const result = recommendMeal({ mealTime: 'dinner', pantryItems: input.pantryItems, candidateDishes: getRecommendationCatalog(input.dishes),
     buddyGroup: input.buddyGroup, memberPreferences: prefs, healthProfiles: input.healthProfiles, familySize: input.settings.people,
     forceCount: target, excludeDishIds: [...recent].filter((id) => id !== input.desiredDishId), seed: dateSeed(input.date) + (input.revision ?? 0) * 997, carbPolicy: input.settings.carb })
-  return { dishes: result?.dishes ?? [], persisted: false, reason: result?.reason ?? '暂时没有可安排的菜。' }
+  return {
+    dishes: result?.dishes ?? [],
+    persisted: false,
+    reason: result?.reason ?? '暂时没有可安排的菜。',
+    healthReasons: result?.healthReasons ?? [],
+  }
 }

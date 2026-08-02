@@ -33,6 +33,11 @@
   font: 900 22px var(--serif);
 }
 
+.fd-mobile-brand-mark,
+.fd-mobile-app-note {
+  display: none;
+}
+
 .fd-nav {
   display: flex;
   flex-wrap: wrap;
@@ -385,29 +390,74 @@
 }
 
 @media (max-width: 600px) {
+  html,
+  body,
+  #root {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    background: #f7f0e5;
+  }
+
   .fd-desktop-shell {
+    width: 100%;
+    max-width: none;
     margin: 0;
     border: 0;
     border-radius: 0;
     box-shadow: none;
-    min-height: 100vh;
+    min-height: 100svh;
+    background: #f7f0e5;
   }
 
   .fd-topbar {
     min-height: 56px;
-    padding: 10px 14px;
+    padding: 18px 18px 10px;
     gap: 10px;
+    background: #f7f0e5;
+    border-bottom: 0;
+    position: relative;
+    backdrop-filter: none;
   }
+
+  .fd-mobile-brand-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px 11px 7px 11px;
+    background: #18251f;
+    color: #f7f0e5;
+    font: 500 14px var(--serif);
+    transform: rotate(-5deg);
+  }
+
+  .fd-topbar .fd-logo {
+    display: none;
+  }
+
   .fd-brand span {
-    font-size: 18px;
+    font: 500 14px/1 var(--sans);
+    letter-spacing: .04em;
   }
-  .fd-logo {
-    width: 32px;
-    height: 32px;
-    font-size: 16px;
+
+  .fd-mobile-app-note {
+    display: block;
+    margin-left: auto;
+    color: #78776e;
+    font-size: 11px;
   }
+
   .fd-main {
-    padding: 14px 14px 80px;
+    width: 100%;
+    max-width: none;
+    padding: 5px 18px 82px;
+    background: #f7f0e5;
   }
 }
 
@@ -443,5 +493,40 @@
 @media (max-width: 1000px) {
   .fd-mobile-bottom {
     display: flex;
+  }
+}
+
+@media (max-width: 600px) {
+  .fd-mobile-bottom {
+    height: calc(58px + env(safe-area-inset-bottom));
+    padding: 0 9px env(safe-area-inset-bottom);
+    border-top: 1px solid #d5cbbb;
+    background: #f7f0e5;
+    color: #78776e;
+  }
+
+  .fd-mobile-bottom a {
+    min-width: 74px;
+    padding: 8px 10px;
+    border-radius: 0;
+    color: #78776e;
+    font-size: 10px;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  .fd-mobile-bottom a.active {
+    color: #18251f;
+    font-weight: 500;
+  }
+
+  .fd-mobile-bottom a.active::before {
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin: 0 4px 1px 0;
+    border-radius: 50%;
+    background: #d95039;
+    content: '';
   }
 }

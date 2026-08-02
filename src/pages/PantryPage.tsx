@@ -6,6 +6,8 @@ import { DISHES } from '@/data/dishes'
 import { getIngredientImage } from '@/data/ingredientImages'
 import { useFandaziStore } from '@/stores/fandaziStore'
 import { suggestPantryPlacement } from '@/data/pantryAutoClassify'
+import { missingIngredientsForDish, recommendByPantry } from '@/data/pantryRecommend'
+import { readHealthProfiles, type HealthProfile } from '@/components/healthProfileStorage'
 import type { IngredientGroup, PantryItem, PantryStorage } from '@/types'
 import './PantryPage.css'
 
@@ -31,6 +33,12 @@ export function PantryPage() {
   const [storage, setStorage] = useState<PantryStorage>('fridge')
   const [bestBeforeAt, setBestBeforeAt] = useState('')
   const [note, setNote] = useState('')
+  const [reverseIngredients, setReverseIngredients] = useState<string[]>([])
+  const [reverseMaxMissing, setReverseMaxMissing] = useState<number | null>(1)
+  const [reverseMaxMinutes, setReverseMaxMinutes] = useState<number | null>(30)
+  const [reverseHealthOnly, setReverseHealthOnly] = useState(false)
+  const [healthProfiles] = useState<HealthProfile[]>(() => readHealthProfiles())
+  const [mobileAddOpen, setMobileAddOpen] = useState(false)
   const mealPlans = useFandaziStore((s) => s.mealPlans)
   const searchQuery = searchParams.get('q')?.trim().toLowerCase() ?? ''
 
@@ -42,8 +50,29 @@ export function PantryPage() {
     return matchesFilter && (!searchQuery || haystack.includes(searchQuery))
   }), [filter, pantry, searchQuery])
   const useSoonItems = pantry.filter((item) => item.status === 'use_soon' || item.status === 'past_best')
-  const pantryNames = new Set(pantry.map((item) => item.ingredientName))
+  const pantryNames = useMemo(() => new Set(pantry.map((item) => item.ingredientName)), [pantry])
   const canCookDishes = DISHES.filter((dish) => dish.ingredients.every((ing) => pantryNames.has(ing.name))).slice(0, 3)
+
+  const reverseSelectedIngredients = useMemo(
+    () => reverseIngredients.length > 0 ? reverseIngredients : Array.from(pantryNames),
+    [pantryNames, reverseIngredients],
+  )
+  const reverseResults = useMemo(() => {
+    const matches = recommendByPantry({ pantryItems: reverseSelectedIngredients, candidateDishes: DISHES }).matches
+    const profileLabels = healthProfiles.flatMap((profile) => [...profile.priorityGoals, ...profile.nutritionFocus])
+    const restrictions = healthProfiles.flatMap((profile) => profile.restrictions).map((item) => item.toLowerCase())
+    return matches.filter(({ dish }) => {
+      const missing = missingIngredientsForDish(dish, reverseSelectedIngredients)
+      const minutes = Number.parseInt(dish.cookTime, 10)
+      const hasRestriction = dish.ingredients.some((ingredient) => restrictions.some((restriction) => ingredient.name.toLowerCase().includes(restriction)))
+      const healthTags = dish.tags.join(' ').toLowerCase()
+      const healthMatch = profileLabels.length === 0 || profileLabels.some((label) => healthTags.includes(label.toLowerCase())) || dish.tags.some((tag) => ['清淡', '少油', '少盐', '低脂', '高蛋白', '控糖友好'].includes(tag))
+      return (reverseMaxMissing === null || missing.length <= reverseMaxMissing)
+        && (reverseMaxMinutes === null || Number.isNaN(minutes) || minutes <= reverseMaxMinutes)
+        && !hasRestriction
+        && (!reverseHealthOnly || healthMatch)
+    }).slice(0, 6)
+  }, [healthProfiles, reverseHealthOnly, reverseMaxMissing, reverseMaxMinutes, reverseSelectedIngredients])
 
   function handleAdd(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -79,7 +108,48 @@ export function PantryPage() {
         <div className="fd-side-card pantry-summary"><div className="hero-label">冰箱状态</div><div className="pantry-line"><span>库存食材</span><strong>{pantry.length} 项</strong></div><div className="pantry-line"><span>快过期</span><strong>{useSoonItems.length} 项</strong></div><div className="pantry-line"><span>今晚可做</span><strong>{canCookDishes.length} 道菜</strong></div></div>
       </div>
 
-      <section id="add-pantry" className="fd-panel pantry-add-panel">
+      <section className="mobile-reverse-panel" aria-label="逆向食谱">
+        <div className="mobile-fridge-head"><h1>冰箱</h1><span>{pantry.length} 样食材</span></div>
+        <p className="mobile-fridge-intro">从现有食材出发，看看今晚能做什么。</p>
+        {pantry.length === 0 ? (
+          <div className="mobile-reverse-empty"><span>冰箱还没有食材</span><button type="button" onClick={() => setMobileAddOpen(true)}>先添加几样</button></div>
+        ) : (
+          <>
+            <div className="mobile-fridge-brief"><div><span>冰箱里已有 {pantry.length} 样食材</span><strong>先用快过期的</strong></div><button type="button" onClick={() => setReverseIngredients(useSoonItems.map((item) => item.ingredientName))}>查看</button></div>
+            <div className="mobile-reverse-kicker">逆向食谱</div>
+            <div className="mobile-ingredient-shelf">
+              {pantry.slice(0, 10).map((item) => {
+                const active = reverseSelectedIngredients.includes(item.ingredientName)
+                return <button key={item.id} type="button" className={active ? 'active' : ''} onClick={() => setReverseIngredients((current) => {
+                  const base = current.length > 0 ? current : Array.from(pantryNames)
+                  return base.includes(item.ingredientName) ? base.filter((name) => name !== item.ingredientName) : [...base, item.ingredientName]
+                })}>{item.ingredientName}</button>
+              })}
+            </div>
+            <div className="mobile-reverse-filters">
+              <button type="button" className={reverseMaxMissing === 1 ? 'active' : ''} onClick={() => setReverseMaxMissing((value) => value === 1 ? null : 1)}>最多缺 1 样</button>
+              <button type="button" className={reverseMaxMinutes === 30 ? 'active' : ''} onClick={() => setReverseMaxMinutes((value) => value === 30 ? null : 30)}>30 分钟内</button>
+              <button type="button" className={reverseHealthOnly ? 'active' : ''} onClick={() => setReverseHealthOnly((value) => !value)}>适合健康计划</button>
+            </div>
+            <div className="mobile-reverse-heading"><strong>能做这些</strong><span>{reverseResults.length} 道匹配</span></div>
+            <div className="mobile-reverse-results">
+              {reverseResults.length === 0 ? <p className="mobile-reverse-no-result">换一个筛选，或者再添一样食材试试。</p> : reverseResults.map(({ dish, matchedIngredients }) => {
+                const missing = missingIngredientsForDish(dish, reverseSelectedIngredients)
+                return <Link key={dish.id} to={`/recipes/${dish.id}`} className="mobile-reverse-result">
+                  <div className="mobile-reverse-image" style={{ background: dish.image ? undefined : `linear-gradient(135deg, ${dish.color}, #fff7e9)` }}>
+                    {dish.image ? <img src={dish.image} alt="" width={96} height={76} loading="lazy" /> : <span>🍲</span>}
+                  </div>
+                  <div className="mobile-reverse-copy"><strong>{dish.name}</strong><span>用上 {matchedIngredients.slice(0, 3).join('、')}{matchedIngredients.length > 3 ? '等' : ''}</span><small>{missing.length === 0 ? '冰箱可做' : `还差 ${missing.join('、')}`} · {dish.cookTime}</small></div>
+                  <span className="mobile-reverse-arrow">›</span>
+                </Link>
+              })}
+            </div>
+            <button type="button" className="mobile-add-trigger" onClick={() => setMobileAddOpen((value) => !value)}>{mobileAddOpen ? '收起添加入口' : '+ 添加冰箱食材'}</button>
+          </>
+        )}
+      </section>
+
+      <section id="add-pantry" className={`fd-panel pantry-add-panel ${mobileAddOpen ? 'mobile-add-open' : ''}`}>
         <div className="hero-label">长期入口</div><h3>添加冰箱食材</h3><p className="pantry-form-hint">手动录入不依赖采购流程，只有你确认放入冰箱的采购项才会进入库存。</p>
         <form className="pantry-form" onSubmit={handleAdd}>
           <input aria-label="食材名称" placeholder="食材名称，例如：鸡蛋" value={name} onChange={(e) => setName(e.target.value)} />

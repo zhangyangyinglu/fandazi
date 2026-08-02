@@ -3,7 +3,7 @@ import { NavLink, useLocation, useNavigate, useSearchParams } from 'react-router
 import './TopNav.css'
 
 const PRIMARY_NAV = [
-  { to: '/', label: '今天', end: true },
+  { to: '/', label: '开饭', end: true },
   { to: '/pantry', label: '冰箱' },
   { to: '/mine', label: '我的' },
 ]
@@ -76,9 +76,11 @@ export function TopNav() {
     <>
     <header className="fd-topbar">
       <div className="fd-brand">
+        <span className="fd-mobile-brand-mark" aria-hidden="true">饭</span>
         <img src="/brand-logo.png" alt="饭搭子" className="fd-logo" width={32} height={32} />
         <span>饭搭子</span>
       </div>
+      <span className="fd-mobile-app-note">开饭 · 晚餐</span>
       <nav className="fd-nav" role="navigation" aria-label="主导航">
         {PRIMARY_NAV.map((item) => (
           <NavLink

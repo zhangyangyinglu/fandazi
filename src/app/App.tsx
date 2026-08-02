@@ -34,10 +34,9 @@ function PageFallback() {
 }
 
 const MOBILE_NAV_ITEMS = [
-  { to: '/', label: '菜品', end: true },
+  { to: '/', label: '开饭', end: true },
   { to: '/pantry', label: '冰箱', end: false },
-  { to: '/plan', label: '计划', end: false },
-  { to: '/fantuan', label: '饭团', end: false },
+  { to: '/mine', label: '我的', end: false },
 ]
 
 function MobileBottomNav() {

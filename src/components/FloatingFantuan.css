@@ -468,6 +468,11 @@
 
 /* === 移动端 === */
 @media (max-width: 600px) {
+  /* 饭团在手机端是“我的”里的工具，不占用首屏空间。 */
+  .floating-fantuan {
+    display: none !important;
+  }
+
   .floating-fantuan {
     right: 16px;
     bottom: 72px;

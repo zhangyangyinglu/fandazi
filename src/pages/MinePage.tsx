@@ -47,6 +47,12 @@ export function MinePage() {
 
   return (
     <div className="mine-page">
+      <section className="mobile-mine-card" aria-label="我的">
+        <div className="mobile-mine-profile"><div className="mobile-mine-avatar">米</div><div><span>我的饭搭子</span><h1>Miki</h1></div><Link to="/health" aria-label="打开健康计划">›</Link></div>
+        <div className="mobile-mine-stats"><div><strong>{displayCookedCount}</strong><span>做过的菜</span></div><div><strong>{cookingLogs.length}</strong><span>次记录</span></div><div><strong>{fantuan.mili}</strong><span>米粒</span></div></div>
+        <section className="mobile-mine-section"><div className="mobile-mine-section-head"><h2>最近常做</h2><button type="button" onClick={() => switchTab('dishes')}>查看全部</button></div>{displayDishes.length === 0 ? <p className="mobile-mine-empty">做完一道菜后，它会出现在这里。</p> : <div className="mobile-mine-dishes">{displayDishes.slice(0, 3).map((dish) => dish && <Link key={dish.id} to={`/recipes/${dish.id}`}><span className="mobile-mine-dish-dot">🍽️</span><strong>{dish.name}</strong><small>{cookingLogs.filter((log) => log.dishId === dish.id).length} 次</small></Link>)}</div>}</section>
+        <section className="mobile-mine-section"><div className="mobile-mine-section-head"><h2>个人工具</h2><span>需要时再打开</span></div><div className="mobile-mine-tools"><Link to="/health"><span>✦</span><strong>健康计划</strong><small>饭团按你的身体需求推荐</small><b>›</b></Link><Link to="/fantuan"><span>☻</span><strong>饭团 AI</strong><small>问它今天怎么吃</small><b>›</b></Link><Link to="/plan"><span>▦</span><strong>饮食计划</strong><small>看接下来怎么安排</small><b>›</b></Link><Link to="/shopping"><span>□</span><strong>购物清单</strong><small>缺什么一次补齐</small><b>›</b></Link><Link to="/family"><span>⌂</span><strong>家庭同步</strong><small>和家人共享冰箱</small><b>›</b></Link></div></section>
+      </section>
       {/* Hero */}
       <div className="mine-hero">
         <div className="fd-hero-card">

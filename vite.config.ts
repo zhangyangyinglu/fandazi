@@ -14,8 +14,8 @@ export default defineConfig({
         name: '饭搭子 — 家庭做饭助手',
         short_name: '饭搭子',
         description: 'GitHub 开源型 Web 工具版家庭做饭助手',
-        theme_color: '#faf7f2',
-        background_color: '#faf7f2',
+        theme_color: '#f7f0e5',
+        background_color: '#f7f0e5',
         display: 'standalone',
         start_url: '/',
         icons: [

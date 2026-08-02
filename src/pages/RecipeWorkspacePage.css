@@ -612,3 +612,386 @@
 .filter-tabs-extra {
   align-items: center;
 }
+
+.mobile-today-hero {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  .recipe-workspace.home-mode {
+    max-width: none;
+  }
+
+  .home-mode > .today-meal-card {
+    display: none;
+  }
+
+  .mobile-today-hero {
+    display: block;
+    background: var(--fd-surface, #fffdf9);
+    border: 1px solid var(--fd-line-soft, #eee7dc);
+    border-radius: 26px;
+    padding: 18px;
+    box-shadow: 0 12px 32px rgba(78, 53, 28, 0.08);
+  }
+
+  .mobile-today-kicker,
+  .mobile-reverse-kicker {
+    color: var(--fd-orange);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+
+  .mobile-today-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .mobile-today-title-row h1 {
+    font: 900 30px/1.08 var(--serif);
+    margin: 0;
+    letter-spacing: -.03em;
+  }
+
+  .mobile-today-title-row p {
+    color: var(--fd-muted);
+    font-size: 13px;
+    margin: 7px 0 0;
+  }
+
+  .mobile-ready-badge {
+    flex: 0 0 auto;
+    border-radius: 999px;
+    background: var(--fd-danger-bg, #fff0ec);
+    color: var(--fd-danger-ink, #c8553c);
+    font-size: 11px;
+    font-weight: 900;
+    padding: 6px 9px;
+  }
+
+  .mobile-ready-badge.ready {
+    background: var(--fd-success-bg, #edf7e8);
+    color: var(--fd-green, #4e8c54);
+  }
+
+  .mobile-today-dish-image {
+    display: block;
+    height: 220px;
+    margin: 16px -2px 12px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--fd-surface-warm, #fff5e6);
+  }
+
+  .mobile-today-dish-image img,
+  .mobile-today-dish-image .dish-image-placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .mobile-today-status {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    color: var(--fd-muted);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .mobile-today-status strong {
+    color: var(--fd-ink);
+    white-space: nowrap;
+  }
+
+  .mobile-health-strip {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 16px;
+    background: #f4f8ed;
+    color: var(--fd-green);
+  }
+
+  .mobile-health-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #dcebd5;
+    font-weight: 900;
+  }
+
+  .mobile-health-strip strong {
+    display: block;
+    font-size: 13px;
+  }
+
+  .mobile-health-strip p {
+    margin: 3px 0 0;
+    color: #608060;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .mobile-health-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 7px;
+  }
+
+  .mobile-health-tags span {
+    padding: 3px 7px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.72);
+    color: #608060;
+    font-size: 10px;
+    font-weight: 800;
+  }
+
+  .mobile-today-actions {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .mobile-today-actions .fd-btn {
+    min-height: 46px;
+    justify-content: center;
+  }
+
+  .mobile-today-more {
+    margin: 12px 0 0;
+    color: var(--fd-quiet);
+    font-size: 11px;
+    text-align: center;
+  }
+}
+
+/* V3 手机视觉：纸张底、朱红主卡、墨色主按钮，保持首屏像一顿饭而不是后台卡片。 */
+@media (max-width: 600px) {
+  .mobile-today-hero {
+    --v3-paper: #f7f0e5;
+    --v3-paper-soft: #e9dfd1;
+    --v3-ink: #18251f;
+    --v3-muted: #78776e;
+    --v3-line: #d5cbbb;
+    --v3-red: #d95039;
+    --v3-yellow: #d8ac45;
+    --v3-green: #4e806b;
+    --v3-red-soft: #ebd0c3;
+    --v3-green-soft: #dfebe2;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 5px 0 0;
+  }
+
+  .mobile-today-kicker {
+    color: var(--v3-red);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .13em;
+  }
+
+  .mobile-today-title-row {
+    align-items: flex-start;
+    margin-top: 7px;
+  }
+
+  .mobile-today-title-row h1 {
+    color: var(--v3-ink);
+    font: 500 29px/1.12 var(--serif);
+    letter-spacing: -.08em;
+  }
+
+  .mobile-today-seal {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--v3-ink);
+    border-radius: 50%;
+    color: var(--v3-ink);
+    font-size: 10px;
+    letter-spacing: .08em;
+    transform: rotate(8deg);
+  }
+
+  .mobile-today-intro {
+    margin: 8px 0 16px;
+    color: var(--v3-muted);
+    font-size: 12px;
+  }
+
+  .mobile-meal-scene {
+    overflow: hidden;
+    border-radius: 5px 24px 5px 24px;
+    border: 1px solid var(--v3-line);
+    background: var(--v3-paper-soft);
+    color: var(--v3-ink);
+  }
+
+  .mobile-today-dish-image {
+    height: 185px;
+    margin: 0;
+    border-radius: 0;
+    background: #eee5d8;
+  }
+
+  .mobile-today-dish-image img,
+  .mobile-today-dish-image .dish-image-placeholder {
+    object-fit: cover;
+  }
+
+  .mobile-meal-copy {
+    padding: 14px 16px 16px;
+  }
+
+  .mobile-meal-copy h2 {
+    margin: 0;
+    color: var(--v3-ink);
+    font: 500 21px/1.25 var(--sans);
+    letter-spacing: -.04em;
+  }
+
+  .mobile-meal-copy p {
+    overflow: hidden;
+    margin: 5px 0 0;
+    color: var(--v3-muted);
+    font-size: 11px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-meal-meta {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+    padding-top: 11px;
+    border-top: 1px solid var(--v3-line);
+  }
+
+  .mobile-meal-meta span {
+    color: var(--v3-muted);
+    font-size: 10px;
+  }
+
+  .mobile-meal-meta strong {
+    margin-left: 4px;
+    color: var(--v3-ink);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .mobile-today-status {
+    align-items: center;
+    margin-top: 16px;
+    padding: 11px 0;
+    border-top: 1px solid var(--v3-line);
+    border-bottom: 1px solid var(--v3-line);
+    color: var(--v3-muted);
+  }
+
+  .mobile-today-status div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobile-today-status span {
+    font-size: 10px;
+  }
+
+  .mobile-today-status strong {
+    margin-top: 2px;
+    color: var(--v3-ink);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .mobile-today-status em {
+    color: var(--v3-red);
+    font-size: 11px;
+    font-style: normal;
+    white-space: nowrap;
+  }
+
+  .mobile-health-strip {
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding: 9px 11px;
+    border-left: 3px solid var(--v3-green);
+    border-radius: 2px 13px 2px 13px;
+    background: var(--v3-green-soft);
+    color: var(--v3-ink);
+  }
+
+  .mobile-health-icon {
+    display: none;
+  }
+
+  .mobile-health-strip > div {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  .mobile-health-strip strong {
+    color: var(--v3-ink);
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .mobile-health-strip p {
+    margin: 2px 0 0;
+    color: var(--v3-green);
+    font-size: 10px;
+  }
+
+  .mobile-health-tags {
+    display: none;
+  }
+
+  .mobile-today-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .mobile-today-actions .fd-btn-primary {
+    flex: 1;
+    min-height: 45px;
+    border: 0;
+    border-radius: 4px 15px 4px 15px;
+    background: var(--v3-ink);
+    color: var(--v3-paper);
+    font-weight: 500;
+  }
+
+  .mobile-today-actions .fd-btn-secondary {
+    min-height: 40px;
+    border: 0;
+    background: transparent;
+    color: var(--v3-red);
+  }
+
+  .mobile-today-more {
+    margin-top: 12px;
+    color: var(--v3-muted);
+    font-size: 10px;
+  }
+}
