@@ -18,6 +18,146 @@
   padding: 11px 16px;
 }
 
+/* 首页只承载一份真实的今日餐食方案 */
+.today-meal-card {
+  background: var(--fd-surface);
+  border: 1px solid var(--fd-line);
+  border-radius: 28px;
+  padding: 30px;
+  box-shadow: 0 18px 44px rgba(78, 58, 35, 0.06);
+}
+
+.today-meal-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 28px;
+  align-items: start;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--fd-line-soft);
+}
+
+.today-meal-header h1 {
+  max-width: 820px;
+  margin: 4px 0 12px;
+  font: 900 clamp(28px, 4vw, 46px)/1.18 var(--serif);
+  letter-spacing: -0.03em;
+}
+
+.today-meal-header p {
+  max-width: 720px;
+  margin: 0;
+  color: var(--fd-muted);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.today-ready-state {
+  min-width: 150px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: var(--fd-danger-bg);
+  color: var(--fd-danger-ink);
+  text-align: right;
+}
+
+.today-ready-state.ready {
+  background: var(--fd-success-bg);
+  color: var(--fd-success-ink);
+}
+
+.today-ready-state strong,
+.today-ready-state span {
+  display: block;
+}
+
+.today-ready-state strong {
+  font-size: 15px;
+}
+
+.today-ready-state span {
+  margin-top: 3px;
+  font-size: 12px;
+  color: var(--fd-muted);
+}
+
+.today-dish-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  padding: 22px 0 8px;
+}
+
+.today-dish-row {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--fd-line-soft);
+  border-radius: 20px;
+  background: #fffdf9;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.today-dish-row:hover {
+  border-color: var(--fd-line);
+  transform: translateY(-1px);
+}
+
+.today-dish-image {
+  width: 84px;
+  height: 72px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: var(--fd-surface-warm);
+}
+
+.today-dish-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.today-dish-copy {
+  min-width: 0;
+}
+
+.today-dish-copy strong,
+.today-dish-copy span {
+  display: block;
+}
+
+.today-dish-copy strong {
+  overflow: hidden;
+  color: var(--fd-ink);
+  font-size: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.today-dish-copy span {
+  margin-top: 5px;
+  color: var(--fd-muted);
+  font-size: 12px;
+}
+
+.today-missing-copy {
+  margin: 12px 0 0;
+  color: var(--fd-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.today-meal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px solid var(--fd-line-soft);
+}
+
 /* 空状态 */
 .empty-dishes {
   text-align: center;
@@ -355,6 +495,19 @@
 }
 
 @media (max-width: 800px) {
+  .today-meal-card {
+    padding: 20px;
+  }
+  .today-meal-header {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .today-ready-state {
+    text-align: left;
+  }
+  .today-dish-list {
+    grid-template-columns: 1fr;
+  }
   .hero-section {
     grid-template-columns: 1fr;
   }
@@ -379,6 +532,31 @@
 }
 
 @media (max-width: 480px) {
+  .today-meal-card {
+    border-radius: 22px;
+    padding: 18px;
+  }
+  .today-meal-header h1 {
+    font-size: 28px;
+  }
+  .today-dish-row {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+  .today-dish-image {
+    width: 70px;
+    height: 64px;
+  }
+  .today-dish-row > .fd-badge {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .today-meal-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .today-meal-actions .fd-btn {
+    width: 100%;
+  }
   .recommended-grid,
   .catalog-grid {
     grid-template-columns: repeat(2, 1fr) !important;

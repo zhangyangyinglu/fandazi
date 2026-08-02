@@ -4,6 +4,7 @@ import type { BuddyGroup } from './familySharing'
 import type { DishPreferences } from './dishPreferences'
 import type { HealthProfile } from '@/components/healthProfileStorage'
 import { recommendMeal } from './recommend'
+import { getRecommendationCatalog } from './dishCatalogPolicy'
 
 export type DailyMealSettings = {
   people: number
@@ -45,7 +46,7 @@ export function getDailyMealRecommendation(input: {
   if (todayDishes.length) return { dishes: todayDishes, persisted: true, reason: '这是你家今天已经确认的安排。' }
   const target = input.settings.dishesPerMeal === 'auto' ? (input.settings.people <= 1 ? 1 : input.settings.people <= 2 ? 2 : 3) : input.settings.dishesPerMeal
   const prefs = Object.fromEntries(input.buddyGroup.members.map((m) => [m.id, m.preferences])) as Record<string, DishPreferences>
-  const result = recommendMeal({ mealTime: 'dinner', pantryItems: input.pantryItems, candidateDishes: input.dishes,
+  const result = recommendMeal({ mealTime: 'dinner', pantryItems: input.pantryItems, candidateDishes: getRecommendationCatalog(input.dishes),
     buddyGroup: input.buddyGroup, memberPreferences: prefs, healthProfiles: input.healthProfiles, familySize: input.settings.people,
     forceCount: target, excludeDishIds: [...recent].filter((id) => id !== input.desiredDishId), seed: dateSeed(input.date) + (input.revision ?? 0) * 997, carbPolicy: input.settings.carb })
   return { dishes: result?.dishes ?? [], persisted: false, reason: result?.reason ?? '暂时没有可安排的菜。' }

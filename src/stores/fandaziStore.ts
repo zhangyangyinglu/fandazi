@@ -160,16 +160,20 @@ export const useFandaziStore = create<FandaziStore>()(
       // === 计划 ===
       mealPlans: [],
       addMealPlan: (dishId, date) => {
-        const plan: MealPlan = {
-          id: uid(),
-          dishId,
-          status: 'planned' as PlanStatus,
-          planDate: date,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        }
-        set((s) => ({ mealPlans: [...s.mealPlans.filter((p) => p.id !== plan.id), plan] }))
-        void syncMealPlan(plan)
+        let planToSync: MealPlan | undefined
+        set((s) => {
+          const existing = s.mealPlans.find((plan) => plan.dishId === dishId && plan.planDate === date)
+          const now = new Date().toISOString()
+          planToSync = existing
+            ? { ...existing, status: 'planned' as PlanStatus, updatedAt: now }
+            : { id: uid(), dishId, status: 'planned' as PlanStatus, planDate: date, createdAt: now, updatedAt: now }
+          return {
+            mealPlans: existing
+              ? s.mealPlans.map((plan) => plan.id === existing.id ? planToSync! : plan)
+              : [...s.mealPlans, planToSync],
+          }
+        })
+        if (planToSync) void syncMealPlan(planToSync)
       },
       updatePlanStatus: (planId, status) => {
         let updatedPlan: MealPlan | undefined

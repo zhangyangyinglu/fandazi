@@ -83,16 +83,10 @@ export function PlanPage() {
   }
 
   const todayPlans = mealPlans.filter((p) => p.planDate === selectedDate)
-  const displayPlans = todayPlans.length > 0
-    ? todayPlans
-    : [
-        { id: 'demo-plan-1', dishId: 'broccoli-chicken-egg', status: 'planned' as PlanStatus, planDate: selectedDate, createdAt: '', updatedAt: '' },
-        { id: 'demo-plan-2', dishId: 'tomato-tofu-shrimp-soup', status: 'planned' as PlanStatus, planDate: selectedDate, createdAt: '', updatedAt: '' },
-        { id: 'demo-plan-3', dishId: 'asparagus-shrimp-mushroom', status: 'shopping_done' as PlanStatus, planDate: selectedDate, createdAt: '', updatedAt: '' },
-      ]
+  const displayPlans = todayPlans
+  const hasPlans = displayPlans.length > 0
   const displayMissingTotal = displayPlans.reduce((sum, plan) => sum + getMatchForDish(plan.dishId).missing, 0)
   const displayDoneCount = displayPlans.filter((p) => p.status === 'done').length
-  const isDemoPlan = todayPlans.length === 0
   const upcomingPlans = mealPlans
     .filter((p) => p.planDate > selectedDate)
     .sort((a, b) => a.planDate.localeCompare(b.planDate))
@@ -188,17 +182,23 @@ export function PlanPage() {
         <div className="fd-hero-card">
           <div className="hero-label">今晚计划</div>
           <h2>
-            {displayMissingTotal > 0
+            {!hasPlans
+              ? `${dateLabel(selectedDate)}还没有确认吃什么`
+              : displayMissingTotal > 0
               ? `今晚计划差 ${displayMissingTotal} 样食材，买完就能开做`
               : '今晚计划已就绪，可以开做'}
           </h2>
           <p>
-            {isDemoPlan
-              ? '西兰花鸡胸肉炒蛋、番茄豆腐虾仁汤与芦笋虾仁炒口蘑已排进今晚示例计划；购物清单会按菜品来源自动分组。'
+            {!hasPlans
+              ? '这里不会用示例菜冒充真实安排。先接受首页推荐，或在下方手动添加一道菜。'
               : `已计划 ${displayPlans.length} 道菜，做完后自动沉淀到我家版。`}
           </p>
           <div className="cta-row">
-            <Link to="/shopping" className="fd-btn fd-btn-primary">打开购物清单</Link>
+            {hasPlans ? (
+              <Link to="/shopping" className="fd-btn fd-btn-primary">打开购物清单</Link>
+            ) : (
+              <Link to="/" className="fd-btn fd-btn-primary">查看今日推荐</Link>
+            )}
             <button className="fd-btn fd-btn-secondary" onClick={() => showAdd ? setShowAdd(false) : openQuickAdd()}>
               {showAdd ? '收起加菜' : <><FantuanIcon name="takeout" size={20} /> 让饭团重搭</>}
             </button>
@@ -230,8 +230,8 @@ export function PlanPage() {
             <strong>{displayDoneCount} / {displayPlans.length}</strong>
           </div>
           <div className="fd-list-item">
-            <span>饭团副本</span>
-            <strong>2 / 4</strong>
+            <span>当前状态</span>
+            <strong>{hasPlans ? '已安排' : '待安排'}</strong>
           </div>
         </div>
       </div>
@@ -301,32 +301,39 @@ export function PlanPage() {
               <article className="meal-card">
                 <div className="meal-head">
                   <div>
-                    <h4>晚餐 · 日常一起吃</h4>
-                    <span className="match-info">2 人 · 预计 35 分钟</span>
+                    <h4>{dateLabel(selectedDate)} · 饮食计划</h4>
+                    <span className="match-info">{hasPlans ? `已确认 ${displayPlans.length} 道菜` : '尚未确认菜品'}</span>
                   </div>
-                  <span className="fd-badge gold">采购中</span>
+                  <span className={`fd-badge ${hasPlans ? 'gold' : ''}`}>{hasPlans ? '已计划' : '待安排'}</span>
                 </div>
-                {displayPlans.map((plan) => {
-                  const dish = getDishById(plan.dishId)
-                  if (!dish) return null
-                  const match = getMatchForDish(plan.dishId)
-                  return (
-                    <div key={plan.id} className="meal-dish-row">
-                      <div>
-                        <Link to={`/recipes/${dish.id}`} className="plan-dish-name">{dish.name}</Link>
-                        <span>已有 {match.have}/{match.have + match.missing}{match.missing > 0 ? ` · 缺 ${match.missing} 项` : ' · 可直接做'}</span>
+                {hasPlans ? displayPlans.map((plan) => {
+                    const dish = getDishById(plan.dishId)
+                    if (!dish) return null
+                    const match = getMatchForDish(plan.dishId)
+                    return (
+                      <div key={plan.id} className="meal-dish-row">
+                        <div>
+                          <Link to={`/recipes/${dish.id}`} className="plan-dish-name">{dish.name}</Link>
+                          <span>已有 {match.have}/{match.have + match.missing}{match.missing > 0 ? ` · 缺 ${match.missing} 项` : ' · 可直接做'}</span>
+                        </div>
+                        <span className={`fd-badge ${match.missing > 0 ? 'red' : 'green'}`}>{match.missing > 0 ? '需采购' : '可做'}</span>
                       </div>
-                      <span className={`fd-badge ${match.missing > 0 ? 'red' : 'green'}`}>{match.missing > 0 ? '需采购' : '可做'}</span>
+                    )
+                  }) : (
+                    <div className="meal-dish-row">
+                      <div>
+                        <strong>没有真实计划</strong>
+                        <span>接受首页推荐后，菜品与缺少食材会显示在这里。</span>
+                      </div>
                     </div>
-                  )
-                })}
+                  )}
                 <div className="dish-actions">
-                  <Link to="/">查看菜品</Link>
+                  <Link to="/">查看今日推荐</Link>
                   <button onClick={openQuickAdd}>调整计划</button>
                   <button className="done" onClick={() => {
-                    const targetPlan = todayPlans[0] ?? displayPlans[0]
+                    const targetPlan = displayPlans[0]
                     if (targetPlan) handleMarkDone(targetPlan.id, targetPlan.dishId)
-                  }}>标记做过</button>
+                  }} disabled={!hasPlans}>标记做过</button>
                 </div>
               </article>
               <article className="meal-card">
@@ -393,7 +400,12 @@ export function PlanPage() {
           <section className="fd-side-card pantry-shopping-note">
             <h4>🛒 购物补齐</h4>
             <div className="sticky-note-list">
-              {displayPlans.slice(0, 3).map((plan) => {
+              {!hasPlans ? (
+                <div className="fd-list-item sticky-note-item">
+                  <span>确认计划后再计算</span>
+                  <strong>0 项</strong>
+                </div>
+              ) : displayPlans.slice(0, 3).map((plan) => {
                 const dish = getDishById(plan.dishId)
                 const match = getMatchForDish(plan.dishId)
                 if (!dish) return null

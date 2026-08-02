@@ -162,24 +162,17 @@ function useFantuanInsights() {
       })
     }
 
-    // 2. 今日计划缺口；计划页没有真实数据时会展示示例计划，浮层也采用同一口径。
+    // 2. 今日真实计划缺口。没有计划时只提示安排，不注入示例菜。
     const todayPlans = mealPlans.filter((p) => p.planDate === todayStr)
-    const insightPlans = todayPlans.length > 0 || location.pathname !== '/plan'
-      ? todayPlans
-      : [
-          { dishId: 'broccoli-chicken-egg' },
-          { dishId: 'tomato-tofu-shrimp-soup' },
-          { dishId: 'asparagus-shrimp-mushroom' },
-        ]
-    if (insightPlans.length === 0) {
+    if (todayPlans.length === 0) {
       insights.push({
         message: '今天还没安排计划，先搭一版？',
-        link: '/plan',
-        linkLabel: '去计划',
+        link: '/',
+        linkLabel: '看今日推荐',
         priority: 'medium',
       })
     } else {
-      const plannedDishes = insightPlans
+      const plannedDishes = todayPlans
         .map((p) => DISHES.find((d) => d.id === p.dishId))
         .filter(Boolean) as typeof DISHES
       const missingCount = plannedDishes.reduce((sum, dish) => (

@@ -1,19 +1,17 @@
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { NavLink, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
-import { useFandaziStore } from '@/stores/fandaziStore'
-import { FantuanPetImage } from './FantuanPetImage'
 import './TopNav.css'
 
 const PRIMARY_NAV = [
-  { to: '/', label: '菜品', end: true },
-  { to: '/catalog', label: '菜品库' },
+  { to: '/', label: '今天', end: true },
   { to: '/pantry', label: '冰箱' },
-  { to: '/plan', label: '计划' },
-  { to: '/shopping', label: '购物清单' },
+  { to: '/mine', label: '我的' },
 ]
 
 const MORE_NAV = [
-  { to: '/mine', label: '📋 我家版' },
+  { to: '/plan', label: '计划' },
+  { to: '/shopping', label: '购物清单' },
+  { to: '/catalog', label: '完整菜品库' },
   { to: '/fantuan', label: '饭团' },
   { to: '/ai-kitchen', label: 'AI厨房' },
   { to: '/health', label: '健康' },
@@ -22,11 +20,11 @@ const MORE_NAV = [
 ]
 
 export function TopNav() {
-  const fantuan = useFandaziStore((s) => s.fantuan)
   const location = useLocation()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const isPantry = location.pathname.startsWith('/pantry')
+  const searchAvailable = isPantry || location.pathname.startsWith('/catalog')
   const [searchOpen, setSearchOpen] = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
   const moreRef = useRef<HTMLDivElement>(null)
@@ -100,7 +98,7 @@ export function TopNav() {
             aria-expanded={moreOpen}
             aria-label="更多功能"
           >
-            我的 ▾
+            更多 ▾
           </button>
           {moreOpen && (
             <div className="fd-nav-dropdown">
@@ -119,8 +117,7 @@ export function TopNav() {
         </div>
       </nav>
       <div className="fd-top-right">
-        {/* 搜索：点击后在原位置向左横向展开 */}
-        <form
+        {searchAvailable && <form
           className={searchOpen ? 'fd-inline-search open' : 'fd-inline-search'}
           role="search"
           onSubmit={handleSearch}
@@ -173,13 +170,7 @@ export function TopNav() {
             🔍
           </button>
           {searchOpen && <button type="button" className="fd-inline-search-close" onClick={() => setSearchOpen(false)}>取消</button>}
-        </form>
-        {/* 状态栏：等级 + 米粒 */}
-        <div className="fd-status">
-          <span className="fd-status-item"><span className="fd-status-pet"><FantuanPetImage state="default" /></span><b>Lv.{fantuan.level}</b></span>
-          <span className="fd-status-divider">·</span>
-          <span className="fd-status-item">🌾{fantuan.mili}</span>
-        </div>
+        </form>}
       </div>
     </header>
 

@@ -79,6 +79,21 @@ export function MinePage() {
         </div>
       </div>
 
+      <section className="fd-panel">
+        <div className="hero-label">更多工具</div>
+        <h3>需要时再打开</h3>
+        <p className="empty-text">这些功能继续保留，但不占用“今天吃什么”的首页。</p>
+        <div className="cta-row">
+          <Link to="/plan" className="fd-btn fd-btn-secondary">饮食计划</Link>
+          <Link to="/shopping" className="fd-btn fd-btn-secondary">购物清单</Link>
+          <Link to="/catalog" className="fd-btn fd-btn-secondary">完整菜品库</Link>
+          <Link to="/ai-kitchen" className="fd-btn fd-btn-secondary">AI 厨房</Link>
+          <Link to="/health" className="fd-btn fd-btn-secondary">健康档案</Link>
+          <Link to="/family" className="fd-btn fd-btn-secondary">家庭空间</Link>
+          <Link to="/sync" className="fd-btn fd-btn-secondary">同步设置</Link>
+        </div>
+      </section>
+
       <div className="mine-workspace">
         <main className="mine-main">
           {/* 我家菜品 */}

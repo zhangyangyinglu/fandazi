@@ -3,9 +3,7 @@ import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
 import { TopNav } from '@/components/TopNav'
 import { FloatingFantuan } from '@/components/FloatingFantuan'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
-import { OnboardingHint } from '@/components/OnboardingHint'
 import { FantuanPetImage } from '@/components/FantuanPetImage'
-import { AppAccessGate } from '@/components/AppAccessGate'
 import { RecipeWorkspacePage } from '@/pages/RecipeWorkspacePage'
 import { RecipeDetailPage } from '@/pages/RecipeDetailPage'
 import { useFamilySync } from '@/lib/useFamilySync'
@@ -36,10 +34,9 @@ function PageFallback() {
 }
 
 const MOBILE_NAV_ITEMS = [
-  { to: '/', label: '菜品', end: true },
+  { to: '/', label: '今天', end: true },
   { to: '/pantry', label: '冰箱', end: false },
-  { to: '/plan', label: '计划', end: false },
-  { to: '/fantuan', label: '饭团', end: false },
+  { to: '/mine', label: '我的', end: false },
 ]
 
 function MobileBottomNav() {
@@ -77,11 +74,10 @@ export function App() {
   return (
     <BrowserRouter>
       <ErrorBoundary>
-        <AppAccessGate>
-          <div className="fd-desktop-shell">
-            <TopNav />
-            <main className="fd-main">
-              <Routes>
+        <div className="fd-desktop-shell">
+          <TopNav />
+          <main className="fd-main">
+            <Routes>
             <Route path="/" element={<RecipeWorkspacePage />} />
             <Route path="/catalog" element={<RecipeWorkspacePage catalogMode />} />
             <Route path="/recipes/:id" element={<RecipeDetailPage />} />
@@ -97,12 +93,10 @@ export function App() {
             <Route path="/welcome" element={<Suspense fallback={<PageFallback />}><FirstUsePage /></Suspense>} />
             <Route path="/privacy" element={<Suspense fallback={<PageFallback />}><PrivacyPage /></Suspense>} />
             <Route path="*" element={<Suspense fallback={<PageFallback />}><NotFoundPage /></Suspense>} />
-              </Routes>
-            </main>
-          </div>
-        </AppAccessGate>
+            </Routes>
+          </main>
+        </div>
       </ErrorBoundary>
-      <OnboardingHint />
       <FloatingFantuan />
       <MobileBottomNav />
     </BrowserRouter>

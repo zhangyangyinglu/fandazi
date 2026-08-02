@@ -3,7 +3,7 @@
  * 对应渲染图：P1-1 菜品工作区 v6
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useLocation, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { DISHES } from '@/data/dishes'
 import type { Dish } from '@/types'
 import { useFandaziStore } from '@/stores/fandaziStore'
@@ -57,37 +57,6 @@ const FALLBACK_RECOMMENDATION_IDS = [
   'brown-rice-chicken-veg-bowl',
 ]
 
-type RecommendationCopy = {
-  displayName?: string
-  note: string
-  meta: string
-  role: '主蛋白' | '绿叶菜' | '汤羹' | '主食'
-}
-
-const RECOMMENDATION_COPY: Record<string, RecommendationCopy> = {
-  'steamed-bass-shanghai-greens': {
-    note: '清蒸鱼做主蛋白，口味干净，搭配绿叶菜不厚重。',
-    meta: '主蛋白｜缺：鲈鱼、上海青',
-    role: '主蛋白',
-  },
-  'water-spinach-lean-pork': {
-    displayName: '空心菜炒瘦肉',
-    note: '补一盘绿叶菜，快炒出锅，和清蒸主菜错开做法。',
-    meta: '绿叶菜｜已有：蒜｜缺：空心菜、瘦猪肉',
-    role: '绿叶菜',
-  },
-  'winter-melon-egg-soup': {
-    note: '汤菜用冬瓜打底，避开番茄重复，晚餐更清爽。',
-    meta: '汤羹｜已有：鸡蛋｜缺：冬瓜、虾皮',
-    role: '汤羹',
-  },
-  'brown-rice-chicken-veg-bowl': {
-    note: '少量糙米饭补主食，搭配蔬菜和鸡肉，晚餐更稳。',
-    meta: '主食｜缺：糙米饭、鸡胸肉、胡萝卜',
-    role: '主食',
-  },
-}
-
 function matchFilter(dish: Dish, filter: string, pantryNames: Set<string>, myDishIds: Set<string>): boolean {
   if (filter === '全部') return true
 
@@ -119,6 +88,7 @@ function matchFilter(dish: Dish, filter: string, pantryNames: Set<string>, myDis
 }
 
 export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boolean }) {
+  const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const [activeFilter, setActiveFilter] = useState('全部')
   const [activeCuisine, setActiveCuisine] = useState('')
@@ -127,13 +97,13 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
   const [moreFiltersOpen, setMoreFiltersOpen] = useState(catalogMode)
   const [healthProfiles, setHealthProfiles] = useState<HealthProfile[]>([])
   const [isSharedMode, setIsSharedMode] = useState(() => Boolean(localStorage.getItem('fandazi.householdId')))
-  const recommendationRef = useRef<HTMLElement | null>(null)
   const filtersRef = useRef<HTMLDivElement | null>(null)
   const catalogRef = useRef<HTMLElement | null>(null)
 
   const pantry = useFandaziStore((s) => s.pantry)
   const myDishVersions = useFandaziStore((s) => s.myDishVersions)
   const mealPlans = useFandaziStore((s) => s.mealPlans)
+  const addMealPlan = useFandaziStore((s) => s.addMealPlan)
   const cookingLogs = useFandaziStore((s) => s.cookingLogs)
   const [dailySettings, setDailySettings] = useState(readDailyMealSettings)
   const [mealRevision, setMealRevision] = useState(0)
@@ -188,8 +158,24 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
 
   const isFiltering = searchQuery.trim() !== '' || activeFilter !== '全部' || activeCuisine !== '' || activeTaste !== ''
 
-  const scrollTo = (node: HTMLElement | null) => {
-    node?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const recommendationIngredients = useMemo(
+    () => [...new Set(recommendationDishes.flatMap((dish) => dish.ingredients.map((ingredient) => ingredient.name)))],
+    [recommendationDishes],
+  )
+  const availableRecommendationIngredients = recommendationIngredients.filter((name) => pantryNames.has(name))
+  const missingRecommendationIngredients = recommendationIngredients.filter((name) => !pantryNames.has(name))
+
+  const handleConfirmRecommendation = () => {
+    const today = new Date().toISOString().slice(0, 10)
+    if (!recommendationResult.persisted) {
+      recommendationDishes.forEach((dish) => addMealPlan(dish.id, today))
+    }
+    if (missingRecommendationIngredients.length > 0) {
+      navigate('/shopping')
+      return
+    }
+    const firstDish = recommendationDishes[0]
+    navigate(firstDish ? `/recipes/${firstDish.id}` : '/plan')
   }
 
 
@@ -321,36 +307,54 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
           <p>首页只放晚餐推荐和少量展示；完整菜品库在这里，可筛选、搜索、进详情、加入计划。</p>
         </div>
       ) : (
-        <div className="fd-hero-card hero-main simple-home-hero">
-          <div className="hero-label">今晚 · {homeModeLabel}</div>
-          <h2>今晚就吃这个</h2>
-          <p>{recommendationResult.reason || '饭团已经替你安排好了。'}</p>
-          <div className="cta-row hero-cta-row">
-            <button className="fd-btn fd-btn-primary" onClick={() => scrollTo(recommendationRef.current)}>开始做</button>
-            <button className="fd-btn fd-btn-secondary" onClick={() => setMealRevision((value) => value + 1)}>换一份</button>
-            <Link className="fd-btn fd-btn-text" to="/catalog">今天特别想吃什么？</Link>
-          </div>
-        </div>
-      )}
-
-      {catalogMode && renderFilters()}
-
-      {!catalogMode && !isFiltering && (
-        <section className="dish-section" ref={recommendationRef}>
-          <div className="dish-header">
+        <section className="today-meal-card">
+          <div className="today-meal-header">
             <div>
-              <div className="hero-label">今日安排 · {recommendationDishes.length} 道</div>
-              <h3>今天就吃这个</h3>
+              <div className="hero-label">今晚 · {homeModeLabel} · {recommendationResult.persisted ? '已确认计划' : '系统推荐'}</div>
+              <h1>{recommendationDishes.map((dish) => dish.name).join(' + ')}</h1>
+              <p>{recommendationResult.reason || '饭团已经替你安排好了。'}</p>
             </div>
-            <span className="dish-count">{dailySettings.people} 人 · 每天 {dailySettings.mealsPerDay} 餐 · 主食{dailySettings.carb === 'optional' ? '可选' : dailySettings.carb === 'required' ? '必配' : '不安排'} · {dailySettings.repeatWindowDays} 天避重</span>
+            <div className={`today-ready-state ${missingRecommendationIngredients.length === 0 ? 'ready' : ''}`}>
+              <strong>{missingRecommendationIngredients.length === 0 ? '可以直接做' : `还缺 ${missingRecommendationIngredients.length} 样`}</strong>
+              <span>已有 {availableRecommendationIngredients.length}/{recommendationIngredients.length} 样食材</span>
+            </div>
           </div>
-          <div className="dish-grid recommended-grid">
-            {recommendationDishes.map((dish) => (
-              <DishCard key={dish.id} dish={dish} compact recommendation />
-            ))}
+
+          <div className="today-dish-list">
+            {recommendationDishes.map((dish) => {
+              const missing = dish.ingredients.filter((ingredient) => !pantryNames.has(ingredient.name)).length
+              return (
+                <Link key={dish.id} to={`/recipes/${dish.id}`} className="today-dish-row">
+                  <div className="today-dish-image"><DishImage dish={dish} /></div>
+                  <div className="today-dish-copy">
+                    <strong>{dish.name}</strong>
+                    <span>{dish.category} · {dish.cookTime}</span>
+                  </div>
+                  <span className={`fd-badge ${missing === 0 ? 'green' : 'red'}`}>{missing === 0 ? '冰箱可做' : `缺 ${missing} 样`}</span>
+                </Link>
+              )
+            })}
+          </div>
+
+          {missingRecommendationIngredients.length > 0 && (
+            <p className="today-missing-copy">缺少：{missingRecommendationIngredients.slice(0, 6).join('、')}{missingRecommendationIngredients.length > 6 ? `等 ${missingRecommendationIngredients.length} 样` : ''}</p>
+          )}
+
+          <div className="today-meal-actions">
+            <button className="fd-btn fd-btn-primary" onClick={handleConfirmRecommendation}>
+              {missingRecommendationIngredients.length > 0 ? `确认并补齐 ${missingRecommendationIngredients.length} 样` : '确认并开始做'}
+            </button>
+            {recommendationResult.persisted ? (
+              <Link className="fd-btn fd-btn-secondary" to="/plan">调整计划</Link>
+            ) : (
+              <button className="fd-btn fd-btn-secondary" onClick={() => setMealRevision((value) => value + 1)}>换一份</button>
+            )}
+            <Link className="fd-btn fd-btn-text" to="/catalog">今天特别想吃什么？</Link>
           </div>
         </section>
       )}
+
+      {catalogMode && renderFilters()}
 
       {catalogMode && <section className="dish-section dish-catalog-section" ref={catalogRef}>
         <div className="dish-header">
@@ -454,11 +458,9 @@ function DishCard({ dish, compact = false, recommendation = false }: { dish: Dis
 
   const pantryNames = new Set(pantry.map((p) => p.ingredientName))
   const missingCount = dish.ingredients.filter((ing) => !pantryNames.has(ing.name)).length
-  const copy = RECOMMENDATION_COPY[dish.id]
-  const displayName = copy?.displayName ?? dish.name
-  const note = copy?.note ?? dish.flavorDescription ?? dish.intro ?? `适合${dish.mealType?.includes('dinner') ? '晚餐' : '日常'}的一道${dish.category}。`
-  const meta = copy?.meta ?? `已有 ${Math.max(0, dish.ingredients.length - missingCount)}/${dish.ingredients.length} · ${missingCount === 0 ? '冰箱可做' : `缺${missingCount}样`}`
-  const role = copy?.role
+  const displayName = dish.name
+  const note = dish.flavorDescription ?? dish.intro ?? `适合${dish.mealType?.includes('dinner') ? '晚餐' : '日常'}的一道${dish.category}。`
+  const meta = `已有 ${Math.max(0, dish.ingredients.length - missingCount)}/${dish.ingredients.length} · ${missingCount === 0 ? '冰箱可做' : `缺${missingCount}样`}`
 
   const handleAddToPlan = () => {
     const today = new Date().toISOString().slice(0, 10)
@@ -478,7 +480,7 @@ function DishCard({ dish, compact = false, recommendation = false }: { dish: Dis
         <div className="dish-tags">
           {recommendation ? (
             <>
-              {role && <span className="fd-badge green">{role}</span>}
+              <span className="fd-badge green">{dish.category}</span>
               {dish.tags.includes('低油') || dish.tags.includes('少油') ? <span className="fd-badge">少油</span> : null}
               {dish.tags.includes('控糖友好') || dish.tags.includes('控糖主食') ? <span className="fd-badge gold">控糖友好</span> : null}
               <span className="fd-badge">{dish.cookTime}</span>
