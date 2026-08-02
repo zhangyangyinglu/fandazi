@@ -27,6 +27,9 @@ const items = queue.items
   .slice(0, queue.dailyAssetLimit)
 
 if (!items.length) throw new Error('No queued image assets.')
+if (items.some((item) => !item.prompt.includes('STYLE LOCK: Fandazi watercolor-v2'))) {
+  throw new Error('Image prompt style lock missing. Update the queue to the approved Fandazi watercolor-v2 style before exporting.')
+}
 
 const lines = [
   `# 饭搭子图片批次｜${date}`,

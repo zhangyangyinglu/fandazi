@@ -1,54 +1,64 @@
-# 饭搭子图片批次｜2026-07-29
+# 饭搭子图片批次｜2026-07-30
 
-本批提示词已按既有饭搭子画风修订。每项单独提交给 ChatGPT Images，直接下载原图到本文件夹。
+本批共 5 项，全部使用已冻结的提示词。每项单独提交给 ChatGPT Images，下载原图后按输出文件名保存到待接入目录。
 
-## 1. 葱（食材图）
-队列 ID：ingredient-16e853fdba
-输出文件：ingredient-16e853fdba.webp
-视觉规范：ingredient-photo-v1
+## 1. 通海酱油或生抽（食材图）
+- 队列 ID：`ingredient-125c1291d0`
+- 输出文件：`ingredient-125c1291d0.webp`
+- 视觉规范：`ingredient-photo-v1`
 
+```text
 STYLE LOCK: Fandazi watercolor-v2. Match the existing Fandazi ingredient illustrations: warm Chinese hand-painted watercolor, fine dark-brown ink outlines, translucent pigment washes, creamy ivory highlights, subtle paper-grain texture and a soft pale-gray watercolor shadow.
-Asset type: ingredient illustration for the Fandazi cooking app. Draw 葱 in a natural household-cooking quantity.
+Asset type: ingredient illustration for the Fandazi cooking app. Draw 通海酱油或生抽 in a natural household-cooking quantity.
 Transparent background only; centered object; generous transparent margin; no table or colored block.
 No people, hands, text, label, logo, watermark, price tag, photo-real camera texture, flat vector icon, collage, decorative typography or dark background.
+```
 
-## 2. 带骨牛肋排（食材图）
-队列 ID：ingredient-40a03ae5ae
-输出文件：ingredient-40a03ae5ae.webp
-视觉规范：ingredient-photo-v1
+## 2. 鲜鱼（食材图）
+- 队列 ID：`ingredient-db48ce4a8b`
+- 输出文件：`ingredient-db48ce4a8b.webp`
+- 视觉规范：`ingredient-photo-v1`
 
+```text
 STYLE LOCK: Fandazi watercolor-v2. Match the existing Fandazi ingredient illustrations: warm Chinese hand-painted watercolor, fine dark-brown ink outlines, translucent pigment washes, creamy ivory highlights, subtle paper-grain texture and a soft pale-gray watercolor shadow.
-Asset type: ingredient illustration for the Fandazi cooking app. Draw 带骨牛肋排 in a natural household-cooking quantity.
+Asset type: ingredient illustration for the Fandazi cooking app. Draw 鲜鱼 in a natural household-cooking quantity.
 Transparent background only; centered object; generous transparent margin; no table or colored block.
 No people, hands, text, label, logo, watermark, price tag, photo-real camera texture, flat vector icon, collage, decorative typography or dark background.
+```
 
-## 3. 咖喱粉（食材图）
-队列 ID：ingredient-5c5d198639
-输出文件：ingredient-5c5d198639.webp
-视觉规范：ingredient-photo-v1
+## 3. 青蒜（食材图）
+- 队列 ID：`ingredient-23d03cb05c`
+- 输出文件：`ingredient-23d03cb05c.webp`
+- 视觉规范：`ingredient-photo-v1`
 
+```text
 STYLE LOCK: Fandazi watercolor-v2. Match the existing Fandazi ingredient illustrations: warm Chinese hand-painted watercolor, fine dark-brown ink outlines, translucent pigment washes, creamy ivory highlights, subtle paper-grain texture and a soft pale-gray watercolor shadow.
-Asset type: ingredient illustration for the Fandazi cooking app. Draw 咖喱粉 in a natural household-cooking quantity.
+Asset type: ingredient illustration for the Fandazi cooking app. Draw 青蒜 in a natural household-cooking quantity.
 Transparent background only; centered object; generous transparent margin; no table or colored block.
 No people, hands, text, label, logo, watermark, price tag, photo-real camera texture, flat vector icon, collage, decorative typography or dark background.
+```
 
-## 4. 冰糖（食材图）
-队列 ID：ingredient-80445df157
-输出文件：ingredient-80445df157.webp
-视觉规范：ingredient-photo-v1
+## 4. 白糖（食材图）
+- 队列 ID：`ingredient-bcdc796b7c`
+- 输出文件：`ingredient-bcdc796b7c.webp`
+- 视觉规范：`ingredient-photo-v1`
 
+```text
 STYLE LOCK: Fandazi watercolor-v2. Match the existing Fandazi ingredient illustrations: warm Chinese hand-painted watercolor, fine dark-brown ink outlines, translucent pigment washes, creamy ivory highlights, subtle paper-grain texture and a soft pale-gray watercolor shadow.
-Asset type: ingredient illustration for the Fandazi cooking app. Draw 冰糖 in a natural household-cooking quantity.
+Asset type: ingredient illustration for the Fandazi cooking app. Draw 白糖 in a natural household-cooking quantity.
 Transparent background only; centered object; generous transparent margin; no table or colored block.
 No people, hands, text, label, logo, watermark, price tag, photo-real camera texture, flat vector icon, collage, decorative typography or dark background.
+```
 
-## 5. 仔鸡或三黄鸡（食材图）
-队列 ID：ingredient-8cc17efcf4
-输出文件：ingredient-8cc17efcf4.webp
-视觉规范：ingredient-photo-v1
+## 5. 萝卜干（食材图）
+- 队列 ID：`ingredient-13ff7bd5f9`
+- 输出文件：`ingredient-13ff7bd5f9.webp`
+- 视觉规范：`ingredient-photo-v1`
 
+```text
 STYLE LOCK: Fandazi watercolor-v2. Match the existing Fandazi ingredient illustrations: warm Chinese hand-painted watercolor, fine dark-brown ink outlines, translucent pigment washes, creamy ivory highlights, subtle paper-grain texture and a soft pale-gray watercolor shadow.
-Asset type: ingredient illustration for the Fandazi cooking app. Draw 仔鸡或三黄鸡 in a natural household-cooking quantity.
+Asset type: ingredient illustration for the Fandazi cooking app. Draw 萝卜干 in a natural household-cooking quantity.
 Transparent background only; centered object; generous transparent margin; no table or colored block.
 No people, hands, text, label, logo, watermark, price tag, photo-real camera texture, flat vector icon, collage, decorative typography or dark background.
+```
 
