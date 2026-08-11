@@ -12,6 +12,8 @@ import { FANDAZI_SYNC_CONFIG_EVENT } from '@/lib/supabaseClient'
 import { readBuddyGroup } from '@/data/familySharing'
 import { humanizeHealthLabel } from '@/data/healthLabels'
 import { DAILY_MEAL_SETTINGS_EVENT, getDailyMealRecommendation, readDailyMealSettings } from '@/data/dailyMeal'
+import { getBeijingDateString, getBeijingTimeOfDay, getCurrentMealType, MEAL_TYPE_LABEL, type CurrentMealTime } from '@/data/mealTimeContext'
+import { formatWeekDate, getWeekStart, readWeeklyPrepPlan, writeWeeklyPrepPlan, WEEKLY_PREP_CHANGE_EVENT, type WeeklyPrepPlan } from '@/data/weeklyPrepPlan'
 import './RecipeWorkspacePage.css'
 
 const QUICK_FILTERS = [
@@ -49,6 +51,90 @@ const TASTE_FILTERS = [
 ]
 
 const FILTER_HELP = '先用最常用的找菜条件缩小范围；需要菜系或口味时，再点"更多筛选"。'
+
+type MealView = 'auto' | CurrentMealTime
+
+function MealViewSwitcher({
+  view,
+  currentMeal,
+  onChange,
+}: {
+  view: MealView
+  currentMeal: CurrentMealTime
+  onChange: (view: MealView) => void
+}) {
+  const currentLabel = MEAL_TYPE_LABEL[currentMeal]
+  return (
+    <div className="meal-view-switcher" aria-label="首页餐次选择">
+      <div className="meal-view-copy">
+        <strong>当前餐次：{view === 'auto' ? currentLabel : MEAL_TYPE_LABEL[view]}</strong>
+        <span>{view === 'auto' ? '跟随北京时间自动切换' : '已手动选择，不随时间自动切换'}</span>
+      </div>
+      <div className="meal-view-options">
+        <button type="button" className={view === 'auto' ? 'active' : ''} aria-pressed={view === 'auto'} onClick={() => onChange('auto')}>
+          跟随时间
+        </button>
+        <button type="button" className={view === 'breakfast' ? 'active' : ''} aria-pressed={view === 'breakfast'} onClick={() => onChange('breakfast')}>
+          早餐
+        </button>
+        <button type="button" className={view === 'lunch' ? 'active' : ''} aria-pressed={view === 'lunch'} onClick={() => onChange('lunch')}>
+          午餐
+        </button>
+        <button type="button" className={view === 'dinner' ? 'active' : ''} aria-pressed={view === 'dinner'} onClick={() => onChange('dinner')}>
+          晚餐
+        </button>
+        <Link to="/catalog" className="meal-view-browse">随便看看</Link>
+      </div>
+    </div>
+  )
+}
+
+function WeeklyPrepHomeCard({ plan }: { plan: WeeklyPrepPlan | null }) {
+  const weekStart = plan?.weekStart ?? getWeekStart()
+  const weekEnd = plan?.weekEnd ?? weekStart
+  const statusLabel = plan?.status === 'confirmed' ? '已确认' : plan ? '草案待确认' : '尚未生成'
+  const batchLabel = plan ? `已安排 ${plan.batches.length} 批备餐` : '给自己安排一周备餐'
+  const description = plan
+    ? `${plan.mealsPerDay === 2 ? '每天两餐' : '每天一餐'} · ${plan.servings}人份 · 打开查看每天怎么组合`
+    : '一次规划 2～3 天的量，分批做好，平时直接搭配。'
+
+  return (
+    <section className="home-weekly-prep-card" aria-label="本周备餐计划">
+      <div className="home-weekly-prep-head">
+        <div>
+          <div className="hero-label">本周备餐 · {formatWeekDate(weekStart)}～{formatWeekDate(weekEnd)}</div>
+          <div className="home-weekly-prep-title-row">
+            <h2>{batchLabel}</h2>
+            <span className={`home-weekly-prep-status ${plan?.status === 'confirmed' ? 'confirmed' : ''}`}>{statusLabel}</span>
+          </div>
+          <p>{description}</p>
+        </div>
+        <Link className="fd-btn fd-btn-primary home-weekly-prep-link" to="/weekly-prep">
+          {plan ? '查看周计划' : '生成周计划'}
+        </Link>
+      </div>
+
+      {plan ? (
+        <div className="home-weekly-prep-batches">
+          {plan.batches.map((batch) => {
+            const dishNames = batch.dishIds
+              .map((dishId) => DISHES.find((dish) => dish.id === dishId)?.name)
+              .filter(Boolean)
+            return (
+              <div className="home-weekly-prep-batch" key={batch.id}>
+                <strong>{batch.title}</strong>
+                <span>{batch.rangeLabel}</span>
+                <p>{dishNames.length > 0 ? dishNames.join('、') : '待生成菜品组合'}</p>
+              </div>
+            )
+          })}
+        </div>
+      ) : (
+        <div className="home-weekly-prep-empty">还没有本周草案，点“生成周计划”后，饭团会按 2～3 天一批帮你安排。</div>
+      )}
+    </section>
+  )
+}
 
 /** 推荐引擎未返回结果时的兜底（避免首页空白） */
 const FALLBACK_RECOMMENDATION_IDS = [
@@ -108,6 +194,9 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
   const cookingLogs = useFandaziStore((s) => s.cookingLogs)
   const [dailySettings, setDailySettings] = useState(readDailyMealSettings)
   const [mealRevision, setMealRevision] = useState(0)
+  const [mealView, setMealView] = useState<MealView>('auto')
+  const [now, setNow] = useState(() => new Date())
+  const [weeklyPrepPlan, setWeeklyPrepPlan] = useState<WeeklyPrepPlan | null>(() => readWeeklyPrepPlan(getWeekStart()))
 
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
@@ -128,8 +217,37 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
     return () => window.removeEventListener(DAILY_MEAL_SETTINGS_EVENT, refresh)
   }, [])
 
+  useEffect(() => {
+    const refresh = () => setWeeklyPrepPlan(readWeeklyPrepPlan(getWeekStart()))
+    window.addEventListener(WEEKLY_PREP_CHANGE_EVENT, refresh)
+    window.addEventListener('storage', refresh)
+    // 云端周备餐变更（其他设备同步过来）
+    const onCloudWeeklyPrep = (e: Event) => {
+      const detail = (e as CustomEvent).detail
+      if (detail) {
+        writeWeeklyPrepPlan(detail)
+        refresh()
+      }
+    }
+    window.addEventListener('fandazi:weekly-prep-cloud', onCloudWeeklyPrep)
+    return () => {
+      window.removeEventListener(WEEKLY_PREP_CHANGE_EVENT, refresh)
+      window.removeEventListener('storage', refresh)
+      window.removeEventListener('fandazi:weekly-prep-cloud', onCloudWeeklyPrep)
+    }
+  }, [])
+
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 60_000)
+    return () => window.clearInterval(timer)
+  }, [])
+
   const buddyGroup = useMemo(() => readBuddyGroup(), [])
   const homeModeLabel = isSharedMode ? '家庭共享' : '本机使用'
+  const currentMealTime = getCurrentMealType(getBeijingTimeOfDay(now))
+  const selectedMealTime: CurrentMealTime = mealView === 'auto' ? currentMealTime : mealView
+  const selectedMealLabel = MEAL_TYPE_LABEL[selectedMealTime]
+  const today = getBeijingDateString(now)
 
   const pantryNames = useMemo(() => new Set(pantry.map((p) => p.ingredientName)), [pantry])
   const myDishIds = useMemo(() => new Set(myDishVersions.map((v) => v.dishId)), [myDishVersions])
@@ -137,10 +255,10 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
   // 今日安排：同一日期稳定、已计划优先、近期做过避重；健康与冰箱只参与排序。
   const recommendationResult = useMemo(() => {
     return getDailyMealRecommendation({
-      date: new Date().toISOString().slice(0, 10), dishes: DISHES, pantryItems: Array.from(pantryNames), mealPlans, cookingLogs,
-      settings: dailySettings, buddyGroup, healthProfiles, revision: mealRevision,
+      date: today, dishes: DISHES, pantryItems: Array.from(pantryNames), mealPlans, cookingLogs,
+      settings: dailySettings, buddyGroup, healthProfiles, mealTime: selectedMealTime, revision: mealRevision,
     })
-  }, [pantryNames, healthProfiles, mealPlans, cookingLogs, dailySettings, buddyGroup, mealRevision])
+  }, [today, selectedMealTime, pantryNames, healthProfiles, mealPlans, cookingLogs, dailySettings, buddyGroup, mealRevision])
 
   // 推荐引擎返回的菜品；未返回时用兜底 ID
   const recommendationDishes = useMemo(() => {
@@ -173,11 +291,10 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
     ])
     return [...new Set(labels.filter(Boolean))].slice(0, 3).map(humanizeHealthLabel)
   }, [healthProfiles])
-  const mobileHealthReason = recommendationResult.healthReasons?.[0]
-    ?? (healthProfiles.length > 0 ? '饭团已结合你的健康计划和冰箱库存排序。' : '建立健康计划后，饭团会按你的身体需求定制推荐。')
+  const mobileHealthReason = recommendationResult.healthReasons?.slice(0, 2).join('；')
+    || (healthProfiles.length > 0 ? '饭团已参考你确认的需求和冰箱库存，但这道菜没有命中更具体的健康标签。' : '建立健康计划后，饭团会按你的身体需求定制推荐。')
 
   const handleConfirmRecommendation = () => {
-    const today = new Date().toISOString().slice(0, 10)
     if (!recommendationResult.persisted) {
       recommendationDishes.forEach((dish) => addMealPlan(dish.id, today))
     }
@@ -315,16 +432,21 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
         <div className="catalog-hero fd-hero-card">
           <div className="hero-label">完整菜品库</div>
           <h2>这里能看到全部 {DISHES.length} 道菜</h2>
-          <p>首页只放晚餐推荐和少量展示；完整菜品库在这里，可筛选、搜索、进详情、加入计划。</p>
+          <p>首页会按北京时间和你的选择推荐一餐；想自己找菜时，可以在这里筛选、搜索、进详情、加入计划。</p>
         </div>
       ) : (
         <>
+        <WeeklyPrepHomeCard plan={weeklyPrepPlan} />
         <section className="today-meal-card">
+          <MealViewSwitcher view={mealView} currentMeal={currentMealTime} onChange={setMealView} />
           <div className="today-meal-header">
             <div>
-              <div className="hero-label">今晚 · {homeModeLabel} · {recommendationResult.persisted ? '已确认计划' : '系统推荐'}</div>
+              <div className="hero-label">{selectedMealLabel} · {homeModeLabel} · {recommendationResult.persisted ? '已确认计划' : '系统推荐'}</div>
               <h1>{recommendationDishes.map((dish) => dish.name).join(' + ')}</h1>
               <p>{recommendationResult.reason || '饭团已经替你安排好了。'}</p>
+              {healthProfiles.length > 0 && recommendationResult.healthReasons?.length > 0 && (
+                <div className="today-health-reason">健康依据：{recommendationResult.healthReasons.slice(0, 2).join('；')}</div>
+              )}
             </div>
             <div className={`today-ready-state ${missingRecommendationIngredients.length === 0 ? 'ready' : ''}`}>
               <strong>{missingRecommendationIngredients.length === 0 ? '可以直接做' : `还缺 ${missingRecommendationIngredients.length} 样`}</strong>
@@ -365,9 +487,10 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
           </div>
         </section>
         <section className="mobile-today-hero" aria-label="开饭推荐">
-          <div className="mobile-today-kicker">{new Date().toLocaleDateString('zh-CN', { month: 'numeric', day: 'numeric' })} · {recommendationResult.persisted ? '已确认安排' : '晚餐'}</div>
+          <MealViewSwitcher view={mealView} currentMeal={currentMealTime} onChange={setMealView} />
+          <div className="mobile-today-kicker">{today} · {selectedMealLabel} · {recommendationResult.persisted ? '已确认安排' : '系统推荐'}</div>
           <div className="mobile-today-title-row">
-            <h1>今晚吃什么？</h1>
+            <h1>{selectedMealLabel}吃什么？</h1>
             <span className="mobile-today-seal">01</span>
           </div>
           <p className="mobile-today-intro">不是任务，是一顿刚好适合今天的饭。</p>
@@ -390,7 +513,7 @@ export function RecipeWorkspacePage({ catalogMode = false }: { catalogMode?: boo
           <div className="mobile-health-strip">
             <span className="mobile-health-icon">✦</span>
             <div>
-              <strong>{healthProfiles.length > 0 ? '符合你的健康计划' : '饭团推荐依据'}</strong>
+              <strong>{healthProfiles.length > 0 ? '为什么这样推荐' : '饭团推荐依据'}</strong>
               <p>{mobileHealthReason}</p>
               {healthPlanLabels.length > 0 && <div className="mobile-health-tags">{healthPlanLabels.map((label) => <span key={label}>{label}</span>)}</div>}
             </div>

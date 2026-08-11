@@ -29,6 +29,7 @@ import {
   type AuthUser,
   type Household,
 } from '@/lib/familyAuth'
+import { getSyncStatus, onSyncStatusChange, type SyncStatus } from '@/lib/useFamilySync'
 import {
   readAiConfig,
   writeAiConfig,
@@ -40,6 +41,8 @@ import {
 } from '@/lib/aiProviderConfig'
 import { testAiConnection } from '@/lib/fantuanAiClient'
 import { FIRST_USE_COMPLETED_KEY, LOCAL_MODE_CONFIRMED_KEY } from '@/components/AppAccessGate'
+import { AuthHandoffPanel } from '@/components/AuthHandoffPanel'
+import { AuthHandoffScanner } from '@/components/AuthHandoffScanner'
 import './SyncSettingsPage.css'
 
 type Step = 'config' | 'auth' | 'household' | 'done'
@@ -70,6 +73,13 @@ export function SyncSettingsPage() {
   const [aiTestStatus, setAiTestStatus] = useState<'idle' | 'testing' | 'ok' | 'fail'>(savedAiConfig?.tested ? 'ok' : 'idle')
   const [aiTestError, setAiTestError] = useState('')
   const [aiConfigSaved, setAiConfigSaved] = useState(!!savedAiConfig)
+
+  // 同步状态（synced / connecting / error / offline）
+  const [syncStatus, setSyncStatus] = useState<SyncStatus>(getSyncStatus())
+  useEffect(() => {
+    const unsub = onSyncStatusChange(setSyncStatus)
+    return unsub
+  }, [])
 
   const supabasePublicConfig = getSupabasePublicConfig()
   const visiblePrimaryButtonStyle = {
@@ -299,9 +309,13 @@ export function SyncSettingsPage() {
 
   return (
     <div className="sync-settings-page">
-      <h2>家庭数据同步</h2>
+      <h2>进入饭搭子</h2>
 
       <div className="sync-info-banner">
+        <p>
+          <strong>饭搭子是一款家庭吃饭 App。</strong>
+          你可以把它添加到手机主屏幕，像 App 一样打开；它本质上是 PWA 网页 App。这里的“饭搭子项目”只是开发和维护它的代码项目，不是另一个产品。
+        </p>
         <p>
           饭搭子的核心是「一起吃饭的人」。
           你可以一个人用一个家庭组，也可以把搭子邀请进来。搭子可以是另一个人、家里的宠物、或不会用电脑的老人——由你自己设置。
@@ -379,6 +393,7 @@ export function SyncSettingsPage() {
               </div>
             </div>
           )}
+          <AuthHandoffScanner />
         </section>
       )}
 
@@ -425,6 +440,12 @@ export function SyncSettingsPage() {
       {step === 'done' && household && user && (
         <section className="sync-section sync-done">
           <h3>✅ 同步已开启</h3>
+          <div className="sync-status-indicator" style={{ marginBottom: '0.75rem', fontSize: '0.9rem', color: syncStatus === 'error' ? '#e74c3c' : syncStatus === 'synced' ? '#27ae60' : '#7f8c8d' }}>
+            {syncStatus === 'synced' && '🟢 数据同步正常'}
+            {syncStatus === 'connecting' && '🟡 正在连接…'}
+            {syncStatus === 'error' && '🔴 同步出错，数据可能未保存到云端（本地仍可用）'}
+            {syncStatus === 'offline' && '⚪ 未连接云端'}
+          </div>
           <div className="sync-status-card">
             <p><strong>家庭：</strong>{household.name}</p>
             <p><strong>邀请码：</strong><code>{household.inviteCode}</code></p>
@@ -444,6 +465,7 @@ export function SyncSettingsPage() {
             )}
             <p><strong>当前账号：</strong>{user.email}</p>
           </div>
+          <AuthHandoffPanel />
           <button style={visiblePrimaryButtonStyle} onClick={() => navigate('/welcome')}>
             继续首次设置
           </button>

@@ -2,6 +2,12 @@ import { useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { DISHES } from '@/data/dishes'
 import { useFandaziStore } from '@/stores/fandaziStore'
+import {
+  DISH_PREFERENCES_CHANGE_EVENT,
+  readDishPreferences,
+  toggleDishPreference,
+  writeDishPreferences,
+} from '@/data/dishPreferences'
 import './RecipeDetailPage.css'
 
 function getDishEmoji(name: string, category: string, tags: string[]): string {
@@ -56,6 +62,20 @@ export function RecipeDetailPage() {
   const [timerSeconds, setTimerSeconds] = useState(0)
   const [timerRunning, setTimerRunning] = useState(false)
   const [cookingCompleted, setCookingCompleted] = useState(false)
+  const [isFavorite, setIsFavorite] = useState(false)
+  const dishId = id ?? ''
+
+  useEffect(() => {
+    if (!dishId) return
+    const refreshFavorite = () => setIsFavorite(readDishPreferences().favorite.includes(dishId))
+    refreshFavorite()
+    window.addEventListener(DISH_PREFERENCES_CHANGE_EVENT, refreshFavorite)
+    window.addEventListener('storage', refreshFavorite)
+    return () => {
+      window.removeEventListener(DISH_PREFERENCES_CHANGE_EVENT, refreshFavorite)
+      window.removeEventListener('storage', refreshFavorite)
+    }
+  }, [dishId])
 
   const stepCount = Math.max(1, dish?.steps.length ?? 1)
   const totalCookMinutes = Number.parseInt(dish?.cookTime ?? '', 10) || 30
@@ -116,6 +136,12 @@ export function RecipeDetailPage() {
     addMealPlan(dish.id, today)
     setAdded(true)
     setTimeout(() => setAdded(false), 1500)
+  }
+
+  const handleToggleFavorite = () => {
+    const next = toggleDishPreference(readDishPreferences(), 'favorite', dish.id)
+    writeDishPreferences(next)
+    setIsFavorite(next.favorite.includes(dish.id))
   }
 
   const handleMarkCooked = () => {
@@ -187,6 +213,7 @@ export function RecipeDetailPage() {
           </div>
         )}
         <button className="fd-btn fd-btn-primary mobile-start-cooking" onClick={handleStartCooking}>开始做饭</button>
+        <button type="button" className="fd-btn fd-btn-secondary mobile-favorite-button" aria-pressed={isFavorite} onClick={handleToggleFavorite}>{isFavorite ? '♥ 已收藏' : '♡ 收藏这道菜'}</button>
       </section>
       {mobileCookingMode && (
         <section className="mobile-cooking-mode" aria-label="厨房模式">
@@ -195,6 +222,7 @@ export function RecipeDetailPage() {
           <div className="mobile-cooking-timer"><span>{timerText}</span><small>{timerRunning ? '计时中' : timerSeconds === 0 ? '这一步完成' : '已暂停'}</small></div>
           <div className="mobile-cooking-step"><span>第 {cookStep + 1} 步</span><h2>{displaySteps[cookStep]}</h2><p>饭团会在这一步结束时提醒你。</p></div>
           <div className="mobile-cooking-actions"><button type="button" className="mobile-cooking-pause" onClick={() => setTimerRunning((running) => !running)}>{timerRunning ? '暂停计时' : '继续计时'}</button><button type="button" className="fd-btn fd-btn-primary" onClick={handleNextCookStep}>{cookStep >= displaySteps.length - 1 ? (cookingCompleted ? '已完成' : '完成这道菜') : '下一步 →'}</button></div>
+          {cookingCompleted && <div className="mobile-cooking-complete" role="status"><strong>开饭啦！</strong><p>这道菜已经记入做饭记录，饭团把米粒也记下了。</p><div className="mobile-cooking-complete-actions"><button type="button" onClick={() => setMobileCookingMode(false)}>回到菜品</button><Link to="/mine">查看我的记录</Link></div></div>}
         </section>
       )}
       <div className="detail-breadcrumb">
@@ -245,6 +273,7 @@ export function RecipeDetailPage() {
           <div className="cta-row">
             <button className={added ? 'fd-btn fd-btn-green' : 'fd-btn fd-btn-primary'} onClick={handleAddToPlan}>{added ? '✓ 已加入' : '加入今晚计划'}</button>
             <Link to="/shopping" className="fd-btn fd-btn-secondary">加入购物清单</Link>
+            <button type="button" className="fd-btn fd-btn-secondary" aria-pressed={isFavorite} onClick={handleToggleFavorite}>{isFavorite ? '♥ 已收藏' : '♡ 收藏这道菜'}</button>
             <button type="button" className="fd-btn fd-btn-green" onClick={handleMarkCooked}>标记做过</button>
             <button type="button" className="fd-btn fd-btn-secondary" onClick={() => setRecipeTab('mine')}>改成我家版</button>
           </div>

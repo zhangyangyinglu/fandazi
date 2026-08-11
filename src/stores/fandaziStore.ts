@@ -14,6 +14,7 @@ import type {
 import { DISHES } from '@/data/dishes'
 import type { Dish } from '@/types'
 import {
+  deleteCookingLog,
   deleteMealPlan,
   deleteMyDishVersion,
   deletePantryItem,
@@ -99,6 +100,7 @@ export interface FandaziStore {
   // 做饭记录
   cookingLogs: CookingLog[]
   addCookingLog: (log: CookingLog) => void
+  removeCookingLog: (id: string) => void
 
   // 我家版
   myDishVersions: MyDishVersion[]
@@ -296,6 +298,10 @@ export const useFandaziStore = create<FandaziStore>()(
           }
         })
         void syncCookingLog(log)
+      },
+      removeCookingLog: (id) => {
+        set((s) => ({ cookingLogs: s.cookingLogs.filter((l) => l.id !== id) }))
+        void deleteCookingLog(id)
       },
 
       // === 我家版 ===

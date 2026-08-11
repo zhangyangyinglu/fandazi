@@ -21,7 +21,7 @@
  */
 import type { Dish } from '../types'
 import { sumDishNutrients } from './nutrition'
-import type { HealthProfile, DietRestriction } from '@/components/healthProfileStorage'
+import type { HealthProfile, DietRestriction, HealthGoal } from '@/components/healthProfileStorage'
 
 // ── 食材关键词映射 ──
 
@@ -140,6 +140,35 @@ export function checkDishAgainstRestriction(
   return { hardFilter: false, penalty: 0, reason: '' }
 }
 
+function scoreDishAgainstGoal(dish: Dish, goal: HealthGoal): { delta: number; reason: string } {
+  const nutrition = sumDishNutrients(dish.ingredients)
+  const tags = new Set(dish.tags)
+  const lightTags = ['清淡', '少油', '低油', '低脂', '低热量', '轻食']
+  const sugarFriendlyTags = ['控糖友好', '低GI', '低糖', '低碳水']
+
+  switch (goal) {
+    case 'sugar-control':
+      if (sugarFriendlyTags.some((tag) => tags.has(tag))) return { delta: 0.24, reason: '符合控糖友好的标签' }
+      if (nutrition.sugar >= 12) return { delta: -0.24, reason: `糖 ${Math.round(nutrition.sugar)}g，控糖目标下适当降权` }
+      return { delta: 0, reason: '' }
+    case 'light-diet':
+      if (lightTags.some((tag) => tags.has(tag))) return { delta: 0.2, reason: '符合清淡少油的饮食目标' }
+      if (['炸', '煎', '爆'].some((method) => dish.cookMethod.includes(method)) || nutrition.satFat >= 10) {
+        return { delta: -0.2, reason: '做法或脂肪偏重，清淡目标下适当降权' }
+      }
+      return { delta: 0, reason: '' }
+    case 'fat-loss':
+      if (lightTags.some((tag) => tags.has(tag)) || nutrition.kcal <= 500) return { delta: 0.18, reason: '热量和油脂更适合减脂目标' }
+      if (nutrition.kcal >= 700) return { delta: -0.2, reason: `热量 ${Math.round(nutrition.kcal)} kcal，减脂目标下适当降权` }
+      return { delta: 0, reason: '' }
+    case 'muscle-gain':
+      if (nutrition.protein >= 20 || tags.has('高蛋白')) return { delta: 0.2, reason: '蛋白质更充足，符合增肌目标' }
+      return { delta: -0.05, reason: '' }
+    default:
+      return { delta: 0, reason: '' }
+  }
+}
+
 /**
  * 汇总所有成员的健康档案，对一道菜给出综合判定
  */
@@ -153,6 +182,7 @@ export function scoreDishByHealthProfiles(
   let penalty = 0
   const reasons: string[] = []
   const seenRestrictions = new Set<DietRestriction>()
+  const seenGoals = new Set<HealthGoal>()
 
   for (const profile of profiles) {
     for (const restriction of profile.restrictions) {
@@ -167,9 +197,23 @@ export function scoreDishByHealthProfiles(
         reasons.push(result.reason)
       }
     }
+
+    for (const goal of [...profile.priorityGoals, ...profile.goals]) {
+      if (seenGoals.has(goal)) continue
+      seenGoals.add(goal)
+      const result = scoreDishAgainstGoal(dish, goal)
+      penalty += result.delta
+      if (result.reason) reasons.push(result.reason)
+    }
   }
 
   return { hardFilter, penalty, reasons: Array.from(new Set(reasons)) }
+}
+
+export function isSoupLikeDish(dish: Dish): boolean {
+  return dish.category === '汤羹'
+    || /汤|羹/.test(dish.name)
+    || dish.tags.some((tag) => ['汤菜', '汤品', '炖汤', '清炖'].includes(tag))
 }
 
 function getCoreIngredientNames(dish: Dish): string[] {
@@ -215,7 +259,8 @@ export function checkPlateStructure(dishes: Dish[]): {
   const hasProtein = dishes.some((d) => d.ingredients.some((i) => i.group === '肉蛋'))
   const hasVegetable = dishes.some((d) => d.ingredients.some((i) => i.group === '蔬菜') || d.category === '素菜')
   const hasStaple = dishes.some((d) => d.category === '主食' || d.ingredients.some((i) => i.group === '主食'))
-  const hasSoup = dishes.some((d) => d.category === '汤羹' || /汤|羹|煲/.test(d.name))
+  const soupCount = dishes.filter(isSoupLikeDish).length
+  const hasSoup = soupCount > 0
   const repeatedCoreIngredients = findRepeated(dishes.flatMap(getCoreIngredientNames))
   const repeatedFlavorFamilies = findRepeated(dishes.flatMap(getFlavorFamilies))
   const repeatedCookMethods = findRepeated(
@@ -229,6 +274,7 @@ export function checkPlateStructure(dishes: Dish[]): {
   if (!hasProtein) gaps.push('缺优质蛋白')
   if (!hasVegetable) gaps.push('缺蔬菜')
   if (!hasStaple) gaps.push('缺主食')
+  if (soupCount > 1) gaps.push('汤类重复：一餐最多保留一份汤或清炖汤菜')
   if (repeatedCoreIngredients.length > 0) gaps.push(`核心食材重复：${repeatedCoreIngredients.join('、')}`)
   if (repeatedFlavorFamilies.length > 0) gaps.push(`口味重复：${repeatedFlavorFamilies.join('、')}`)
   if (dishes.length >= 3 && repeatedCookMethods.length > 0) gaps.push(`做法重复：${repeatedCookMethods.join('、')}`)

@@ -8,6 +8,7 @@ import { callFantuanAi, type FantuanContext, type FantuanChatMessage } from '@/l
 import { hasAiKey } from '@/lib/aiProviderConfig'
 import { addHealthFacts, readHealthFacts, type HealthFactCategory } from '@/lib/healthFacts'
 import { readBuddyGroup } from '@/data/familySharing'
+import { readDailyMealSettings } from '@/data/dailyMeal'
 import { FantuanIcon } from './FantuanIcon'
 import { FantuanPetImage } from './FantuanPetImage'
 import './FloatingFantuan.css'
@@ -248,6 +249,8 @@ export function FloatingFantuan() {
       todayPlans,
       tasteProfile: state.fantuan.tasteProfile,
       healthFacts: readHealthFacts().map((f) => ({ category: f.category, label: f.label })),
+      healthProfiles: readHealthProfiles(),
+      people: readDailyMealSettings().people,
       pageHint: location.pathname,
     }
   }

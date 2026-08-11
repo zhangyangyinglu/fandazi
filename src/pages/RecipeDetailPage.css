@@ -891,6 +891,16 @@
     font-weight: 500;
   }
 
+  .mobile-favorite-button {
+    width: 100%;
+    margin-top: 8px;
+    border-color: var(--v3-line);
+    border-radius: 4px 15px 4px 15px;
+    background: transparent;
+    color: var(--v3-ink);
+    font-weight: 500;
+  }
+
   .mobile-cooking-mode {
     background: var(--v3-ink);
     color: var(--v3-paper);
@@ -932,5 +942,44 @@
     background: var(--v3-yellow);
     color: var(--v3-ink);
     font-weight: 500;
+  }
+
+  .mobile-cooking-complete {
+    margin-top: 18px;
+    padding: 15px;
+    border: 1px solid var(--v3-yellow);
+    border-radius: 4px 16px 4px 16px;
+    background: rgba(216, 172, 69, .12);
+  }
+
+  .mobile-cooking-complete strong {
+    display: block;
+    color: var(--v3-yellow);
+    font: 500 18px/1.2 var(--serif);
+  }
+
+  .mobile-cooking-complete p {
+    margin: 6px 0 12px;
+    color: var(--v3-paper);
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .mobile-cooking-complete-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .mobile-cooking-complete-actions button,
+  .mobile-cooking-complete-actions a {
+    flex: 1;
+    padding: 9px 10px;
+    border: 1px solid var(--v3-line);
+    border-radius: 4px 12px 4px 12px;
+    background: transparent;
+    color: var(--v3-paper);
+    font: 400 11px/1.2 var(--sans);
+    text-align: center;
+    text-decoration: none;
   }
 }

@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useRef, useState } from 'react'
 import { NavLink, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { BrandLogo } from '@/components/BrandLogo'
 import './TopNav.css'
 
 const PRIMARY_NAV = [
@@ -9,6 +10,7 @@ const PRIMARY_NAV = [
 ]
 
 const MORE_NAV = [
+  { to: '/weekly-prep', label: '周备餐' },
   { to: '/plan', label: '计划' },
   { to: '/shopping', label: '购物清单' },
   { to: '/catalog', label: '完整菜品库' },
@@ -76,11 +78,11 @@ export function TopNav() {
     <>
     <header className="fd-topbar">
       <div className="fd-brand">
-        <span className="fd-mobile-brand-mark" aria-hidden="true">饭</span>
-        <img src="/brand-logo.png" alt="饭搭子" className="fd-logo" width={32} height={32} />
+        <BrandLogo className="fd-logo" size={36} />
+        <BrandLogo className="fd-mobile-brand-mark" size={28} label="" />
         <span>饭搭子</span>
       </div>
-      <span className="fd-mobile-app-note">开饭 · 晚餐</span>
+      <span className="fd-mobile-app-note">开饭</span>
       <nav className="fd-nav" role="navigation" aria-label="主导航">
         {PRIMARY_NAV.map((item) => (
           <NavLink

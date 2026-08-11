@@ -8,6 +8,7 @@
  *   4. 登录后缓存 householdId 到 localStorage
  */
 import { FANDAZI_SYNC_CONFIG_EVENT, getSupabase } from '@/lib/supabaseClient'
+import { clearAuthHandoffAccess } from '@/lib/authHandoff'
 
 const LAST_ACTIVE_KEY = 'fandazi.auth.lastActiveAt'
 const INACTIVITY_LIMIT_MS = 30 * 24 * 60 * 60 * 1000
@@ -95,6 +96,7 @@ export async function signOut(): Promise<void> {
   await supabase.auth.signOut()
   localStorage.removeItem('fandazi.householdId')
   localStorage.removeItem(LAST_ACTIVE_KEY)
+  clearAuthHandoffAccess()
   notifySyncConfigChanged()
 }
 

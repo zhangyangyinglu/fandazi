@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { callFantuanAi, getChatCompletionsUrl, parseHealthFactsFromReply, testAiConnection } from '@/lib/fantuanAiClient'
+import { buildFantuanSystemPrompt, callFantuanAi, getChatCompletionsUrl, parseHealthFactsFromReply, testAiConnection } from '@/lib/fantuanAiClient'
 
 afterEach(() => {
   vi.restoreAllMocks()
@@ -30,6 +30,35 @@ describe('fantuanAiClient', () => {
     const result = parseHealthFactsFromReply('今晚可以做番茄豆腐虾仁汤。')
 
     expect(result).toEqual({ reply: '今晚可以做番茄豆腐虾仁汤。' })
+  })
+
+  it('会把已确认的健康计划摘要提供给饭团 AI', () => {
+    const prompt = buildFantuanSystemPrompt({
+      pantryItems: ['鸡蛋'],
+      todayPlans: [],
+      people: 1,
+      healthProfiles: [{
+        id: 'me',
+        name: '我',
+        role: 'owner',
+        goals: ['light-diet'],
+        healthStatuses: [],
+        restrictions: ['no-spicy'],
+        nutritionFocus: [],
+        priorityGoals: ['light-diet'],
+        cookingTimePreference: 'quick',
+        needDescription: '晚饭少油，尽量 30 分钟内完成。',
+        contextNotes: '',
+        analysisSummary: '优先围绕「清淡少负担」来安排。',
+        notes: '问卷记录',
+        createdAt: 1,
+        updatedAt: 1,
+      }],
+    })
+
+    expect(prompt).toContain('用户已确认的健康计划')
+    expect(prompt).toContain('清淡少负担')
+    expect(prompt).toContain('过敏和明确忌口是硬限制')
   })
 
   it('兼容根地址和完整 chat/completions 地址', () => {

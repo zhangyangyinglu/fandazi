@@ -30,6 +30,13 @@
   color: var(--fd-fantuan) !important;
 }
 
+.health-questionnaire-error {
+  margin: 0;
+  color: var(--fd-danger-ink, #b42318);
+  font-size: 13px;
+  font-weight: 800;
+}
+
 .health-questionnaire {
   display: grid;
   gap: 16px;
@@ -40,15 +47,110 @@
   gap: 10px;
 }
 
+.health-text-block textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  border: 1px solid var(--fd-line-soft);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: #fffdf9;
+  color: var(--fd-ink);
+  font: inherit;
+  line-height: 1.6;
+}
+
+.health-text-block textarea:focus {
+  outline: 2px solid rgba(218, 142, 48, .2);
+  border-color: var(--fd-fantuan);
+}
+
+.health-required,
+.health-optional {
+  margin-left: 6px;
+  color: var(--fd-fantuan);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.health-optional {
+  color: var(--fd-muted);
+}
+
+.health-summary-card {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid #d8e4cd;
+  border-radius: 20px;
+  background: #f5f8ef;
+}
+
+.health-summary-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.health-summary-head h3 {
+  margin: 5px 0 0;
+  font: 900 22px/1.2 var(--serif);
+}
+
+.health-summary-source {
+  flex: 0 0 auto;
+  color: var(--fd-green, #517b52);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.health-summary-card > p,
+.health-summary-card li {
+  color: var(--fd-muted);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.health-summary-card > p {
+  margin: 0;
+}
+
+.health-summary-card ul {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.health-summary-missing {
+  color: var(--fd-danger-ink, #b42318) !important;
+  font-weight: 800;
+}
+
+.health-summary-ready {
+  color: var(--fd-green, #517b52) !important;
+  font-weight: 800;
+}
+
 .health-question-block h4 {
   margin: 0;
   font-size: 16px;
+}
+
+.health-question-hint {
+  color: var(--fd-muted);
+  font-size: 12px;
 }
 
 .health-choice-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 10px;
+}
+
+.health-choice-grid-compact {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .health-choice,
@@ -70,6 +172,10 @@
   margin-top: 5px;
   color: var(--fd-muted);
   font-size: 13px;
+}
+
+.health-choice {
+  min-height: 76px;
 }
 
 .health-choice.selected,

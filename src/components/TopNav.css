@@ -13,6 +13,29 @@
   z-index: 100;
 }
 
+.fd-entry-shell {
+  min-height: 100vh;
+  padding: 20px 24px 40px;
+  background: var(--fd-cream, #fbf5ea);
+}
+
+.fd-entry-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 920px;
+  margin: 0 auto 4px;
+  color: var(--fd-ink);
+  font: 900 20px var(--serif);
+}
+
+.fd-entry-brand img { object-fit: contain; }
+
+.fd-entry-main {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
 .fd-brand {
   display: flex;
   align-items: center;
@@ -390,6 +413,9 @@
 }
 
 @media (max-width: 600px) {
+  .fd-entry-shell { padding: 14px 14px 28px; }
+  .fd-entry-brand { margin-bottom: 0; }
+
   html,
   body,
   #root {
@@ -430,11 +456,8 @@
     justify-content: center;
     width: 28px;
     height: 28px;
-    border-radius: 7px 11px 7px 11px;
-    background: #18251f;
-    color: #f7f0e5;
-    font: 500 14px var(--serif);
-    transform: rotate(-5deg);
+    border-radius: 8px;
+    object-fit: contain;
   }
 
   .fd-topbar .fd-logo {

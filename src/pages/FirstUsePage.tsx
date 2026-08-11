@@ -7,13 +7,20 @@ export function FirstUsePage() {
   return (
     <div className="first-use-page">
       <section className="first-use-hero">
-        <div className="hero-label">第一次使用 · 只需几分钟</div>
-        <h1>先把你的这一餐搭起来</h1>
-        <p>先了解饭搭子会怎么工作。你的饮食目标和需要避开的内容，请统一在“健康”里填写，之后也可以随时修改。</p>
+        <div className="hero-label">饭搭子 · 第一次使用</div>
+        <h1>先用 1–2 分钟告诉饭搭子你怎么吃</h1>
+        <p>先写一句你希望饭团帮你解决的事情，再补充目标、人数、需要避开的内容和做饭节奏。保存前饭团会把你的需求整理成一份可回看的摘要。</p>
+        <div className="first-use-product-note">
+          <strong>饭搭子是什么？</strong>
+          <span>你日常使用的是一个可以添加到主屏幕、像 App 一样打开的网页 App（PWA）；“饭搭子项目”只是我们开发它的代码项目，不是另一个需要你使用的东西。</span>
+        </div>
+        <button className="fd-btn fd-btn-primary first-use-start" type="button" onClick={() => navigate('/health')}>
+          开始 1–2 分钟问卷
+        </button>
       </section>
 
       <section className="first-use-panel">
-        <div className="first-use-step"><span>1</span><div><h2>先填写自己的健康问卷</h2><p>每个人填写自己的饮食目标和限制，家庭推荐会据此调整。</p></div></div>
+        <div className="first-use-step"><span>1</span><div><h2>先填写自己的饮食需求</h2><p>先用自己的话写清想解决什么，再选 1–2 个方向，补充人数、忌口和做饭节奏。</p></div></div>
       </section>
 
       <section className="first-use-panel">

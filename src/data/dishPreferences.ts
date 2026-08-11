@@ -29,6 +29,7 @@ export type DishPreferences = Record<DishPreferenceKey, string[]> & {
 }
 
 export const DISH_PREFERENCES_STORAGE_KEY = 'fandazi.dishPreferences'
+export const DISH_PREFERENCES_CHANGE_EVENT = 'fandazi:dish-preferences-change'
 
 export const EMPTY_DISH_PREFERENCES: DishPreferences = {
   favorite: [],
@@ -112,6 +113,7 @@ export function writeDishPreferences(preferences: DishPreferences): void {
       DISH_PREFERENCES_STORAGE_KEY,
       JSON.stringify(normalizePreferences(preferences)),
     )
+    window.dispatchEvent(new Event(DISH_PREFERENCES_CHANGE_EVENT))
   } catch {
     // ignore quota / privacy mode
   }

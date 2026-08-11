@@ -1,9 +1,12 @@
 import { useEffect, lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom'
 import { TopNav } from '@/components/TopNav'
 import { FloatingFantuan } from '@/components/FloatingFantuan'
 import { ErrorBoundary } from '@/components/ErrorBoundary'
-import { FantuanPetImage } from '@/components/FantuanPetImage'
+import { BrandLogo } from '@/components/BrandLogo'
+import { PwaInstallPrompt } from '@/components/PwaInstallPrompt'
+import { AuthHandoffReceiver } from '@/components/AuthHandoffReceiver'
+import { AppAccessGate, FIRST_USE_COMPLETED_KEY } from '@/components/AppAccessGate'
 import { RecipeWorkspacePage } from '@/pages/RecipeWorkspacePage'
 import { RecipeDetailPage } from '@/pages/RecipeDetailPage'
 import { useFamilySync } from '@/lib/useFamilySync'
@@ -13,6 +16,7 @@ import './AppLazyFallback.css'
 // 代码分割：非首屏页面全部 lazy load
 const PantryPage = lazy(() => import('@/pages/PantryPage').then(m => ({ default: m.PantryPage })))
 const PlanPage = lazy(() => import('@/pages/PlanPage').then(m => ({ default: m.PlanPage })))
+const WeeklyPrepPage = lazy(() => import('@/pages/WeeklyPrepPage').then(m => ({ default: m.WeeklyPrepPage })))
 const ShoppingPage = lazy(() => import('@/pages/ShoppingPage').then(m => ({ default: m.ShoppingPage })))
 const MinePage = lazy(() => import('@/pages/MinePage').then(m => ({ default: m.MinePage })))
 const FantuanPage = lazy(() => import('@/pages/FantuanPage').then(m => ({ default: m.FantuanPage })))
@@ -27,7 +31,7 @@ const NotFoundPage = lazy(() => import('@/pages/NotFoundPage').then(m => ({ defa
 function PageFallback() {
   return (
     <div className="lazy-fallback">
-      <div className="lazy-spinner"><FantuanPetImage state="thinking" /></div>
+      <div className="lazy-spinner"><BrandLogo size={42} label="饭搭子" /></div>
       <p>正在打开饭搭子页面，请稍候…</p>
     </div>
   )
@@ -56,6 +60,55 @@ function MobileBottomNav() {
   )
 }
 
+function AppFrame() {
+  const location = useLocation()
+  const isFirstUseHealth = location.pathname === '/health'
+    && localStorage.getItem(FIRST_USE_COMPLETED_KEY) !== 'true'
+  const isEntryFlow = location.pathname === '/sync'
+    || location.pathname === '/welcome'
+    || isFirstUseHealth
+
+  return (
+    <>
+      <AuthHandoffReceiver />
+      <AppAccessGate>
+        <div className={isEntryFlow ? 'fd-entry-shell' : 'fd-desktop-shell'}>
+          {!isEntryFlow && <TopNav />}
+          {isEntryFlow && (
+            <div className="fd-entry-brand">
+              <BrandLogo size={40} label="" />
+              <strong>饭搭子</strong>
+            </div>
+          )}
+          <main className={isEntryFlow ? 'fd-entry-main' : 'fd-main'}>
+            <Routes>
+              <Route path="/" element={<RecipeWorkspacePage />} />
+              <Route path="/catalog" element={<RecipeWorkspacePage catalogMode />} />
+              <Route path="/recipes/:id" element={<RecipeDetailPage />} />
+              <Route path="/pantry" element={<Suspense fallback={<PageFallback />}><PantryPage /></Suspense>} />
+              <Route path="/plan" element={<Suspense fallback={<PageFallback />}><PlanPage /></Suspense>} />
+              <Route path="/weekly-prep" element={<Suspense fallback={<PageFallback />}><WeeklyPrepPage /></Suspense>} />
+              <Route path="/shopping" element={<Suspense fallback={<PageFallback />}><ShoppingPage /></Suspense>} />
+              <Route path="/mine" element={<Suspense fallback={<PageFallback />}><MinePage /></Suspense>} />
+              <Route path="/fantuan" element={<Suspense fallback={<PageFallback />}><FantuanPage /></Suspense>} />
+              <Route path="/ai-kitchen" element={<Suspense fallback={<PageFallback />}><AIKitchenPage /></Suspense>} />
+              <Route path="/health" element={<Suspense fallback={<PageFallback />}><HealthPage /></Suspense>} />
+              <Route path="/family" element={<Suspense fallback={<PageFallback />}><FamilyPage /></Suspense>} />
+              <Route path="/sync" element={<Suspense fallback={<PageFallback />}><SyncSettingsPage /></Suspense>} />
+              <Route path="/welcome" element={<Suspense fallback={<PageFallback />}><FirstUsePage /></Suspense>} />
+              <Route path="/privacy" element={<Suspense fallback={<PageFallback />}><PrivacyPage /></Suspense>} />
+              <Route path="*" element={<Suspense fallback={<PageFallback />}><NotFoundPage /></Suspense>} />
+            </Routes>
+          </main>
+        </div>
+        <PwaInstallPrompt />
+        {!isEntryFlow && <FloatingFantuan />}
+        {!isEntryFlow && <MobileBottomNav />}
+      </AppAccessGate>
+    </>
+  )
+}
+
 export function App() {
   useFamilySync()
 
@@ -74,31 +127,8 @@ export function App() {
   return (
     <BrowserRouter>
       <ErrorBoundary>
-        <div className="fd-desktop-shell">
-          <TopNav />
-          <main className="fd-main">
-            <Routes>
-            <Route path="/" element={<RecipeWorkspacePage />} />
-            <Route path="/catalog" element={<RecipeWorkspacePage catalogMode />} />
-            <Route path="/recipes/:id" element={<RecipeDetailPage />} />
-            <Route path="/pantry" element={<Suspense fallback={<PageFallback />}><PantryPage /></Suspense>} />
-            <Route path="/plan" element={<Suspense fallback={<PageFallback />}><PlanPage /></Suspense>} />
-            <Route path="/shopping" element={<Suspense fallback={<PageFallback />}><ShoppingPage /></Suspense>} />
-            <Route path="/mine" element={<Suspense fallback={<PageFallback />}><MinePage /></Suspense>} />
-            <Route path="/fantuan" element={<Suspense fallback={<PageFallback />}><FantuanPage /></Suspense>} />
-            <Route path="/ai-kitchen" element={<Suspense fallback={<PageFallback />}><AIKitchenPage /></Suspense>} />
-            <Route path="/health" element={<Suspense fallback={<PageFallback />}><HealthPage /></Suspense>} />
-            <Route path="/family" element={<Suspense fallback={<PageFallback />}><FamilyPage /></Suspense>} />
-            <Route path="/sync" element={<Suspense fallback={<PageFallback />}><SyncSettingsPage /></Suspense>} />
-            <Route path="/welcome" element={<Suspense fallback={<PageFallback />}><FirstUsePage /></Suspense>} />
-            <Route path="/privacy" element={<Suspense fallback={<PageFallback />}><PrivacyPage /></Suspense>} />
-            <Route path="*" element={<Suspense fallback={<PageFallback />}><NotFoundPage /></Suspense>} />
-            </Routes>
-          </main>
-        </div>
+        <AppFrame />
       </ErrorBoundary>
-      <FloatingFantuan />
-      <MobileBottomNav />
     </BrowserRouter>
   )
 }

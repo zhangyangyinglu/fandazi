@@ -353,6 +353,69 @@
     font-size: 10px;
   }
 
+  .mobile-mine-collection-links {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+    margin-top: 10px;
+  }
+
+  .mobile-mine-collection-links button,
+  .mobile-mine-collection-links a {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+    padding: 11px 9px;
+    border: 1px solid var(--fd-line-soft);
+    border-radius: 14px;
+    background: var(--fd-surface, #fffdf9);
+    color: inherit;
+    text-align: left;
+    text-decoration: none;
+  }
+
+  .mobile-mine-collection-links button {
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .mobile-mine-collection-links strong {
+    font-size: 12px;
+  }
+
+  .mobile-mine-collection-links small {
+    color: var(--fd-muted);
+    font-size: 10px;
+  }
+
+  .mobile-mine-collection-links span {
+    color: var(--fd-quiet);
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .mobile-mine-collection-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 10px 0 2px;
+  }
+
+  .mobile-mine-collection-tabs button {
+    border: 1px solid var(--fd-line-soft);
+    border-radius: 999px;
+    padding: 7px 10px;
+    background: transparent;
+    color: var(--fd-muted);
+    font: 800 11px/1.2 var(--sans);
+    cursor: pointer;
+  }
+
+  .mobile-mine-collection-tabs button.active {
+    border-color: var(--fd-orange);
+    background: var(--fd-orange);
+    color: #fff;
+  }
+
   .mobile-mine-empty {
     margin: 0;
     padding: 16px;
@@ -408,6 +471,64 @@
     color: var(--fd-quiet);
     font-size: 22px;
     font-weight: 400;
+  }
+
+  .mobile-mine-collection-links {
+    gap: 0;
+    margin-top: 8px;
+    border-top: 1px solid var(--v3-line);
+  }
+
+  .mobile-mine-collection-links button,
+  .mobile-mine-collection-links a {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 2px 8px;
+    padding: 10px 0;
+    border: 0;
+    border-bottom: 1px solid var(--v3-line);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .mobile-mine-collection-links strong,
+  .mobile-mine-collection-links small {
+    grid-column: 1;
+  }
+
+  .mobile-mine-collection-links strong {
+    color: var(--v3-ink);
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .mobile-mine-collection-links small {
+    color: var(--v3-muted);
+    font-size: 10px;
+  }
+
+  .mobile-mine-collection-links span {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    color: var(--v3-muted);
+    font-size: 19px;
+  }
+
+  .mobile-mine-collection-tabs {
+    gap: 6px;
+    padding: 9px 0 2px;
+  }
+
+  .mobile-mine-collection-tabs button {
+    border-color: var(--v3-line);
+    color: var(--v3-muted);
+    font: 400 10px/1.2 var(--sans);
+  }
+
+  .mobile-mine-collection-tabs button.active {
+    border-color: var(--v3-ink);
+    background: var(--v3-ink);
+    color: var(--v3-paper);
   }
 }
 

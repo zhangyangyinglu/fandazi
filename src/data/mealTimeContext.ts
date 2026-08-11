@@ -4,7 +4,8 @@
  * 设计 (Q1=A 拍板, 2026-06-25):
  * - 字段层完整存在 (Dish.mealType 5 维) → 推荐排序按当前时段隐式加权
  * - UI 层不做强制餐次入口 → 早晨打开首页, 红烧排骨自然降权, 不会跳出来
- * - 时段映射: 6-10 早餐 / 10-15 午餐 / 15-21 晚餐 / 21+/0-6 夜宵→晚餐回退
+ * - 不用单一整点切断：以早餐 8:00、午餐 12:30、晚餐 18:30 为中心，按平滑分数处理过渡区。
+ * - 凌晨 0:00–5:00 不制造早餐，沿用晚餐逻辑；这只处理睡眠时段，不影响白天的软过渡。
  *
  * 用法:
  *   const meal = getCurrentMealType()       // 'breakfast' | 'lunch' | 'dinner'
@@ -15,15 +16,67 @@
 import type { Dish, MealType } from '../types'
 
 export type CurrentMealTime = 'breakfast' | 'lunch' | 'dinner'
+export type MealTimeScores = Record<CurrentMealTime, number>
+
+const MEAL_TIME_PROFILES: Record<CurrentMealTime, { center: number; spread: number }> = {
+  breakfast: { center: 8, spread: 2.75 },
+  lunch: { center: 12.5, spread: 3.2 },
+  dinner: { center: 18.5, spread: 4.2 },
+}
+
+function beijingDateParts(date: Date): Record<string, string> {
+  return Object.fromEntries(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Shanghai',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+    }).formatToParts(date)
+      .filter((part) => part.type !== 'literal')
+      .map((part) => [part.type, part.value]),
+  )
+}
+
+/** 统一使用北京时间，避免用户设备时区导致餐次和日期错位。 */
+export function getBeijingHour(date = new Date()): number {
+  return Math.floor(getBeijingTimeOfDay(date))
+}
+
+export function getBeijingTimeOfDay(date = new Date()): number {
+  const parts = beijingDateParts(date)
+  return Number(parts.hour) + Number(parts.minute ?? 0) / 60
+}
+
+export function getBeijingDateString(date = new Date()): string {
+  const parts = beijingDateParts(date)
+  return `${parts.year}-${parts.month}-${parts.day}`
+}
 
 /**
- * 根据当前小时拿对应餐次. 测试时可传入小时数.
- * 6-10 早 / 10-15 午 / 15-21 晚 / 21+ 或 0-6 晚 (避免凌晨 3 点弹早餐粥)
+ * 返回当前时刻对三种正餐的相对匹配度。
+ * 分数使用“中心时段 + 平滑衰减”，所以午餐和晚餐之间不会被某个整点突然切断。
  */
+export function getMealTimeScores(hour = getBeijingTimeOfDay()): MealTimeScores {
+  const h = ((hour % 24) + 24) % 24
+  if (h < 5) return { breakfast: 0.05, lunch: 0.05, dinner: 1 }
+
+  const score = (meal: CurrentMealTime) => {
+    const { center, spread } = MEAL_TIME_PROFILES[meal]
+    const rawDistance = Math.abs(h - center)
+    const distance = Math.min(rawDistance, 24 - rawDistance)
+    return Math.exp(-(distance ** 2) / (2 * spread ** 2))
+  }
+
+  return { breakfast: score('breakfast'), lunch: score('lunch'), dinner: score('dinner') }
+}
+
 export function getCurrentMealType(hour?: number): CurrentMealTime {
-  const h = hour ?? new Date().getHours()
-  if (h >= 6 && h < 10) return 'breakfast'
-  if (h >= 10 && h < 15) return 'lunch'
+  const scores = getMealTimeScores(hour)
+  if (scores.breakfast >= scores.lunch && scores.breakfast >= scores.dinner) return 'breakfast'
+  if (scores.lunch >= scores.dinner) return 'lunch'
   return 'dinner'
 }
 

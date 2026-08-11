@@ -1,0 +1,90 @@
+.auth-handoff-scanner {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid rgba(91, 118, 83, 0.28);
+  border-radius: 14px;
+  background: rgba(244, 249, 239, 0.78);
+}
+
+.auth-handoff-scanner-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.auth-handoff-scanner-copy strong {
+  color: #345c35;
+}
+
+.auth-handoff-scanner-copy span,
+.auth-handoff-scanner-status,
+.auth-handoff-scanner-success,
+.auth-handoff-scanner-error p {
+  margin: 0;
+  color: #5d6658;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.auth-handoff-scanner-trigger,
+.auth-handoff-scanner-error button {
+  justify-self: start;
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid #6b8e5e;
+  border-radius: 10px;
+  background: #6b8e5e;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+}
+
+.auth-handoff-scanner-trigger:hover:not(:disabled),
+.auth-handoff-scanner-error button:hover {
+  background: #58784d;
+}
+
+.auth-handoff-scanner-trigger:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.auth-handoff-scanner-view {
+  width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #1f271f;
+}
+
+.auth-handoff-scanner-view:empty {
+  min-height: 1px;
+  background: transparent;
+}
+
+.auth-handoff-scanner-view video {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.auth-handoff-scanner-success {
+  color: #347244;
+  font-weight: 700;
+}
+
+.auth-handoff-scanner-error {
+  display: grid;
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .auth-handoff-scanner {
+    padding: 14px;
+  }
+
+  .auth-handoff-scanner-trigger,
+  .auth-handoff-scanner-error button {
+    width: 100%;
+  }
+}

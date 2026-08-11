@@ -12,6 +12,7 @@ import {
   type BuddyGroup,
   type BuddyMember,
 } from '@/data/familySharing'
+import { syncTodayChefId, fetchTodayChefId } from '@/lib/familyCloudSync'
 import { EMPTY_DISH_PREFERENCES } from '@/data/dishPreferences'
 import { readHealthProfiles, type HealthProfile } from '@/components/healthProfileStorage'
 import { FantuanIcon } from '@/components/FantuanIcon'
@@ -63,9 +64,36 @@ export function FamilyPage() {
         setGroup(localGroup)
       }
       setHealthProfiles(readHealthProfiles())
+
+      // 从云端拉取今日掌勺人（新设备首次打开时同步）
+      const remoteChefId = await fetchTodayChefId()
+      if (!cancelled && remoteChefId) {
+        setGroup((prev) =>
+          prev.todayChefId === remoteChefId ? prev : { ...prev, todayChefId: remoteChefId }
+        )
+      }
     }
     void loadMembers()
-    return () => { cancelled = true }
+
+    // 监听云端 todayChefId 变更（其他设备切换掌勺人时同步）
+    const onCloudChef = (e: Event) => {
+      const detail = (e as CustomEvent).detail as Record<string, unknown>
+      const remoteChefId = detail?.today_chef_id
+      if (typeof remoteChefId === 'string' && remoteChefId) {
+        setGroup((prev) => {
+          if (prev.todayChefId === remoteChefId) return prev
+          const updated = { ...prev, todayChefId: remoteChefId }
+          writeBuddyGroup(updated)
+          return updated
+        })
+      }
+    }
+    window.addEventListener('fandazi:household-settings-cloud', onCloudChef)
+
+    return () => {
+      cancelled = true
+      window.removeEventListener('fandazi:household-settings-cloud', onCloudChef)
+    }
   }, [])
 
   const isDefaultGroup = group.members.length === 0
@@ -108,6 +136,7 @@ export function FamilyPage() {
     }
     const trimmed = { ...group, members: group.members.map((m) => ({ ...m, name: m.name.trim() })) }
     writeBuddyGroup(trimmed)
+    void syncTodayChefId(trimmed.todayChefId)
     setGroup(trimmed)
     setEditing(false)
     setSaved(true)

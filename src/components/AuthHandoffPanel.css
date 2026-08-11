@@ -1,0 +1,98 @@
+.auth-handoff-panel {
+  display: grid;
+  gap: 12px;
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid rgba(91, 118, 83, 0.28);
+  border-radius: 14px;
+  background: rgba(244, 249, 239, 0.78);
+}
+
+.auth-handoff-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.auth-handoff-copy strong {
+  color: #345c35;
+}
+
+.auth-handoff-copy span,
+.auth-handoff-status,
+.auth-handoff-error p {
+  margin: 0;
+  color: #5d6658;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.auth-handoff-trigger,
+.auth-handoff-actions button {
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid #6b8e5e;
+  border-radius: 10px;
+  background: #6b8e5e;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+}
+
+.auth-handoff-trigger {
+  justify-self: start;
+}
+
+.auth-handoff-trigger:hover,
+.auth-handoff-actions button:hover {
+  background: #58784d;
+}
+
+.auth-handoff-qr-wrap {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+}
+
+.auth-handoff-qr {
+  width: 280px;
+  max-width: 100%;
+  padding: 8px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.auth-handoff-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.auth-handoff-actions .auth-handoff-secondary {
+  border-color: rgba(52, 92, 53, 0.35);
+  background: transparent;
+  color: #345c35;
+}
+
+.auth-handoff-error {
+  display: grid;
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .auth-handoff-panel {
+    padding: 14px;
+  }
+
+  .auth-handoff-trigger,
+  .auth-handoff-actions button {
+    width: 100%;
+  }
+
+  .auth-handoff-qr-wrap {
+    justify-items: center;
+  }
+
+  .auth-handoff-actions {
+    width: 100%;
+  }
+}

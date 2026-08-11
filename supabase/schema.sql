@@ -37,7 +37,7 @@ create table if not exists pantry_items (
   bought_at date,
   best_before_at date,
   source text default 'manual_add',
-  status text default 'fresh', -- fresh / use_soon / expired
+  status text default 'fresh', -- fresh / use_soon / past_best / check_before_use
   note text,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
@@ -63,6 +63,7 @@ create table if not exists shopping_items (
   amount text,
   source text, -- 菜名
   checked boolean default false,
+  status text default 'pending', -- pending / purchased / stored
   checked_by uuid references auth.users(id),
   created_at timestamptz default now(),
   updated_at timestamptz default now()
@@ -107,7 +108,27 @@ create table if not exists fantuan_state (
   level integer default 1,
   cooking_streak integer default 0,
   total_cooked integer default 0,
+  spicy smallint default 1,
+  salty smallint default 1,
+  sweet smallint default 1,
+  avoid jsonb default '[]'::jsonb,
+  taste_note text default '',
   updated_at timestamptz default now()
+);
+
+-- 9. 周备餐计划（家庭共享）
+create table if not exists weekly_prep_plans (
+  id text primary key,
+  household_id uuid references households(id) on delete cascade,
+  week_start date not null,
+  week_end date not null,
+  meals_per_day smallint default 2,
+  servings integer default 2,
+  status text default 'draft',
+  plan_data jsonb not null,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now(),
+  unique(household_id, week_start)
 );
 
 -- ============================================================
@@ -131,6 +152,7 @@ create or replace function is_household_member(target_household_id uuid)
 returns boolean
 language sql
 security definer
+set search_path = public
 as $$
   select exists (
     select 1 from household_members
@@ -168,6 +190,11 @@ create policy "家庭成员可写记录" on cooking_logs for all using (is_house
 alter table fantuan_state enable row level security;
 create policy "家庭成员可读饭团" on fantuan_state for select using (is_household_member(household_id));
 create policy "家庭成员可写饭团" on fantuan_state for all using (is_household_member(household_id));
+
+-- weekly_prep_plans
+alter table weekly_prep_plans enable row level security;
+create policy "家庭成员可读周备餐" on weekly_prep_plans for select using (is_household_member(household_id));
+create policy "家庭成员可写周备餐" on weekly_prep_plans for all using (is_household_member(household_id));
 
 -- RPC：创建家庭并把当前用户设为 owner
 -- 用数据库函数一次性完成 households / household_members / fantuan_state 初始化，
@@ -278,6 +305,7 @@ create policy "用户可创建家庭" on households for insert with check (creat
 create table if not exists household_settings (
   household_id uuid references households(id) on delete cascade primary key,
   ai_config jsonb,  -- { provider, baseURL, model, apiKey, tested }
+  today_chef_id text,  -- 今日掌勺成员 id，跨设备同步
   updated_at timestamptz default now(),
   updated_by uuid references auth.users(id)
 );
@@ -285,7 +313,9 @@ create table if not exists household_settings (
 alter table household_settings enable row level security;
 create policy "成员可读家庭设置" on household_settings for select using (is_household_member(household_id));
 create policy "成员可写家庭设置" on household_settings for insert with check (is_household_member(household_id));
-create policy "成员可更新家庭设置" on household_settings for update using (is_household_member(household_id));
+create policy "成员可更新家庭设置" on household_settings for update
+  using (is_household_member(household_id))
+  with check (is_household_member(household_id));
 
 alter publication supabase_realtime add table household_settings;
 
@@ -298,3 +328,4 @@ alter publication supabase_realtime add table shopping_items;
 alter publication supabase_realtime add table my_dish_versions;
 alter publication supabase_realtime add table cooking_logs;
 alter publication supabase_realtime add table fantuan_state;
+alter publication supabase_realtime add table weekly_prep_plans;

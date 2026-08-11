@@ -69,6 +69,8 @@ export type NutritionFocus =
   | 'cholesterol'
   | 'post-meal-glucose'
 
+export type CookingTimePreference = 'quick' | 'regular' | 'slow'
+
 export type HealthProfile = {
   id: string
   name: string
@@ -78,6 +80,15 @@ export type HealthProfile = {
   restrictions: DietRestriction[]
   nutritionFocus: NutritionFocus[]
   priorityGoals: HealthGoal[]
+  /** 首次问卷采集的做饭时间偏好；旧档案没有此字段时按常规做饭兼容。 */
+  cookingTimePreference?: CookingTimePreference
+  /** 用户自己写下的需求，作为 AI 和推荐理由的原始依据。 */
+  needDescription?: string
+  /** 用户愿意补充的身体、营养、预算或家庭背景。 */
+  contextNotes?: string
+  /** 保存时生成的可读摘要，供饭团对话和推荐说明读取。 */
+  analysisSummary?: string
+  summaryConfirmedAt?: number
   reportNotes?: string
   notes: string
   createdAt: number
@@ -88,6 +99,10 @@ export const HEALTH_PROFILES_STORAGE_KEY = 'fandazi.healthProfiles'
 
 function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((item) => typeof item === 'string')
+}
+
+function isCookingTimePreference(value: unknown): value is CookingTimePreference {
+  return value === 'quick' || value === 'regular' || value === 'slow'
 }
 
 export function readHealthProfiles(): HealthProfile[] {
@@ -108,6 +123,11 @@ export function readHealthProfiles(): HealthProfile[] {
         isStringArray(profile.restrictions) &&
         isStringArray(profile.nutritionFocus) &&
         isStringArray(profile.priorityGoals) &&
+        (typeof profile.cookingTimePreference === 'undefined' || isCookingTimePreference(profile.cookingTimePreference)) &&
+        (typeof profile.needDescription === 'undefined' || typeof profile.needDescription === 'string') &&
+        (typeof profile.contextNotes === 'undefined' || typeof profile.contextNotes === 'string') &&
+        (typeof profile.analysisSummary === 'undefined' || typeof profile.analysisSummary === 'string') &&
+        (typeof profile.summaryConfirmedAt === 'undefined' || typeof profile.summaryConfirmedAt === 'number') &&
         typeof profile.notes === 'string' &&
         typeof profile.createdAt === 'number' &&
         typeof profile.updatedAt === 'number',

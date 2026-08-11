@@ -16,6 +16,8 @@ export function enablePwaAutoUpdate() {
       const checkForUpdate = () => void registration?.update().catch(() => undefined)
       window.setInterval(checkForUpdate, CHECK_INTERVAL_MS)
       window.addEventListener('focus', checkForUpdate)
+      window.addEventListener('online', checkForUpdate)
+      window.addEventListener('pageshow', checkForUpdate)
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') checkForUpdate()
       })

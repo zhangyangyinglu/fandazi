@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest'
 import {
   checkDishAgainstRestriction,
   checkPlateStructure,
+  isSoupLikeDish,
   scoreDishByHealthProfiles,
 } from '../healthRecommend'
 import type { Dish, DishCategory, Ingredient } from '../../types'
-import type { DietRestriction, HealthProfile } from '../../components/healthProfileStorage'
+import type { DietRestriction, HealthGoal, HealthProfile } from '../../components/healthProfileStorage'
 
 function ing(name: string, group: Ingredient['group'], amount = '100 克'): Ingredient {
   return { name, group, amount }
@@ -33,16 +34,16 @@ function dish(
   }
 }
 
-function profile(id: string, restrictions: DietRestriction[]): HealthProfile {
+function profile(id: string, restrictions: DietRestriction[], goals: HealthGoal[] = []): HealthProfile {
   return {
     id,
     name: id,
     role: 'family',
-    goals: [],
+    goals,
     healthStatuses: [],
     restrictions,
     nutritionFocus: [],
-    priorityGoals: [],
+    priorityGoals: goals,
     notes: '',
     createdAt: 1,
     updatedAt: 1,
@@ -77,6 +78,16 @@ describe('healthRecommend: 健康约束', () => {
     expect(result.hardFilter).toBe(true)
     expect(result.reasons.some((r) => r.includes('海鲜') || r.includes('鱼'))).toBe(true)
   })
+
+  it('饮食目标会真正参与排序信号，而不是只显示在页面上', () => {
+    const light = dish('light', '清蒸鸡胸肉', '荤菜', [ing('鸡胸肉', '肉蛋')], '蒸', ['控糖友好'])
+    const ordinary = dish('ordinary', '糖醋排骨', '荤菜', [ing('排骨', '肉蛋')], '炖', ['下饭'])
+    const result = scoreDishByHealthProfiles(light, [profile('小夏', [], ['sugar-control'])])
+    const ordinaryResult = scoreDishByHealthProfiles(ordinary, [profile('小夏', [], ['sugar-control'])])
+
+    expect(result.penalty).toBeGreaterThan(ordinaryResult.penalty)
+    expect(result.reasons.some((reason) => reason.includes('控糖'))).toBe(true)
+  })
 })
 
 describe('checkPlateStructure: 一桌饭结构', () => {
@@ -110,5 +121,13 @@ describe('checkPlateStructure: 一桌饭结构', () => {
     expect(result.repeatedCoreIngredients).toContain('番茄')
     expect(result.repeatedFlavorFamilies).toContain('番茄')
     expect(result.gaps.some((gap) => gap.includes('番茄'))).toBe(true)
+  })
+
+  it('一餐最多保留一份汤或清炖汤菜', () => {
+    const clearBraised = dish('lion-head', '清炖鸡肉狮子头', '荤菜', [ing('鸡肉', '肉蛋')], '炖', ['清炖'])
+    const result = checkPlateStructure([soup, clearBraised, staple])
+
+    expect(isSoupLikeDish(clearBraised)).toBe(true)
+    expect(result.gaps).toContain('汤类重复：一餐最多保留一份汤或清炖汤菜')
   })
 })

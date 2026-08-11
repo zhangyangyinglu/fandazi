@@ -9,6 +9,8 @@
  */
 
 import { readAiConfig, type AiProviderConfig } from './aiProviderConfig'
+import type { HealthProfile } from '@/components/healthProfileStorage'
+import { buildHealthPlanSummaryFromProfile } from '@/data/healthPlanSummary'
 
 /** 兼容用户填写 API 根地址或完整 chat/completions 地址。 */
 export function getChatCompletionsUrl(baseURL: string): string {
@@ -51,6 +53,14 @@ export function buildFantuanSystemPrompt(context: FantuanContext): string {
     parts.push(`用户已记录的健康信息：${factStrs.join('，')}`)
     parts.push('注意：已在档案中的信息不需要重复提取，除非用户说了新的或要修改的。')
   }
+  if (context.healthProfiles && context.healthProfiles.length > 0) {
+    const healthPlan = context.healthProfiles.map((profile) => {
+      const summary = buildHealthPlanSummaryFromProfile(profile, context.people ?? 2)
+      return `${profile.name}：${summary}`
+    })
+    parts.push(`用户已确认的健康计划：${healthPlan.join('；')}`)
+    parts.push('解释推荐时要引用用户明确写下的需求；过敏和明确忌口是硬限制，目标、人数和做饭节奏是排序依据。不要把用户偏好说成医学诊断。')
+  }
   if (context.pageHint) {
     parts.push(`当前所在页面：${context.pageHint}`)
   }
@@ -69,6 +79,8 @@ export interface FantuanContext {
     note: string
   }
   healthFacts?: { category: string; label: string }[]
+  healthProfiles?: HealthProfile[]
+  people?: number
   pageHint?: string
 }
 

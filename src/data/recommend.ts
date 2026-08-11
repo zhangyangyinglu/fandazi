@@ -19,7 +19,7 @@ import { sumDishNutrients, type DishNutrients } from './nutrition'
 import type { BuddyGroup, BuddyMember } from './familySharing'
 import type { DishPreferences } from './dishPreferences'
 import type { HealthProfile } from '@/components/healthProfileStorage'
-import { scoreDishByHealthProfiles, checkPlateStructure } from './healthRecommend'
+import { scoreDishByHealthProfiles, checkPlateStructure, isSoupLikeDish } from './healthRecommend'
 
 /**
  * v1.11: 提取菜品的主要蛋白质食材类型，用于推荐去重。
@@ -147,6 +147,27 @@ function hasStapleRole(dish: Dish): boolean {
   return dish.category === '主食' || dish.ingredients.some((ingredient) => ingredient.group === '主食')
 }
 
+function dishCookMinutes(dish: Dish): number {
+  const minutes = Number.parseInt(dish.cookTime, 10)
+  return Number.isFinite(minutes) ? minutes : 30
+}
+
+/** 把首次问卷里的做饭节奏变成轻量排序信号，不覆盖健康和忌口硬约束。 */
+function cookingTimePreferenceDelta(dish: Dish, profiles: HealthProfile[]): number {
+  const preferences = profiles
+    .map((profile) => profile.cookingTimePreference)
+    .filter((preference): preference is NonNullable<HealthProfile['cookingTimePreference']> => Boolean(preference))
+  if (preferences.length === 0) return 0
+
+  const minutes = dishCookMinutes(dish)
+  const deltas = preferences.map((preference) => {
+    if (preference === 'quick') return minutes <= 25 ? 0.18 : minutes <= 40 ? 0.04 : -0.12
+    if (preference === 'slow') return minutes >= 45 ? 0.14 : minutes >= 30 ? 0.04 : -0.05
+    return minutes >= 20 && minutes <= 40 ? 0.1 : minutes > 55 ? -0.08 : 0.02
+  })
+  return deltas.reduce((total, delta) => total + delta, 0) / deltas.length
+}
+
 /**
  * 在贪心排序后做一次餐盘结构修复。
  * 评分只能表达“更像晚餐”，不能保证一定有主食；这里把 2026 餐盘结构变成硬性收口条件。
@@ -169,7 +190,9 @@ function repairPlateStructure(
   for (const role of roles) {
     if (next.some(role.has)) continue
     const candidate = scored
-      .filter((item) => role.has(item.dish) && !next.some((dish) => dish.id === item.dish.id))
+      .filter((item) => role.has(item.dish)
+        && !next.some((dish) => dish.id === item.dish.id)
+        && (!next.some(isSoupLikeDish) || !isSoupLikeDish(item.dish)))
       .sort((a, b) => b.score - a.score)[0]
     if (!candidate) continue
 
@@ -308,11 +331,16 @@ export function recommendMeal(input: RecommendInput): RecommendResult | null {
       if (picks.includes(c.dish)) return false
       const pk = getProteinType(c.dish)
       if (pk && usedProteinKeys.includes(pk)) return false
+      if (picks.some(isSoupLikeDish) && isSoupLikeDish(c.dish)) return false
       return true
     })
     if (available.length === 0) {
       // fallback: 去重后候选不够了，放宽限制（总比推荐不够数好）
-      const fallback = scored.filter((c) => !picks.includes(c.dish))
+      const fallbackWithoutSoup = scored.filter((c) => !picks.includes(c.dish)
+        && (!picks.some(isSoupLikeDish) || !isSoupLikeDish(c.dish)))
+      const fallback = fallbackWithoutSoup.length > 0
+        ? fallbackWithoutSoup
+        : scored.filter((c) => !picks.includes(c.dish))
       if (fallback.length === 0) break
       const best = fallback
         .map((c) => {
@@ -373,9 +401,6 @@ export function recommendMeal(input: RecommendInput): RecommendResult | null {
   const pantryIngredientCount = inPantry.length
   const pantryIngredientTotal = uniqueIngredients.length
 
-  // 6) 推荐理由
-  const reason = buildReason(totalNutrition, pantryCoverage, mealTime, familySize)
-
   // P0-3: 构建每道菜的推荐理由(偏好 + 营养亮点, ≤4行)
   const perDishReasons: Record<string, string[]> = {}
   const disagreementDishIds: string[] = []
@@ -383,6 +408,7 @@ export function recommendMeal(input: RecommendInput): RecommendResult | null {
   for (const pick of picks) {
     const c = scoredMap.get(pick.id)
     const lines: string[] = []
+    if (c?.healthReasons?.length) lines.push(...c.healthReasons.slice(0, 2))
     if (c?.prefReasons?.length) lines.push(...c.prefReasons.slice(0, 2))
     // 营养亮点(≤2行)
     const n = sumDishNutrients(pick.ingredients)
@@ -395,11 +421,12 @@ export function recommendMeal(input: RecommendInput): RecommendResult | null {
   // 7) 餐盘结构检查（2026 膳食指南）
   const plateResult = checkPlateStructure(picks)
   const allHealthReasons = Array.from(new Set(
-    picks.flatMap((pick) => {
-      const c = scoredMap.get(pick.id)
-      return c?.prefReasons ?? []
-    }).filter((r) => r.includes('偏高') || r.includes('忌口') || r.includes('过敏') || r.includes('含'))
+    picks.flatMap((pick) => scoredMap.get(pick.id)?.healthReasons ?? []).filter(Boolean),
   ))
+  const reason = [
+    buildReason(totalNutrition, pantryCoverage, mealTime, familySize),
+    ...allHealthReasons.slice(0, 2),
+  ].join(' · ')
 
   return {
     dishes: picks,
@@ -427,6 +454,7 @@ export function recommendMeal(input: RecommendInput): RecommendResult | null {
 type CandidateScore = {
   score: number
   prefFilter: boolean
+  healthReasons: string[]
   prefReasons: string[]
   disagreement: boolean
 }
@@ -476,10 +504,22 @@ function scoreCandidate(
   let healthFilter = false
   let healthReasons: string[] = []
   if (ctx?.healthProfiles && ctx.healthProfiles.length > 0) {
+    score += cookingTimePreferenceDelta(dish, ctx.healthProfiles)
     const healthResult = scoreDishByHealthProfiles(dish, ctx.healthProfiles)
     score += healthResult.penalty
     healthFilter = healthResult.hardFilter
     healthReasons = healthResult.reasons
+    const cookingReasons = ctx.healthProfiles
+      .map((profile) => {
+        if (!profile.cookingTimePreference) return ''
+        const minutes = dishCookMinutes(dish)
+        if (profile.cookingTimePreference === 'quick' && minutes <= 25) return `符合快手优先（${minutes} 分钟）`
+        if (profile.cookingTimePreference === 'slow' && minutes >= 45) return `符合愿意慢慢做（${minutes} 分钟）`
+        if (profile.cookingTimePreference === 'regular' && minutes >= 20 && minutes <= 40) return `符合正常做饭节奏（${minutes} 分钟）`
+        return ''
+      })
+      .filter(Boolean)
+    healthReasons = [...healthReasons, ...cookingReasons]
   }
 
   // P0-3: 今日掌勺 + 饭搭子偏好加权(结构体)
@@ -501,7 +541,7 @@ function scoreCandidate(
     score += ((hash + ctx.seed * 131) % 17) * 0.012
   }
 
-  return { score, prefFilter: prefFilter || healthFilter, prefReasons: [...healthReasons, ...prefReasons], disagreement }
+  return { score, prefFilter: prefFilter || healthFilter, healthReasons, prefReasons, disagreement }
 }
 
 /**

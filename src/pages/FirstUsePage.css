@@ -24,6 +24,9 @@
 .first-use-hero { background: var(--fd-cream, #fbf5ea); }
 .first-use-hero h1 { margin: 8px 0 10px; font-family: var(--fd-display, Georgia, serif); font-size: clamp(34px, 5vw, 58px); line-height: 1.05; }
 .first-use-hero p { max-width: 680px; color: var(--fd-muted); line-height: 1.8; margin: 0; }
+.first-use-product-note { display: grid; gap: 5px; max-width: 700px; margin-top: 20px; padding: 14px 16px; border: 1px solid var(--fd-border, #eadfce); border-radius: 16px; background: rgba(255,255,255,.65); color: var(--fd-muted); line-height: 1.6; font-size: 13px; }
+.first-use-product-note strong { color: var(--fd-ink); font-size: 14px; }
+.first-use-start { margin-top: 22px; min-width: 220px; }
 .first-use-step { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 20px; }
 .first-use-step > span { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: #f39c12; color: #fff; font-weight: 700; flex: 0 0 auto; }
 .first-use-step h2 { margin: 0 0 4px; font-size: 22px; }
@@ -50,4 +53,3 @@
   .first-use-hero, .first-use-panel, .first-use-logic { padding: 20px; border-radius: 18px; }
   .choice-grid, .logic-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-

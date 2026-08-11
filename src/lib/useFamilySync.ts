@@ -17,10 +17,12 @@ import {
   toMyDishVersion,
   toPantryItem,
   toShoppingItem,
+  toWeeklyPrepPlan,
   withRemoteApply,
 } from '@/lib/familyCloudSync'
+import { onSyncError } from '@/lib/familyCloudSync'
 
-type SyncStatus = 'offline' | 'connecting' | 'synced' | 'error'
+export type SyncStatus = 'offline' | 'connecting' | 'synced' | 'error'
 
 let currentStatus: SyncStatus = 'offline'
 const statusListeners = new Set<(_s: SyncStatus) => void>()
@@ -60,13 +62,49 @@ async function loadInitialFamilyData(householdId: string): Promise<void> {
   }
 
   withRemoteApply(() => {
-    useFandaziStore.getState().replaceFamilyData({
-      pantry: (pantry.data ?? []).map((row) => toPantryItem(row)),
-      mealPlans: (mealPlans.data ?? []).map((row) => toMealPlan(row)),
-      shoppingList: (shopping.data ?? []).map((row) => toShoppingItem(row)),
-      cookingLogs: (cooking.data ?? []).map((row) => toCookingLog(row)),
-      myDishVersions: (versions.data ?? []).map((row) => toMyDishVersion(row)),
-      ...(fantuan.data ? { fantuan: toFantuanState(fantuan.data) } : {}),
+    const store = useFandaziStore.getState()
+    const localFantuan = store.fantuan
+
+    // 云端饭团数据与本地合并：保留本地口味档案，取较高的进度值
+    let mergedFantuan = localFantuan
+    if (fantuan.data) {
+      const remote = toFantuanState(fantuan.data)
+      mergedFantuan = {
+        mili: Math.max(localFantuan.mili, remote.mili),
+        level: Math.max(localFantuan.level, remote.level),
+        cookingStreak: Math.max(localFantuan.cookingStreak, remote.cookingStreak),
+        totalCooked: Math.max(localFantuan.totalCooked, remote.totalCooked),
+        // 口味档案：本地优先，本地为默认值时才取云端
+        tasteProfile: localFantuan.tasteProfile.spicy === 1
+          && localFantuan.tasteProfile.salty === 1
+          && localFantuan.tasteProfile.sweet === 1
+          && localFantuan.tasteProfile.avoid.length === 0
+          && localFantuan.tasteProfile.note === ''
+          ? remote.tasteProfile
+          : localFantuan.tasteProfile,
+      }
+    }
+
+    // 合并策略：以云端数据为主，但保留本地独有的条目
+    const cloudPantry = (pantry.data ?? []).map((row) => toPantryItem(row))
+    const cloudMealPlans = (mealPlans.data ?? []).map((row) => toMealPlan(row))
+    const cloudShopping = (shopping.data ?? []).map((row) => toShoppingItem(row))
+    const cloudCooking = (cooking.data ?? []).map((row) => toCookingLog(row))
+    const cloudVersions = (versions.data ?? []).map((row) => toMyDishVersion(row))
+
+    const localPantryIds = new Set(cloudPantry.map((p) => p.id))
+    const localMealPlanIds = new Set(cloudMealPlans.map((p) => p.id))
+    const localShoppingIds = new Set(cloudShopping.map((p) => p.id))
+    const localCookingIds = new Set(cloudCooking.map((p) => p.id))
+    const localVersionDishIds = new Set(cloudVersions.map((p) => p.dishId))
+
+    store.replaceFamilyData({
+      pantry: [...cloudPantry, ...store.pantry.filter((p) => !localPantryIds.has(p.id))],
+      mealPlans: [...cloudMealPlans, ...store.mealPlans.filter((p) => !localMealPlanIds.has(p.id))],
+      shoppingList: [...cloudShopping, ...store.shoppingList.filter((p) => !localShoppingIds.has(p.id))],
+      cookingLogs: [...cloudCooking, ...store.cookingLogs.filter((p) => !localCookingIds.has(p.id))],
+      myDishVersions: [...cloudVersions, ...store.myDishVersions.filter((p) => !localVersionDishIds.has(p.dishId))],
+      fantuan: mergedFantuan,
     })
   })
 }
@@ -167,9 +205,13 @@ export function useFamilySync() {
           'postgres_changes',
           { event: '*', schema: 'public', table: 'cooking_logs', filter: `household_id=eq.${householdId}` },
           (payload) => {
-            if (payload.eventType === 'DELETE') return
             withRemoteApply(() => {
-              useFandaziStore.getState().addCookingLog(toCookingLog(payload.new))
+              const store = useFandaziStore.getState()
+              if (payload.eventType === 'DELETE') {
+                store.removeCookingLog(String(payload.old.id))
+              } else {
+                store.addCookingLog(toCookingLog(payload.new))
+              }
             })
           },
         )
@@ -197,6 +239,27 @@ export function useFamilySync() {
             })
           },
         )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'weekly_prep_plans', filter: `household_id=eq.${householdId}` },
+          (payload) => {
+            if (payload.eventType === 'DELETE') return
+            // 周备餐计划变更通过事件通知 UI 刷新
+            window.dispatchEvent(new CustomEvent('fandazi:weekly-prep-cloud', {
+              detail: toWeeklyPrepPlan(payload.new),
+            }))
+          },
+        )
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'household_settings', filter: `household_id=eq.${householdId}` },
+          (payload) => {
+            // 家庭设置（AI Key 等）变更通知 UI 刷新
+            window.dispatchEvent(new CustomEvent('fandazi:household-settings-cloud', {
+              detail: payload.new,
+            }))
+          },
+        )
         .subscribe((status) => {
           if (status === 'SUBSCRIBED') {
             setStatus('synced')
@@ -215,9 +278,15 @@ export function useFamilySync() {
     window.addEventListener(FANDAZI_SYNC_CONFIG_EVENT, startSync)
     window.addEventListener('storage', startSync)
 
+    // 同步错误监听：写入失败时切换到 error 状态
+    const removeSyncErrorListener = onSyncError((_action, _error) => {
+      setStatus('error')
+    })
+
     return () => {
       window.removeEventListener(FANDAZI_SYNC_CONFIG_EVENT, startSync)
       window.removeEventListener('storage', startSync)
+      removeSyncErrorListener()
       stopSync()
     }
   }, [])
