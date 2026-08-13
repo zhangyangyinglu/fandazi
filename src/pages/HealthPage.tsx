@@ -10,6 +10,7 @@ import { readBuddyGroup, writeBuddyGroup, type BuddyGroup, type BuddyMember } fr
 import { readHealthProfiles, writeHealthProfiles, type HealthGoal, type DietRestriction, type HealthProfile, type CookingTimePreference } from '@/components/healthProfileStorage'
 import { FIRST_USE_COMPLETED_EVENT, FIRST_USE_COMPLETED_KEY } from '@/components/AppAccessGate'
 import { hasAiKey } from '@/lib/aiProviderConfig'
+import { markFirstUseCompletedInCloud } from '@/lib/familyAuth'
 import { readDailyMealSettings, writeDailyMealSettings } from '@/data/dailyMeal'
 import {
   readHealthFactsByCategory,
@@ -128,6 +129,7 @@ export function HealthPage() {
       writeBuddyGroup(group)
       localStorage.setItem(FIRST_USE_COMPLETED_KEY, 'true')
       window.dispatchEvent(new Event(FIRST_USE_COMPLETED_EVENT))
+      void markFirstUseCompletedInCloud() // 标记到云端，清缓存/换设备后不重复填问卷
       navigate('/', { replace: true })
       return
     }

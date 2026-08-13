@@ -25,13 +25,15 @@ describe('weekly prep plan', () => {
     expect(plan.days.every((day) => day.meals.length === 2)).toBe(true)
     expect(plan.days.flatMap((day) => day.meals.flatMap((meal) => meal.dishIds)).length).toBeGreaterThan(0)
     expect(plan.batches.every((batch) => batch.dates.length > 0)).toBe(true)
-    const repeatedBatch = plan.batches.slice(0, 2).some((batch) => {
-      const firstDishId = batch.dishIds[0]
-      return Boolean(firstDishId) && batch.dates.filter((date) => plan.days
-        .find((day) => day.date === date)
-        ?.meals.some((meal) => meal.dishIds.includes(firstDishId))).length >= 2
+    // 每天的主菜不应与同批次内其他天完全相同
+    const hasDuplicateDays = plan.batches.slice(0, 2).some((batch) => {
+      const dayDishes = batch.dates.map((date) =>
+        plan.days.find((day) => day.date === date)?.meals[0]?.dishIds[0],
+      )
+      const uniqueDishes = new Set(dayDishes.filter(Boolean))
+      return dayDishes.filter(Boolean).length > uniqueDishes.size
     })
-    expect(repeatedBatch).toBe(true)
+    expect(hasDuplicateDays).toBe(false)
   })
 
   it('normalizes a Sunday input to the Monday of that week', async () => {

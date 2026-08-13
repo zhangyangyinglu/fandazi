@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { DISHES } from '@/data/dishes'
+import type { Dish } from '@/types'
 import { readBuddyGroup } from '@/data/familySharing'
 import { readHealthProfiles } from '@/components/healthProfileStorage'
 import { readDailyMealSettings } from '@/data/dailyMeal'
@@ -59,6 +60,131 @@ export function WeeklyPrepPage() {
   }, [weekStart])
 
   const dishById = useMemo(() => new Map(DISHES.map((dish) => [dish.id, dish])), [])
+
+  // 换菜功能：记录当前正在替换的位置
+  // targetKey 格式: `day:{date}:{mealLabel}:{dishIndex}` 或 `batch:{batchId}:{dishIndex}`
+  const [swapTarget, setSwapTarget] = useState<string | null>(null)
+  const [swapSearch, setSwapSearch] = useState('')
+
+  const swapDishes = useMemo(() => {
+    const usedIds = new Set<string>()
+    if (plan) {
+      plan.days.forEach((d) => d.meals.forEach((m) => m.dishIds.forEach((id) => usedIds.add(id))))
+      plan.batches.forEach((b) => b.dishIds.forEach((id) => usedIds.add(id)))
+    }
+    const query = swapSearch.trim().toLowerCase()
+    return DISHES.filter((dish) => {
+      if (swapTarget && usedIds.has(dish.id)) return false
+      if (!query) return true
+      return dish.name.toLowerCase().includes(query)
+        || dish.tags.some((t) => t.toLowerCase().includes(query))
+        || dish.category.toLowerCase().includes(query)
+    }).slice(0, 24)
+  }, [plan, swapTarget, swapSearch])
+
+  const handleSwapDish = (dish: Dish) => {
+    if (!plan || !swapTarget) return
+    const [scope, ...rest] = swapTarget.split(':')
+    const updated: WeeklyPrepPlan = { ...plan, days: [...plan.days], batches: [...plan.batches] }
+
+    if (scope === 'day') {
+      const [date, mealLabel, idxStr] = rest
+      const dayIndex = updated.days.findIndex((d) => d.date === date)
+      if (dayIndex < 0) return
+      const day = { ...updated.days[dayIndex], meals: [...updated.days[dayIndex].meals] }
+      const mealIndex = day.meals.findIndex((m) => m.label === mealLabel)
+      if (mealIndex < 0) return
+      const meal = { ...day.meals[mealIndex], dishIds: [...day.meals[mealIndex].dishIds] }
+      const idx = Number.parseInt(idxStr, 10)
+      meal.dishIds[idx] = dish.id
+      day.meals[mealIndex] = meal
+      updated.days[dayIndex] = day
+    } else if (scope === 'batch') {
+      const [batchId, idxStr] = rest
+      const batchIndex = updated.batches.findIndex((b) => b.id === batchId)
+      if (batchIndex < 0) return
+      const batch = { ...updated.batches[batchIndex], dishIds: [...updated.batches[batchIndex].dishIds] }
+      const idx = Number.parseInt(idxStr, 10)
+      batch.dishIds[idx] = dish.id
+      updated.batches[batchIndex] = batch
+      // 同步更新该批次对应日期的菜品
+      batch.dates.forEach((date) => {
+        const dayIndex = updated.days.findIndex((d) => d.date === date)
+        if (dayIndex < 0) return
+        const day = { ...updated.days[dayIndex], meals: [...updated.days[dayIndex].meals] }
+        day.meals.forEach((meal, mealIndex) => {
+          meal.dishIds.forEach((oldId, dishIdx) => {
+            const oldBatchIndex = plan.batches.findIndex((b) => b.dishIds.includes(oldId) && b.id === batchId)
+            if (oldBatchIndex >= 0) {
+              const oldDishIdx = plan.batches[oldBatchIndex].dishIds.indexOf(oldId)
+              if (oldDishIdx === idx) {
+                const newMeal = { ...day.meals[mealIndex], dishIds: [...day.meals[mealIndex].dishIds] }
+                newMeal.dishIds[dishIdx] = dish.id
+                day.meals[mealIndex] = newMeal
+              }
+            }
+          })
+        })
+        updated.days[dayIndex] = day
+      })
+    }
+
+    writeWeeklyPrepPlan(updated)
+    setPlan(updated)
+    setSwapTarget(null)
+    setSwapSearch('')
+  }
+
+  // 删菜：从计划中移除当前选中位置的菜品
+  const handleRemoveDish = () => {
+    if (!plan || !swapTarget) return
+    const [scope, ...rest] = swapTarget.split(':')
+    const updated: WeeklyPrepPlan = { ...plan, days: [...plan.days], batches: [...plan.batches] }
+
+    if (scope === 'day') {
+      const [date, mealLabel, idxStr] = rest
+      const dayIndex = updated.days.findIndex((d) => d.date === date)
+      if (dayIndex < 0) return
+      const day = { ...updated.days[dayIndex], meals: [...updated.days[dayIndex].meals] }
+      const mealIndex = day.meals.findIndex((m) => m.label === mealLabel)
+      if (mealIndex < 0) return
+      const meal = { ...day.meals[mealIndex], dishIds: [...day.meals[mealIndex].dishIds] }
+      const idx = Number.parseInt(idxStr, 10)
+      meal.dishIds.splice(idx, 1)
+      day.meals[mealIndex] = meal
+      updated.days[dayIndex] = day
+    } else if (scope === 'batch') {
+      const [batchId, idxStr] = rest
+      const batchIndex = updated.batches.findIndex((b) => b.id === batchId)
+      if (batchIndex < 0) return
+      const batch = { ...updated.batches[batchIndex], dishIds: [...updated.batches[batchIndex].dishIds] }
+      const idx = Number.parseInt(idxStr, 10)
+      const removedId = batch.dishIds[idx]
+      batch.dishIds.splice(idx, 1)
+      updated.batches[batchIndex] = batch
+      // 同步删除该批次对应日期里的同一道菜
+      if (removedId) {
+        batch.dates.forEach((date) => {
+          const dIndex = updated.days.findIndex((d) => d.date === date)
+          if (dIndex < 0) return
+          const day = { ...updated.days[dIndex], meals: [...updated.days[dIndex].meals] }
+          day.meals.forEach((meal, mealIndex) => {
+            const newIds = meal.dishIds.filter((id) => id !== removedId)
+            if (newIds.length !== meal.dishIds.length) {
+              day.meals[mealIndex] = { ...meal, dishIds: newIds }
+            }
+          })
+          updated.days[dIndex] = day
+        })
+      }
+    }
+
+    writeWeeklyPrepPlan(updated)
+    setPlan(updated)
+    setSwapTarget(null)
+    setSwapSearch('')
+  }
+
   const generatePlan = () => {
     const nextPlan = buildWeeklyPrepPlan({
       weekStart,
@@ -162,13 +288,22 @@ export function WeeklyPrepPage() {
                   {day.meals.map((meal) => (
                     <div className="weekly-prep-meal" key={`${day.date}-${meal.label}`}>
                       <span className="weekly-prep-meal-label">{meal.label}</span>
-                      {meal.dishIds.length === 0 ? <em>暂时没有合适安排</em> : meal.dishIds.map((dishId) => {
+                      {meal.dishIds.length === 0 ? <em>暂时没有合适安排</em> : meal.dishIds.map((dishId, dishIdx) => {
                         const dish = dishById.get(dishId)
                         if (!dish) return null
                         const advice = getPrepAdvice(dish)
+                        const swapKey = `day:${day.date}:${meal.label}:${dishIdx}`
                         return (
                           <div className="weekly-prep-dish" key={dish.id}>
-                            <Link to={`/recipes/${dish.id}`}>{dish.name}</Link>
+                            <div className="weekly-prep-dish-row">
+                              <Link to={`/recipes/${dish.id}`} state={{ from: '/weekly-prep' }}>{dish.name}</Link>
+                              <button
+                                type="button"
+                                className="weekly-prep-swap-btn"
+                                aria-label={`替换${dish.name}`}
+                                onClick={() => { setSwapTarget(swapKey); setSwapSearch('') }}
+                              >换一道</button>
+                            </div>
                             <small className={advice.mode === 'fresh' ? 'fresh' : 'batch'}>{advice.label}</small>
                           </div>
                         )
@@ -187,15 +322,74 @@ export function WeeklyPrepPage() {
                 <h3>{batch.title}</h3>
                 <p>{batch.note}</p>
                 <div className="weekly-prep-batch-dishes">
-                  {batch.dishIds.length === 0 ? <span>这一批暂时没有菜</span> : batch.dishIds.map((dishId) => {
+                  {batch.dishIds.length === 0 ? <span>这一批暂时没有菜</span> : batch.dishIds.map((dishId, dishIdx) => {
                     const dish = dishById.get(dishId)
                     if (!dish) return null
-                    return <Link key={dish.id} to={`/recipes/${dish.id}`}>{dish.name}</Link>
+                    const swapKey = `batch:${batch.id}:${dishIdx}`
+                    return (
+                      <div className="weekly-prep-batch-dish" key={dish.id}>
+                        <Link to={`/recipes/${dish.id}`} state={{ from: '/weekly-prep' }}>{dish.name}</Link>
+                        <button
+                          type="button"
+                          className="weekly-prep-swap-btn"
+                          aria-label={`替换${dish.name}`}
+                          onClick={() => { setSwapTarget(swapKey); setSwapSearch('') }}
+                        >换</button>
+                      </div>
+                    )
                   })}
                 </div>
               </article>
             ))}
           </section>
+
+          {swapTarget && (
+            <>
+              {/* 遮罩层 */}
+              <div className="weekly-prep-swap-overlay" onClick={() => { setSwapTarget(null); setSwapSearch('') }} />
+              {/* 浮层弹窗 */}
+              <section className="fd-panel weekly-prep-swap-panel" role="dialog" aria-label="选择替换菜品">
+                <div className="weekly-prep-swap-head">
+                  <h3>选一道菜替换</h3>
+                  <button type="button" className="weekly-prep-swap-close" aria-label="取消替换" onClick={() => { setSwapTarget(null); setSwapSearch('') }}>✕</button>
+                </div>
+                <input
+                  type="search"
+                  className="weekly-prep-swap-search"
+                  placeholder="搜菜名、标签、分类…"
+                  value={swapSearch}
+                  onChange={(e) => setSwapSearch(e.target.value)}
+                  autoFocus
+                />
+                <div className="weekly-prep-swap-list">
+                  {swapDishes.length === 0 ? (
+                    <p className="weekly-prep-swap-empty">没有可选的菜了，试试搜索别的名字。</p>
+                  ) : swapDishes.map((dish) => {
+                    const advice = getPrepAdvice(dish)
+                    return (
+                      <button
+                        key={dish.id}
+                        type="button"
+                        className="weekly-prep-swap-item"
+                        onClick={() => handleSwapDish(dish)}
+                      >
+                        <strong>{dish.name}</strong>
+                        <span>{dish.category} · {dish.cookTime} · {advice.label}</span>
+                      </button>
+                    )
+                  })}
+                </div>
+                {/* 删菜：不要这道菜 */}
+                <button
+                  type="button"
+                  className="weekly-prep-swap-remove"
+                  onClick={() => handleRemoveDish()}
+                >
+                  不要这道菜
+                </button>
+              </section>
+            </>
+          )}
 
           <section className="fd-panel weekly-prep-confirm">
             <div>

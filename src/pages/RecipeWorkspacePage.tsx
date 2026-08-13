@@ -3,7 +3,7 @@
  * 对应渲染图：P1-1 菜品工作区 v6
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { DISHES } from '@/data/dishes'
 import type { Dish } from '@/types'
 import { useFandaziStore } from '@/stores/fandaziStore'
@@ -625,11 +625,9 @@ function DishImage({ dish }: { dish: Dish }) {
 }
 
 function DishCard({ dish, compact = false, recommendation = false }: { dish: Dish; compact?: boolean; recommendation?: boolean }) {
-  const location = useLocation()
   const addMealPlan = useFandaziStore((s) => s.addMealPlan)
   const pantry = useFandaziStore((s) => s.pantry)
   const [added, setAdded] = useState(false)
-  const returnState = { from: `${location.pathname}${location.search}`, label: location.pathname.startsWith('/catalog') ? '返回菜品库' : '返回菜品' }
 
   const pantryNames = new Set(pantry.map((p) => p.ingredientName))
   const missingCount = dish.ingredients.filter((ing) => !pantryNames.has(ing.name)).length
@@ -646,11 +644,11 @@ function DishCard({ dish, compact = false, recommendation = false }: { dish: Dis
 
   return (
     <article className={`dish-card ${compact ? 'compact' : ''} ${recommendation ? 'recommendation' : ''}`.trim()}>
-      <Link to={`/recipes/${dish.id}`} state={returnState} className="dish-image-link" aria-label={displayName}>
+      <Link to={`/recipes/${dish.id}`} className="dish-image-link" aria-label={displayName}>
         <DishImage dish={dish} />
       </Link>
       <div className="dish-body">
-        <h4><Link to={`/recipes/${dish.id}`} state={returnState}>{displayName}</Link></h4>
+        <h4><Link to={`/recipes/${dish.id}`}>{displayName}</Link></h4>
         <p className="dish-note">{note}</p>
         <div className="dish-tags">
           {recommendation ? (
@@ -672,7 +670,7 @@ function DishCard({ dish, compact = false, recommendation = false }: { dish: Dis
           <button className={added ? 'fd-btn fd-btn-green' : 'fd-btn fd-btn-primary'} onClick={handleAddToPlan}>
             {added ? '✓ 已加入' : '加入计划'}
           </button>
-          <Link to={`/recipes/${dish.id}`} state={returnState} className="fd-btn fd-btn-secondary">详情</Link>
+          <Link to={`/recipes/${dish.id}`} className="fd-btn fd-btn-secondary">详情</Link>
         </div>
       </div>
     </article>

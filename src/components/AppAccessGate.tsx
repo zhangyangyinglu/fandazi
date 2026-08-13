@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
 import { FANDAZI_SYNC_CONFIG_EVENT, isSupabaseConfigured } from '@/lib/supabaseClient'
-import { getCurrentUser, getMyHousehold } from '@/lib/familyAuth'
-import { HEALTH_PROFILES_STORAGE_KEY } from '@/components/healthProfileStorage'
+import { getCurrentUser, getMyHousehold, markFirstUseCompletedInCloud } from '@/lib/familyAuth'
 import { hasAuthHandoffAccess } from '@/lib/authHandoff'
 
 export const LOCAL_MODE_CONFIRMED_KEY = 'fandazi.localModeConfirmed'
@@ -22,9 +21,9 @@ function hasConfirmedLocalMode(): boolean {
 function hasCompletedFirstUse(): boolean {
   try {
     if (localStorage.getItem(FIRST_USE_COMPLETED_KEY) !== 'true') return false
-    const rawProfiles = localStorage.getItem(HEALTH_PROFILES_STORAGE_KEY)
-    const profiles = rawProfiles ? JSON.parse(rawProfiles) : []
-    return Array.isArray(profiles) && profiles.length > 0
+    // 健康档案仅存本地；清缓存后丢失不应阻断已登录用户进入主界面。
+    // 只要本地标记为 true（可能由 getCurrentUser 从云端恢复），就视为已完成。
+    return true
   } catch {
     return false
   }
@@ -54,6 +53,12 @@ export function AppAccessGate({ children }: { children: ReactNode }) {
       return
     }
 
+    // 已有家庭空间的登录用户必定已完成过首次使用；清缓存/换设备后本地标记丢失，
+    // 不应再强制填问卷。直接放行，并在云端补标记（异步，不阻塞）。
+    if (!hasCompletedFirstUse()) {
+      try { localStorage.setItem(FIRST_USE_COMPLETED_KEY, 'true') } catch { /* ignore */ }
+      void markFirstUseCompletedInCloud()
+    }
     setState(hasCompletedFirstUse() ? 'ready' : 'first-use')
   }, [])
 

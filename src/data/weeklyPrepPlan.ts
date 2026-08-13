@@ -107,14 +107,17 @@ function makeVirtualPlan(date: string, dishId: string, slot: string): MealPlan {
   }
 }
 
-function unique(values: string[]): string[] {
-  return Array.from(new Set(values))
-}
-
 export function buildWeeklyPrepPlan(input: BuildWeeklyPrepPlanInput): WeeklyPrepPlan {
   const candidates = getRecommendationCatalog(input.dishes)
-  const virtualPlans = [...input.mealPlans]
+  // 草案生成时不复用本周已有 mealPlans —— 否则 getDailyMealRecommendation
+  // 会把它们当作"今天已确认的安排"直接返回，导致重新生成永远是同样的菜。
+  // 只保留 virtualPlans（本次生成过程中的跨批次去重）。
+  const weekEnd = addDays(input.weekStart, 6)
+  const virtualPlans = input.mealPlans.filter(
+    (p) => p.planDate < input.weekStart || p.planDate > weekEnd,
+  )
   const slots: WeeklyMealLabel[] = input.mealsPerDay === 2 ? ['午餐', '晚餐'] : ['晚餐']
+  // 每天独立推荐不同菜品，用 virtualPlans 在周内去重
   const batchWindows: Array<[number, number]> = [[0, 2], [3, 5], [6, 6]]
   const batchCandidates = candidates.filter((dish) => getPrepAdvice(dish).mode === 'batch')
   const recommendationSettings: DailyMealSettings = {
@@ -125,44 +128,67 @@ export function buildWeeklyPrepPlan(input: BuildWeeklyPrepPlanInput): WeeklyPrep
     carb: input.dailySettings.carb === 'none' ? 'optional' : input.dailySettings.carb,
   }
 
-  const batchDrafts = batchWindows.map(([start, end], index) => {
-    const anchorDate = addDays(input.weekStart, start)
-    const result = getDailyMealRecommendation({
-      date: anchorDate,
-      dishes: candidates,
-      pantryItems: input.pantryItems,
-      mealPlans: virtualPlans.filter((plan) => plan.planDate !== anchorDate),
-      cookingLogs: input.cookingLogs,
-      settings: recommendationSettings,
-      buddyGroup: input.buddyGroup,
-      healthProfiles: input.healthProfiles,
-      mealTime: 'dinner',
-      revision: 100 + index,
-    })
-    const selected = unique(result.dishes
-      .filter((dish) => getPrepAdvice(dish).mode === 'batch')
-      .map((dish) => dish.id))
-    const preferred = selected.length > 0 ? selected : []
-    const unavailableFallbacks = batchCandidates.filter((dish) => !preferred.includes(dish.id))
-    const fallbackPool = unavailableFallbacks.length > 0 ? unavailableFallbacks : batchCandidates
-    const componentCount = Math.min(2, Math.max(1, batchCandidates.length))
-    for (let offset = 0; preferred.length < componentCount && offset < fallbackPool.length; offset += 1) {
-      const dish = fallbackPool[(index * componentCount + offset) % fallbackPool.length]
-      if (dish && !preferred.includes(dish.id)) preferred.push(dish.id)
+  // 为每天推荐不同的菜品
+  const dayDishMap = new Map<string, string[]>() // date -> dishIds
+  const batchDrafts = batchWindows.map(([start, end], batchIndex) => {
+    const batchDishIds: string[] = []
+    for (let dayIndex = start; dayIndex <= end; dayIndex += 1) {
+      const date = addDays(input.weekStart, dayIndex)
+      const result = getDailyMealRecommendation({
+        date,
+        dishes: candidates,
+        pantryItems: input.pantryItems,
+        mealPlans: virtualPlans,
+        cookingLogs: input.cookingLogs,
+        settings: recommendationSettings,
+        buddyGroup: input.buddyGroup,
+        healthProfiles: input.healthProfiles,
+        mealTime: 'dinner',
+        revision: 100 + batchIndex * 10 + dayIndex,
+      })
+      // 取推荐结果中排前 1-2 道菜（优先 batch 类型，不够就用 fresh）
+      const batchDishes = result.dishes.filter((d) => getPrepAdvice(d).mode === 'batch')
+      const freshDishes = result.dishes.filter((d) => getPrepAdvice(d).mode === 'fresh')
+      const picked: string[] = []
+      const dishesPerDay = Math.min(2, Math.max(1, result.dishes.length))
+      for (const d of batchDishes) {
+        if (picked.length >= dishesPerDay) break
+        if (!picked.includes(d.id) && !batchDishIds.includes(d.id)) {
+          picked.push(d.id)
+        }
+      }
+      // batch 不够就用 fresh 补
+      for (const d of freshDishes) {
+        if (picked.length >= dishesPerDay) break
+        if (!picked.includes(d.id) && !batchDishIds.includes(d.id)) {
+          picked.push(d.id)
+        }
+      }
+      // 还不够就从 batchCandidates 兜底
+      if (picked.length < dishesPerDay) {
+        for (const d of batchCandidates) {
+          if (picked.length >= dishesPerDay) break
+          if (!picked.includes(d.id) && !batchDishIds.includes(d.id)) {
+            picked.push(d.id)
+          }
+        }
+      }
+      dayDishMap.set(date, picked)
+      picked.forEach((dishId, ci) => {
+        virtualPlans.push(makeVirtualPlan(date, dishId, `batch-${batchIndex}-day${dayIndex}-${ci}`))
+        if (!batchDishIds.includes(dishId)) batchDishIds.push(dishId)
+      })
     }
-    const dishIds = preferred.slice(0, componentCount)
-    dishIds.forEach((dishId, componentIndex) => {
-      virtualPlans.push(makeVirtualPlan(anchorDate, dishId, `batch-${index}-${componentIndex}`))
-    })
-    return { start, end, dishIds }
+    return { start, end, dishIds: batchDishIds }
   })
 
   const days: WeeklyPrepDay[] = []
-  batchDrafts.forEach(({ start, end, dishIds }) => {
+  batchDrafts.forEach(({ start, end }) => {
     for (let dayIndex = start; dayIndex <= end; dayIndex += 1) {
       const date = addDays(input.weekStart, dayIndex)
-      const primaryId = dishIds[dayIndex % Math.max(1, dishIds.length)]
-      const secondaryId = dishIds[(dayIndex + 1) % Math.max(1, dishIds.length)] ?? primaryId
+      const dayDishes = dayDishMap.get(date) ?? []
+      const primaryId = dayDishes[0] ?? ''
+      const secondaryId = dayDishes[1] ?? primaryId
       const meals = slots.map((label, slotIndex) => ({
         label,
         dishIds: [input.mealsPerDay === 2 && slotIndex === 1 ? secondaryId : primaryId].filter(Boolean),

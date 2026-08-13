@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useLocation, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { DISHES } from '@/data/dishes'
 import { useFandaziStore } from '@/stores/fandaziStore'
 import {
@@ -44,6 +44,7 @@ function getDishEmoji(name: string, category: string, tags: string[]): string {
 export function RecipeDetailPage() {
   const { id } = useParams<{ id: string }>()
   const location = useLocation()
+  const navigate = useNavigate()
   const dish = DISHES.find((d) => d.id === id)
   const addMealPlan = useFandaziStore((s) => s.addMealPlan)
   const addCookingLog = useFandaziStore((s) => s.addCookingLog)
@@ -51,9 +52,17 @@ export function RecipeDetailPage() {
   const pantry = useFandaziStore((s) => s.pantry)
   const myDishVersions = useFandaziStore((s) => s.myDishVersions)
   const cookingLogs = useFandaziStore((s) => s.cookingLogs)
-  const backState = location.state as { from?: string; label?: string } | null
-  const backTo = backState?.from ?? '/'
-  const backLabel = backState?.label ?? '返回菜品'
+  // 返回逻辑：优先用 state.from（明确来源页），其次浏览器后退，最后回首页。
+  const goBack = () => {
+    const from = (location.state as { from?: string } | null)?.from
+    if (from) {
+      navigate(from)
+    } else if (window.history.length > 1) {
+      navigate(-1)
+    } else {
+      navigate('/')
+    }
+  }
   const [recipeTab, setRecipeTab] = useState<'standard' | 'mine' | 'partner'>('standard')
   const [added, setAdded] = useState(false)
   const [mobileRecipePanel, setMobileRecipePanel] = useState<'recipe' | 'missing'>('recipe')
@@ -99,7 +108,7 @@ export function RecipeDetailPage() {
     return (
       <div className="fd-main">
         <p>菜品不存在</p>
-        <Link to={backTo}>{backLabel}</Link>
+        <button type="button" onClick={goBack}>返回</button>
       </div>
     )
   }
@@ -184,7 +193,7 @@ export function RecipeDetailPage() {
     <div className="recipe-detail">
       <section className="mobile-recipe-card" aria-label="这顿饭">
         <div className="mobile-recipe-page-head">
-          <Link to={backTo} className="mobile-recipe-back" aria-label={backLabel}>‹</Link>
+          <button type="button" onClick={goBack} className="mobile-recipe-back" aria-label="返回">‹</button>
           <div><strong>这顿饭</strong><span>{dish.cookTime}</span></div>
         </div>
         <p className="mobile-recipe-page-desc">把这顿饭做出来，剩下的交给饭团。</p>
@@ -226,7 +235,7 @@ export function RecipeDetailPage() {
         </section>
       )}
       <div className="detail-breadcrumb">
-        <Link to={backTo} className="back-link">← {backLabel}</Link>
+        <button type="button" onClick={goBack} className="back-link">← 返回</button>
         <span>菜品 / {dish.category} / {dish.name}</span>
       </div>
 

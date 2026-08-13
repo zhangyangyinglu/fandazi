@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense } from 'react'
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom'
 import { TopNav } from '@/components/TopNav'
 import { FloatingFantuan } from '@/components/FloatingFantuan'
@@ -111,18 +111,6 @@ function AppFrame() {
 
 export function App() {
   useFamilySync()
-
-  useEffect(() => {
-    const isLocalPreview = ['127.0.0.1', 'localhost'].includes(window.location.hostname)
-    if (!isLocalPreview || !('serviceWorker' in navigator)) return
-
-    void navigator.serviceWorker.getRegistrations().then((registrations) => {
-      registrations.forEach((registration) => void registration.unregister())
-    })
-    if ('caches' in window) {
-      void caches.keys().then((names) => names.forEach((name) => void caches.delete(name)))
-    }
-  }, [])
 
   return (
     <BrowserRouter>

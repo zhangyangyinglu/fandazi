@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>更新饭搭子</title>
+  <style>
+    body { font-family: system-ui, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #f7f0e5; color: #3d2b1f; }
+    .card { text-align: center; padding: 2rem; max-width: 360px; }
+    h1 { font-size: 1.2rem; margin-bottom: 0.5rem; }
+    p { font-size: 0.9rem; color: #8b7355; line-height: 1.6; }
+    .done { color: #4a7c59; font-weight: 600; }
+    .spinner { display: inline-block; width: 24px; height: 24px; border: 3px solid #ddd; border-top-color: #4a7c59; border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="spinner" id="spinner"></div>
+    <h1>正在更新饭搭子…</h1>
+    <p id="status">正在获取最新版本</p>
+  </div>
+  <script>
+    (async function () {
+      var status = document.getElementById('status');
+      var spinner = document.getElementById('spinner');
+
+      try {
+        // 1. 注销所有旧的 Service Worker（它们缓存了旧版 JS）
+        if ('serviceWorker' in navigator) {
+          var regs = await navigator.serviceWorker.getRegistrations();
+          for (var i = 0; i < regs.length; i++) {
+            await regs[i].unregister();
+          }
+          status.textContent = '已清除旧版本 (' + regs.length + ' 个)';
+        }
+
+        // 2. 清空所有 Cache Storage（旧 SW 缓存的 JS/CSS）
+        if ('caches' in window) {
+          var names = await caches.keys();
+          for (var j = 0; j < names.length; j++) {
+            await caches.delete(names[j]);
+          }
+          status.textContent += ' / 缓存已清空';
+        }
+
+        // 3. 等待 SW 完全注销
+        await new Promise(function (r) { setTimeout(r, 500); });
+
+        // 4. 跳转回首页 -- 新 SW 会在首次加载时重新注册并缓存最新版本
+        spinner.style.display = 'none';
+        status.innerHTML = '<span class="done">✓ 更新完成，正在打开…</span>';
+        await new Promise(function (r) { setTimeout(r, 800); });
+        window.location.href = '/';
+      } catch (e) {
+        spinner.style.display = 'none';
+        status.innerHTML = '更新出错：' + e.message + '<br><br>请刷新页面重试，或访问首页手动刷新。';
+      }
+    })();
+  </script>
+</body>
+</html>

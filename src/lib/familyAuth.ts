@@ -112,9 +112,28 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   }
   if (data.user) {
     markActive()
+    // 如果用户在云端标记过已完成首次使用，恢复本地标记，避免清缓存后重复填问卷。
+    if (data.user.user_metadata?.firstUseCompleted === true) {
+      try {
+        localStorage.setItem('fandazi.firstUseCompleted', 'true')
+      } catch {
+        // 隐私模式无法写入时不阻断。
+      }
+    }
     return { id: data.user.id, email: data.user.email! }
   }
   return null
+}
+
+/** 标记当前用户已在云端完成首次使用（问卷），跨设备/清缓存后不丢失。 */
+export async function markFirstUseCompletedInCloud(): Promise<void> {
+  const supabase = getSupabase()
+  if (!supabase) return
+  try {
+    await supabase.auth.updateUser({ data: { firstUseCompleted: true } })
+  } catch {
+    // 网络错误不阻断本地流程。
+  }
 }
 
 /** 创建家庭空间。
