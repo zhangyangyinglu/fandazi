@@ -7,7 +7,7 @@
  *   3. 家人输入邀请码加入
  *   4. 登录后缓存 householdId 到 localStorage
  */
-import { FANDAZI_SYNC_CONFIG_EVENT, getSupabase } from '@/lib/supabaseClient'
+import { FANDAZI_SYNC_CONFIG_EVENT, getSupabase, getSupabasePublicConfig } from '@/lib/supabaseClient'
 import { clearAuthHandoffAccess } from '@/lib/authHandoff'
 
 const LAST_ACTIVE_KEY = 'fandazi.auth.lastActiveAt'
@@ -95,16 +95,51 @@ export async function signOut(): Promise<void> {
   if (!supabase) return
   await supabase.auth.signOut()
   localStorage.removeItem('fandazi.householdId')
+  localStorage.removeItem('fandazi.householdName')
+  localStorage.removeItem('fandazi.householdInviteCode')
   localStorage.removeItem(LAST_ACTIVE_KEY)
   clearAuthHandoffAccess()
   notifySyncConfigChanged()
 }
 
-/** 获取当前登录用户 */
+/** 获取当前登录用户。
+ *  本地优先：直接从 localStorage 读取 Supabase session，不走网络、不抢 navigator.locks。
+ *  PWA 环境下 supabase.auth.getUser() 会通过 navigator.locks 协调 token 刷新，
+ *  一旦锁卡死（iOS Safari/PWA 常见），所有 auth 请求永远挂起，页面死锁。
+ *  门禁只需要知道"有没有用户"，不需要验证 token 有效性——token 过期由 API 401 自然处理。
+ */
 export async function getCurrentUser(): Promise<AuthUser | null> {
   const supabase = getSupabase()
   if (!supabase) return null
 
+  // ── 本地优先路径：直接读 localStorage，0ms 返回 ──
+  try {
+    const config = getSupabasePublicConfig()
+    if (config) {
+      const projectRef = config.url.replace(/^https?:\/\//, '').split('.')[0]
+      const raw = localStorage.getItem(`sb-${projectRef}-auth-token`)
+      if (raw) {
+        const session = JSON.parse(raw)
+        const user = session?.user ?? session?.data?.user
+        if (user?.id && user?.email) {
+          if (hasExpiredByInactivity()) {
+            void signOut()
+            return null
+          }
+          markActive()
+          if (user.user_metadata?.firstUseCompleted === true) {
+            try { localStorage.setItem('fandazi.firstUseCompleted', 'true') } catch { /* ignore */ }
+          }
+          return { id: user.id, email: user.email }
+        }
+      }
+    }
+  } catch {
+    // localStorage 读取/解析失败，走回退路径
+  }
+
+  // ── 回退路径：本地无 session 时才走 supabase.auth（可能触发网络/锁） ──
+  // 只有首次登录或清了 localStorage 后才会走到这里。
   const { data } = await supabase.auth.getUser()
   if (data.user && hasExpiredByInactivity()) {
     await signOut()
@@ -112,7 +147,6 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   }
   if (data.user) {
     markActive()
-    // 如果用户在云端标记过已完成首次使用，恢复本地标记，避免清缓存后重复填问卷。
     if (data.user.user_metadata?.firstUseCompleted === true) {
       try {
         localStorage.setItem('fandazi.firstUseCompleted', 'true')
@@ -153,6 +187,10 @@ export async function createHousehold(name: string, creatorId: string): Promise<
   const raw = house as { id: string; name: string; invite_code: string }
   localStorage.setItem('fandazi.householdId', raw.id)
   localStorage.setItem('fandazi.currentDisplayName', '家庭成员')
+  try {
+    localStorage.setItem('fandazi.householdName', raw.name)
+    localStorage.setItem('fandazi.householdInviteCode', raw.invite_code)
+  } catch { /* ignore */ }
   notifySyncConfigChanged()
 
   return {
@@ -182,6 +220,10 @@ export async function joinHousehold(inviteCode: string, _userId: string, display
   const raw = house as { id: string; name: string; invite_code: string }
   localStorage.setItem('fandazi.householdId', raw.id)
   localStorage.setItem('fandazi.currentDisplayName', displayName)
+  try {
+    localStorage.setItem('fandazi.householdName', raw.name)
+    localStorage.setItem('fandazi.householdInviteCode', raw.invite_code)
+  } catch { /* ignore */ }
   notifySyncConfigChanged()
 
   return {
@@ -190,11 +232,29 @@ export async function joinHousehold(inviteCode: string, _userId: string, display
   }
 }
 
-/** 获取用户当前所属家庭 */
+/** 获取用户当前所属家庭。
+ *  本地优先：如果 localStorage 已有 householdId，直接返回，不走网络。
+ *  门禁只需要知道"有没有家庭"，不需要实时验证--householdId 在创建/加入时写入，
+ *  只在退出登录时清除。后台同步会在 ready 后自然校正。
+ */
 export async function getMyHousehold(userId: string): Promise<Household | null> {
+  void userId
   const supabase = getSupabase()
   if (!supabase) return null
 
+  // ── 本地优先：有缓存直接返回，0ms ──
+  try {
+    const cachedId = localStorage.getItem('fandazi.householdId')
+    if (cachedId) {
+      const cachedName = localStorage.getItem('fandazi.householdName') || '我的家庭'
+      const cachedInvite = localStorage.getItem('fandazi.householdInviteCode') || ''
+      return { id: cachedId, name: cachedName, inviteCode: cachedInvite }
+    }
+  } catch {
+    // ignore
+  }
+
+  // ── 回退：本地无缓存时走网络（首次登录/清缓存后才会走到） ──
   const { data: member } = await supabase
     .from('household_members')
     .select('household_id, households(id, name, invite_code)')
@@ -209,6 +269,10 @@ export async function getMyHousehold(userId: string): Promise<Household | null> 
     const h = Array.isArray(raw.households) ? raw.households[0] : raw.households
     if (h) {
       localStorage.setItem('fandazi.householdId', h.id)
+      try {
+        localStorage.setItem('fandazi.householdName', h.name)
+        localStorage.setItem('fandazi.householdInviteCode', h.invite_code)
+      } catch { /* ignore */ }
       notifySyncConfigChanged()
       return { id: h.id, name: h.name, inviteCode: h.invite_code }
     }

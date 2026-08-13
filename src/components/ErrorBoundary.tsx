@@ -35,6 +35,24 @@ export class ErrorBoundary extends Component<Props, State> {
     window.location.href = '/'
   }
 
+  /** 深度修复：注销 SW + 清缓存（保留登录和本地数据），然后刷新。用于缓存损坏导致的反复崩溃。 */
+  handleDeepRepair = () => {
+    void (async () => {
+      try {
+        if ('serviceWorker' in navigator) {
+          const regs = await navigator.serviceWorker.getRegistrations()
+          await Promise.all(regs.map((r) => r.unregister()))
+        }
+        if ('caches' in window) {
+          const names = await caches.keys()
+          await Promise.all(names.map((n) => caches.delete(n)))
+        }
+      } finally {
+        window.location.reload()
+      }
+    })()
+  }
+
   render() {
     if (this.state.hasError) {
       return (
@@ -54,6 +72,9 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="error-actions">
               <button className="fd-btn fd-btn-primary" onClick={this.handleReload}>
                 刷新页面
+              </button>
+              <button className="fd-btn fd-btn-secondary" onClick={this.handleDeepRepair}>
+                修复并刷新
               </button>
               <button className="fd-btn fd-btn-secondary" onClick={this.handleGoHome}>
                 返回首页

@@ -3,7 +3,7 @@
  * 对应渲染图：P1-1 菜品工作区 v6
  */
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { DISHES } from '@/data/dishes'
 import type { Dish } from '@/types'
 import { useFandaziStore } from '@/stores/fandaziStore'
