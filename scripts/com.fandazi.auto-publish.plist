@@ -7,10 +7,10 @@
   <key>ProgramArguments</key>
   <array>
     <string>/Users/miki/.local/bin/node</string>
-    <string>/Users/miki/Documents/github-projects/fandazi/scripts/auto-publish.mjs</string>
+    <string>/Users/miki/Projects/fandazi/scripts/auto-publish.mjs</string>
   </array>
   <key>WorkingDirectory</key>
-  <string>/Users/miki/Documents/github-projects/fandazi</string>
+  <string>/Users/miki/Projects/fandazi</string>
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key>
